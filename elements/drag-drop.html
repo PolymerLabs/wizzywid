@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+
+<dom-module id="drag-drop">
+  <template>
+    <style>
+      :host{
+        display: block;background-color: #54cfb3;
+        position: relative;
+        box-sizing: border-box;
+        width: 200px;
+        height: 200px;
+        background-color: #54cfb3;
+      }
+      :host(:hover) {
+      }
+      :host([dragging]) {
+        opacity: 0.6;
+      }
+    </style>
+  </template>
+  <script>
+    class DragDrop extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is() { return 'drag-drop'; }
+      static get properties() {
+        return {
+          dragging: {type: Boolean, value: false, reflectToAttribute: true},
+          x: {type: Number},
+          y: {type: Number}
+        };
+      }
+      connectedCallback() {
+        super.connectedCallback();
+          Polymer.Gestures.addListener(this, 'track', e => this._onTrack(e));
+      }
+
+      _onTrack(e) {
+        var message;
+        switch(e.detail.state) {
+          case 'start':
+            this.dragging = true;
+            break;
+          case 'track':
+            var grid = 10;
+            this.x = Math.round(e.detail.dx / grid) * grid;
+            this.y = Math.round(e.detail.dy / grid) * grid;
+            this._update();
+            break;
+          case 'end':
+            this.dragging = false;
+            var local = this.getBoundingClientRect();
+            var parent = this.offsetParent.getBoundingClientRect();
+            this.style.left = local.left - parent.left + 'px';
+            this.style.top = local.top - parent.top + 'px';
+            this.style.transform = this.style.webkitTransform = 'none';
+            break;
+        }
+      }
+
+      _update() {
+        this.style.transform = this.style.webkitTransform =
+          'translate(' + this.x + 'px, ' + this.y + 'px)';
+      }
+    }
+    customElements.define(DragDrop.is, DragDrop);
+  </script>
+</dom-module>
