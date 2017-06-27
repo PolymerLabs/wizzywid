@@ -1,0 +1,94 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="app-icons.html">
+<dom-module id="app-shell">
+  <template>
+    <style>
+      :host{
+        display: block;
+        box-sizing: border-box;
+      }
+      app-header {
+        background-color: #eeeeee;
+        color: black;
+      }
+      app-drawer {
+        width: 350px;
+        border-left: 1px solid silver;
+      }
+      .drawer-contents {
+        text-align: left;
+      }
+      .drawer-contents app-toolbar {
+        background-color: #eeeeee;
+        color: black;
+      }
+      .separator {
+        border-left: #656565 solid 1px;
+        opacity: .8;
+        height: 24px;
+        margin: 8px;
+      }
+      paper-icon-button {
+        margin: 8px;
+      }
+    </style>
+
+    <app-drawer-layout>
+      <app-drawer slot="drawer" id="drawer" align="right">
+        <div class="drawer-contents">
+          <app-toolbar>
+            <paper-icon-button icon="designer:back"></paper-icon-button>
+            <span>my-element</span>
+            <paper-icon-button icon="designer:fullscreen"></paper-icon-button>
+            <paper-icon-button icon="designer:menu"></paper-icon-button>
+          </app-toolbar>
+          <div>
+            <div>
+              <label>X</label>
+              <input type="text" spellcheck="false" value="109">
+              <label>Y</label>
+              <input type="text" spellcheck="false" value="33">
+            </div>
+            <div>
+              <label>W</label>
+              <input type="text" spellcheck="false" value="109">
+              <label>H</label>
+              <input type="text" spellcheck="false" value="33">
+            </div>
+          </div>
+        </div>
+      </app-drawer>
+      <app-header-layout>
+        <app-header slot="header" fixed>
+          <app-toolbar>
+            <paper-icon-button icon="designer:code"></paper-icon-button>
+            <div class="separator"></div>
+            <paper-icon-button icon="designer:save"></paper-icon-button>
+            <paper-icon-button icon="designer:share"></paper-icon-button>
+            <paper-icon-button icon="designer:launch"></paper-icon-button>
+            <div class="separator"></div>
+            <paper-icon-button icon="designer:undo"></paper-icon-button>
+            <paper-icon-button icon="designer:redo"></paper-icon-button>
+            <div class="separator"></div>
+            <paper-icon-button icon="designer:drawer" onclick="drawer.toggle()"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+        <slot></slot>
+      </app-header-layout>
+    </app-drawer-layout>
+
+  </template>
+  <script>
+    class AppShell extends Polymer.Element {
+      static get is() { return 'app-shell'; }
+    }
+    customElements.define(AppShell.is, AppShell);
+  </script>
+</dom-module>

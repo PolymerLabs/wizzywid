@@ -4,21 +4,13 @@
     <meta charset="utf-8">
     <meta name="generator" content="Indie elements catalog">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-
-    <title>A thing</title>
     <meta name="description" content="">
 
-    <link rel="import" href="bower_components/polymer/polymer-element.html">
-    <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <title>A thing</title>
 
-    <link rel="import" href="bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-    <link rel="import" href="bower_components/app-layout/app-drawer/app-drawer.html">
-    <link rel="import" href="bower_components/app-layout/app-header-layout/app-header-layout.html">
-    <link rel="import" href="bower_components/app-layout/app-header/app-header.html">
-    <link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
-    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
-    <link rel="import" href="elements/app-icons.html">
+    <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="elements/drag-drop.html">
+    <link rel="import" href="elements/app-shell.html">
 
     <custom-style>
     <style>
@@ -29,52 +21,16 @@
         min-height: 100vh;
         background-color: white;
       }
-      app-header {
-        background-color: #eeeeee;
-        color: black;
-      }
-      app-drawer {
-        width: 350px;
-        border-left: 1px solid silver;
-      }
-      .drawer-contents {
-        text-align: left;
-      }
-      .drawer-contents app-toolbar {
-        background-color: #eeeeee;
-        color: black;
-      }
-      .separator {
-        border-left: #656565 solid 1px;
-        opacity: .8;
-        height: 24px;
-        margin: 8px;
-      }
-      paper-icon-button {
-        margin: 8px;
-      }
+
       .main {
         box-sizing: border-box;
         position: absolute;
         width: 100%;
         height: 700px;
         overflow: hidden;
-
-        /*
-        $bg-color: white;
-        $dot-color: black;
-        $dot-size: 1px;
-        $dot-space: 10px;*/
-        background:
-            -webkit-linear-gradient(left, white 9px, transparent 1%) center,
-            -webkit-linear-gradient(white 9px, transparent 1%) center,
-            black;
-        background:
-            linear-gradient(90deg, white 9px, transparent 1%) center,
-            linear-gradient(white 9px, transparent 1%) center,
-            black;
-        background-size: 10px 10px;
-
+        /* 10px grid, using http://www.patternify.com/ */
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGUlEQVQYV2NkIBIwEqmOYVQh3pAiNnj+AwALaAEKfsPrZgAAAABJRU5ErkJggg==);
+        background-position: 0px 0px;
       }
       .main > * {
         cursor: pointer;
@@ -87,53 +43,12 @@
     <custom-style>
   </head>
   <body>
-    <app-drawer-layout>
-      <app-drawer slot="drawer" id="drawer" align="right">
-        <div class="drawer-contents">
-          <app-toolbar>
-            <paper-icon-button icon="designer:back"></paper-icon-button>
-            <span>my-element</span>
-            <paper-icon-button icon="designer:fullscreen"></paper-icon-button>
-            <paper-icon-button icon="designer:menu"></paper-icon-button>
-          </app-toolbar>
-          <div>
-            <div>
-              <label>X</label>
-              <input type="text" spellcheck="false" value="109">
-              <label>Y</label>
-              <input type="text" spellcheck="false" value="33">
-            </div>
-
-            <div>
-              <label>W</label>
-              <input type="text" spellcheck="false" value="109">
-              <label>H</label>
-              <input type="text" spellcheck="false" value="33">
-            </div>
-          </div>
-        </div>
-      </app-drawer>
-      <app-header-layout>
-        <app-header slot="header" fixed>
-          <app-toolbar>
-            <paper-icon-button icon="designer:code"></paper-icon-button>
-            <div class="separator"></div>
-            <paper-icon-button icon="designer:save"></paper-icon-button>
-            <paper-icon-button icon="designer:share"></paper-icon-button>
-            <paper-icon-button icon="designer:launch"></paper-icon-button>
-            <div class="separator"></div>
-            <paper-icon-button icon="designer:undo"></paper-icon-button>
-            <paper-icon-button icon="designer:redo"></paper-icon-button>
-            <div class="separator"></div>
-            <paper-icon-button icon="designer:drawer" onclick="drawer.toggle()"></paper-icon-button>
-          </app-toolbar>
-        </app-header>
-        <div class="main">
-          <drag-drop></drag-drop>
-          <input>
-        </div>
-      </app-header-layout>
-    </app-drawer-layout>
+    <app-shell>
+      <div class="main">
+        <drag-drop></drag-drop>
+        <input>
+      </div>
+    </app-shell>
 
     <noscript>
       Please enable JavaScript to view this website.
@@ -141,6 +56,7 @@
 
     <script>
       window.addEventListener('WebComponentsReady', function() {
+        console.log('🐼 ready!');
       });
     </script>
   </body>
