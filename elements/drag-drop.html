@@ -5,7 +5,7 @@
   <template>
     <style>
       :host{
-        display: block;background-color: #54cfb3;
+        display: block;
         position: relative;
         box-sizing: border-box;
         width: 200px;
@@ -31,7 +31,7 @@
       }
       connectedCallback() {
         super.connectedCallback();
-          Polymer.Gestures.addListener(this, 'track', e => this._onTrack(e));
+        Polymer.Gestures.addListener(this, 'track', e => this._onTrack(e));
       }
 
       _onTrack(e) {

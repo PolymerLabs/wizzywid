@@ -9,6 +9,7 @@
     <title>A thing</title>
 
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
     <link rel="import" href="elements/drag-drop.html">
     <link rel="import" href="elements/app-shell.html">
 
@@ -24,9 +25,8 @@
 
       .main {
         box-sizing: border-box;
-        position: absolute;
         width: 100%;
-        height: 700px;
+        height: 500px;
         overflow: hidden;
         /* 10px grid, using http://www.patternify.com/ */
         background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGUlEQVQYV2NkIBIwEqmOYVQh3pAiNnj+AwALaAEKfsPrZgAAAABJRU5ErkJggg==);
@@ -35,19 +35,40 @@
       .main > * {
         cursor: pointer;
       }
-      .main > *:hover {
+      .main > *.active {
         outline: solid 2px rgba(66, 87, 203, 0.8);
         outline-offset: -2px;
+      }
+      .main > *.dragging {
+        opacity: 0.6;
+      }
+      button {
+        background: transparent;
+        border: none;
+        font-size: inherit;
+        display: block;
+        margin-bottom: 12px;
       }
     </style>
     <custom-style>
   </head>
   <body>
     <app-shell>
-      <div class="main">
-        <drag-drop></drag-drop>
-        <input>
+      <div slot="properties" id="propertiesContainer">
+        <label>X</label>
+        <input type="text" spellcheck="false" value="109">
+        <label>Y</label>
+        <input type="text" spellcheck="false" value="33">
+        <label>W</label>
+        <input type="text" spellcheck="false" value="109">
+        <label>H</label>
+        <input type="text" spellcheck="false" value="33">
       </div>
+      <div slot="elements" id="elementsContainer">
+        <button>input</button>
+        <button>button</button>
+      </div>
+      <div class="main" slot="main" id="viewContainer"></div>
     </app-shell>
 
     <noscript>
@@ -55,9 +76,63 @@
     </noscript>
 
     <script>
+      var activeElement;
+      var grid = 10;
+
       window.addEventListener('WebComponentsReady', function() {
-        console.log('🐼 ready!');
+        elementsContainer.addEventListener('click', addElement);
+        viewContainer.addEventListener('click', selectElement);
+        Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
       });
+
+      function addElement(event) {
+        var el = event.target;
+        console.log('create a new ', el.textContent);
+        var el = document.createElement(el.textContent);
+        el.style.position = 'relative';
+        el.style.left = el.style.top = '0';
+        viewContainer.appendChild(el);
+        updateActiveElement(el);
+      }
+
+      function selectElement(event) {
+        var el = event.target;
+        updateActiveElement(el);
+      }
+
+      function trackElement(event) {
+        var el = event.target;
+
+        switch(event.detail.state) {
+          case 'start':
+            el.classList.add('dragging');
+            break;
+          case 'track':
+            window._trackx = Math.round(event.detail.dx / grid) * grid;
+            window._tracky = Math.round(event.detail.dy / grid) * grid;
+            el.style.transform = el.style.webkitTransform =
+              'translate(' + _trackx + 'px, ' + _tracky + 'px)';
+            break;
+          case 'end':
+            el.classList.remove('dragging');
+            var local = el.getBoundingClientRect();
+            var parent = el.parentElement.getBoundingClientRect();
+            el.style.left = local.left - parent.left + 'px';
+            el.style.top = local.top - parent.top + 'px';
+            el.style.transform = el.style.webkitTransform = 'none';
+            el.getBoundingClientRect();
+            break;
+        }
+
+      }
+
+      function updateActiveElement(el) {
+        if (activeElement) {
+          activeElement.classList.remove('active');
+        }
+        el.classList.add('active');
+        activeElement = el;
+      }
     </script>
   </body>
 </html>

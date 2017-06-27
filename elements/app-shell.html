@@ -38,6 +38,17 @@
       paper-icon-button {
         margin: 8px;
       }
+      .section-header {
+        padding: 12px;
+        background-color: #eeeeee;
+        border-bottom: 1px solid #ccc;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 12px;
+      }
+      .section-contents {
+        padding: 14px;
+      }
     </style>
 
     <app-drawer-layout>
@@ -50,17 +61,13 @@
             <paper-icon-button icon="designer:menu"></paper-icon-button>
           </app-toolbar>
           <div>
-            <div>
-              <label>X</label>
-              <input type="text" spellcheck="false" value="109">
-              <label>Y</label>
-              <input type="text" spellcheck="false" value="33">
+            <div class="section-header">Properties</div>
+            <div class="section-contents">
+              <slot name="properties"></slot>
             </div>
-            <div>
-              <label>W</label>
-              <input type="text" spellcheck="false" value="109">
-              <label>H</label>
-              <input type="text" spellcheck="false" value="33">
+            <div class="section-header">Elements</div>
+            <div class="section-contents">
+              <slot name="elements"></slot>
             </div>
           </div>
         </div>
@@ -80,7 +87,7 @@
             <paper-icon-button icon="designer:drawer" onclick="drawer.toggle()"></paper-icon-button>
           </app-toolbar>
         </app-header>
-        <slot></slot>
+        <slot name="main"></slot>
       </app-header-layout>
     </app-drawer-layout>
 
