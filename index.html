@@ -50,15 +50,7 @@
         margin-bottom: 12px;
       }
 
-      #propertiesContainer input {
-        height: 24px;
-        padding: 0 2px 0 4px;
-        box-sizing: border-box;
-        width: 60px;
-        margin-right: 14px;
-        margin-bottom: 8px;
-      }
-      #stylesContainer label {
+      #stylesContainer label, #propertiesContainer label {
         float: left;
         display: block;
         width: 150px;
@@ -71,6 +63,14 @@
   <body>
     <app-shell>
       <div slot="properties" id="propertiesContainer">
+        <label>textContent</label>
+        <input name="textContent">
+        <label>id</label>
+        <input name="id">
+        <label>className</label>
+        <input name="className">
+        <label>attributes</label>
+        <input name="attributes">
       </div>
       <div slot="styles" id="stylesContainer">
         <label>background color</label>
@@ -114,11 +114,16 @@
       var activeElement;
       var grid = 10;
       var stylesList = [];
+      var propertiesList = [];
 
       window.addEventListener('WebComponentsReady', function() {
         initializeAvailableStyles();
+        initializeAvailableProperties();
+
         elementsContainer.addEventListener('click', addElement);
+
         stylesContainer.addEventListener('input', updateElementStyles);
+        propertiesContainer.addEventListener('input', updateElementProperties);
 
         viewContainer.addEventListener('click', selectElement);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
@@ -131,9 +136,15 @@
         }
       }
 
+      function initializeAvailableProperties() {
+        var els = propertiesContainer.querySelectorAll('[name]');
+        for (var i = 0 ; i < els.length; i++) {
+          propertiesList.push(els[i].name);
+        }
+      }
+
       function addElement(event) {
         var el = event.target;
-        console.log('create a new ', el.textContent);
         var el = document.createElement(el.textContent);
         el.style.position = 'relative';
         el.style.left = el.style.top = '0';
@@ -144,7 +155,6 @@
       }
 
       function selectElement(event) {
-        console.log('select', event);
         var el = event.target;
         updateActiveElement(el);
         displayElementProperties(el);
@@ -185,9 +195,25 @@
       }
 
       function displayElementProperties(el) {
-
+        for (var i = 0; i < propertiesList.length; i++) {
+          var inputEl = document.querySelector(`[name=${propertiesList[i]}]`);
+          if (propertiesList[i] === 'attributes') {
+            var v = '';
+            for(var a = 0; a < el.attributes.length; a++) {
+              var name = el.attributes[a].name;
+              if (name != 'class' && name != 'style' && name != 'id') {
+                v += name + '=' + el.attributes[a].value + ' ';
+              }
+            }
+            inputEl.value = v.trim();
+          } else if (propertiesList[i] === 'className') {
+            inputEl.value = el[propertiesList[i]].replace('active', '');
+          } else {
+            inputEl.value = el[propertiesList[i]];
+          }
+        }
       }
-      
+
       function displayElementStyles(el) {
         var styles = window.getComputedStyle(el);
 
@@ -203,8 +229,14 @@
 
       function updateElementStyles(event) {
         var inputEl = event.target;
-        var type = inputEl.name;
-        activeElement.style[type] = inputEl.value;
+        var name = inputEl.name;
+        activeElement.style[name] = inputEl.value;
+      }
+
+      function updateElementProperties(event) {
+        var inputEl = event.target;
+        var name = inputEl.name;
+        activeElement[name] = inputEl.value;
       }
 
       function rgb2hex(rgb){
