@@ -49,6 +49,25 @@
         display: block;
         margin-bottom: 12px;
       }
+
+      #propertiesContainer label {
+        color: #aaa;
+        display: inline-block;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        font-size: 12px;
+        width: 14px;
+      }
+      #propertiesContainer input {
+        height: 24px;
+        padding: 0 2px 0 4px;
+        box-sizing: border-box;
+        width: 60px;
+        margin-right: 14px;
+        margin-bottom: 8px;
+      }
     </style>
     <custom-style>
   </head>
@@ -56,17 +75,16 @@
     <app-shell>
       <div slot="properties" id="propertiesContainer">
         <label>X</label>
-        <input type="text" spellcheck="false" value="109">
+        <input type="number" id="activeX" data-type="left">
         <label>Y</label>
-        <input type="text" spellcheck="false" value="33">
+        <input type="number" id="activeY" data-type="top"><br>
         <label>W</label>
-        <input type="text" spellcheck="false" value="109">
+        <input type="number" id="activeW" data-type="width">
         <label>H</label>
-        <input type="text" spellcheck="false" value="33">
+        <input type="number" id="activeH" data-type="height">
       </div>
       <div slot="elements" id="elementsContainer">
         <button>input</button>
-        <button>button</button>
       </div>
       <div class="main" slot="main" id="viewContainer"></div>
     </app-shell>
@@ -81,6 +99,9 @@
 
       window.addEventListener('WebComponentsReady', function() {
         elementsContainer.addEventListener('click', addElement);
+
+        propertiesContainer.addEventListener('input', updateElementSize);
+
         viewContainer.addEventListener('click', selectElement);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
       });
@@ -93,11 +114,14 @@
         el.style.left = el.style.top = '0';
         viewContainer.appendChild(el);
         updateActiveElement(el);
+        displayElementProperties(el);
       }
 
       function selectElement(event) {
+        console.log('select', event);
         var el = event.target;
         updateActiveElement(el);
+        displayElementProperties(el);
       }
 
       function trackElement(event) {
@@ -123,7 +147,6 @@
             el.getBoundingClientRect();
             break;
         }
-
       }
 
       function updateActiveElement(el) {
@@ -132,6 +155,20 @@
         }
         el.classList.add('active');
         activeElement = el;
+      }
+
+      function displayElementProperties(el) {
+        var rekt = el.getBoundingClientRect();
+        activeX.value = rekt.left;
+        activeY.value = rekt.top;
+        activeW.value = rekt.width;
+        activeH.value = rekt.height;
+      }
+
+      function updateElementSize(event) {
+        var inputEl = event.target;
+        var type = inputEl.dataset.type;
+        activeElement.style[type] = inputEl.value + 'px';
       }
     </script>
   </body>
