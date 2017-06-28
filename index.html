@@ -38,7 +38,7 @@
         cursor: pointer;
       }
       .main > *.active {
-        outline: solid 2px rgba(66, 87, 203, 0.8);
+        outline: solid 2px rgba(66, 87, 203, 0.8) !important;
         outline-offset: -2px;
       }
       .main > *.dragging {
@@ -47,6 +47,8 @@
       }
       .main > *.over {
         border: 2px dashed black;
+        outline: none;
+        opacity: 0.6;
       }
       button {
         background: transparent;
@@ -82,14 +84,6 @@
         viewContainer.addEventListener('click', selectElement);
         document.addEventListener('update-element', updateElement);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
-
-        viewContainer.addEventListener('dragstart', function( event ) {
-          console.log(event)
-        }, false);
-        viewContainer.addEventListener('dragend', function( event ) {
-          console.log(event)
-        }, false);
-
       });
 
       function addElement(event) {
@@ -127,7 +121,8 @@
             el.style.transform = el.style.webkitTransform =
               'translate(' + _trackx + 'px, ' + _tracky + 'px)';
 
-            // See if it's over anything
+            // See if it's over anything.
+            window._dropTarget = null;
             var targets = viewContainer.children;
             var me = el.getBoundingClientRect();
 
@@ -150,7 +145,13 @@
             if (window._dropTarget) {
               el.parentElement.removeChild(el);
               window._dropTarget.appendChild(el);
+              window._dropTarget.classList.remove('over');
               window._dropTarget = null;
+            } else if (el.parentElement){
+              // If there's no drop target and the el used to be in a different
+              // parent, move it to the main view.
+              el.parentElement.removeChild(el);
+              viewContainer.appendChild(el);
             }
             var parent = el.parentElement.getBoundingClientRect();
             el.style.left = local.left - parent.left + 'px';
