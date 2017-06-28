@@ -82,7 +82,7 @@
 
       window.addEventListener('WebComponentsReady', function() {
         shell.activeElement = viewContainer;
-        console.log(shell.activeElement)
+        
         // Add a new element
         elementsContainer.addEventListener('click', addElement);
 
@@ -116,7 +116,7 @@
         var detail = event.detail;
 
         shell.updateActiveElementValues(detail.type, detail.name, detail.value);
-        displayElement();
+        //displayElement();
       }
 
       function displayElement() {

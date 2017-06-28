@@ -58,7 +58,7 @@
             <!-- <paper-icon-button icon="designer:back"></paper-icon-button> -->
             <span>{{activeElementName}}</span>
             <!-- <paper-icon-button icon="designer:fullscreen"></paper-icon-button>-->
-            <paper-icon-button icon="designer:delete"></paper-icon-button>
+            <paper-icon-button icon="designer:delete" on-click="deleteActiveElement"></paper-icon-button>
           </app-toolbar>
           <div>
             <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
@@ -161,27 +161,37 @@
           el.classList.add('active');
           this.activeElement = el;
         }
-        this.activeElementName = this.computeActiveElementName(this.activeElement);
+        this.computeActiveElementName();
       }
 
       updateActiveElementValues(type, name, value) {
         if (type === 'style') {
           this.activeElement.style[name] = value;
         } else {
+          if (name === 'id')
+            this.computeActiveElementName();
           this.activeElement[name] = value;
         }
       }
 
+      deleteActiveElement() {
+        this.activeElement.parentElement.removeChild(this.activeElement);
+        this.activeElement = null;
+        this.computeActiveElementName();
+        // TODO: ew.
+        window.displayElement();
+      }
+
       // TODO: ugh, this can probably be better.
-      computeActiveElementName(activeElement) {
-        if (!activeElement) {
-          return 'main-app';
+      computeActiveElementName() {
+        if (!this.activeElement) {
+          this.activeElementName = 'main-app';
         } else {
-          var name = activeElement.tagName.toLowerCase();
-          if (activeElement.id) {
-            name += '#' + activeElement.id;
+          var name = this.activeElement.tagName.toLowerCase();
+          if (this.activeElement.id) {
+            name += '#' + this.activeElement.id;
           }
-          return name;
+          this.activeElementName = name;
         }
       }
     }

@@ -13,7 +13,7 @@
           for (var i = 0 ; i < els.length; i++) {
             this._stuff.push(els[i].name);
           }
-          this.root.addEventListener('change', this._do.bind(this));
+          this.root.addEventListener('input', this._do.bind(this));
         }
 
         _do(event) {
