@@ -46,6 +46,8 @@
       display(elementStyles) {
         for (var i = 0; i < this._stuff.length; i++) {
           var name = this._stuff[i];
+          if (!elementStyles[name])
+            continue;
           var el = this.root.querySelector(`[name=${name}]`);
           if (name === 'backgroundColor' || name === 'color') {
             el.value = this._rgb2hex(elementStyles[name]);

@@ -23,7 +23,7 @@
     <label>className</label>
     <input name="className">
     <label>attributes</label>
-    <input name="attributes">
+    <input name="attributes" disabled>
   </template>
   <script>
     class ElementProperties extends ElementStuff(Polymer.Element) {
@@ -38,7 +38,7 @@
         for (var i = 0; i < this._stuff.length; i++) {
           var prop = this._stuff[i];
           var el = this.root.querySelector(`[name=${prop}]`);
-          
+
           // Ugh
           if (prop === 'attributes') {
             var v = '';

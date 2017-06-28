@@ -120,6 +120,7 @@
 
       function displayElement() {
         var el = shell.activeElement ? shell.activeElement : viewContainer;
+
         propertiesContainer.display(el);
         stylesContainer.display(window.getComputedStyle(el));
         flexContainer.display(window.getComputedStyle(el));
@@ -181,8 +182,13 @@
             el.style.transform = el.style.webkitTransform = 'none';
             break;
         }
-        shell.updateActiveElement(el);
+        if (el !== shell.activeElement) {
+          shell.updateActiveElement(el);
+        }
         displayElement();
+        var size = el.getBoundingClientRect();
+        stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
+
       }
     </script>
   </body>
