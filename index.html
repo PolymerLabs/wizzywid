@@ -29,6 +29,7 @@
         width: 100%;
         height: 500px;
         overflow: hidden;
+        position: relative;
         /* 10px grid, using http://www.patternify.com/ */
         background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGUlEQVQYV2NkIBIwEqmOYVQh3pAiNnj+AwALaAEKfsPrZgAAAABJRU5ErkJggg==);
         background-position: 0px 0px;
@@ -86,7 +87,7 @@
           el.style.height = el.style.width = '200px';
           el.style.backgroundColor = '#CDDC39';
         }
-        el.style.position = 'relative';
+        el.style.position = 'absolute';
         el.style.left = el.style.top = '0';
         viewContainer.appendChild(el);
         updateActiveElement(el);
@@ -114,6 +115,7 @@
               'translate(' + _trackx + 'px, ' + _tracky + 'px)';
             break;
           case 'end':
+            // Figure out if this needs to be added to a new parent
             el.classList.remove('dragging');
             var local = el.getBoundingClientRect();
             var parent = el.parentElement.getBoundingClientRect();
