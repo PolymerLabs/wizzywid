@@ -44,11 +44,12 @@
 
   </template>
   <script>
-    class ElementProperties extends Polymer.Element {
+    class ElementStyles extends Polymer.Element {
       static get is() { return 'element-styles'; }
       ready() {
         super.ready();
         this._styles = [];
+        
         var els = this.root.querySelectorAll('[name]');
         for (var i = 0 ; i < els.length; i++) {
           this._styles.push(els[i].name);
@@ -93,6 +94,6 @@
         ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
       }
     }
-    customElements.define(ElementProperties.is, ElementProperties);
+    customElements.define(ElementStyles.is, ElementStyles);
   </script>
 </dom-module>

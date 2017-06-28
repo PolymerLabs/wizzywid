@@ -12,6 +12,7 @@
     <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
     <link rel="import" href="elements/app-shell.html">
     <link rel="import" href="elements/element-styles.html">
+    <link rel="import" href="elements/element-properties.html">
 
     <custom-style>
     <style>
@@ -49,29 +50,12 @@
         display: block;
         margin-bottom: 12px;
       }
-
-      #stylesContainer label, #propertiesContainer label {
-        float: left;
-        display: block;
-        width: 150px;
-        margin-right: 20px;
-        line-height: 1.2em;
-      }
     </style>
     <custom-style>
   </head>
   <body>
     <app-shell>
-      <div slot="properties" id="propertiesContainer">
-        <label>textContent</label>
-        <input name="textContent">
-        <label>id</label>
-        <input name="id">
-        <label>className</label>
-        <input name="className">
-        <label>attributes</label>
-        <input name="attributes">
-      </div>
+      <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <div slot="elements" id="elementsContainer">
         <button>input</button>
@@ -87,25 +71,12 @@
       var activeElement;
       var grid = 10;
 
-      var propertiesList = [];
-
       window.addEventListener('WebComponentsReady', function() {
-        initializeAvailableProperties();
-
-        document.addEventListener('update-element', updateElement);
-
         elementsContainer.addEventListener('click', addElement);
-
         viewContainer.addEventListener('click', selectElement);
+        document.addEventListener('update-element', updateElement);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
       });
-
-      function initializeAvailableProperties() {
-        var els = propertiesContainer.querySelectorAll('[name]');
-        for (var i = 0 ; i < els.length; i++) {
-          propertiesList.push(els[i].name);
-        }
-      }
 
       function addElement(event) {
         var el = event.target;
@@ -114,15 +85,11 @@
         el.style.left = el.style.top = '0';
         viewContainer.appendChild(el);
         updateActiveElement(el);
-        displayElementStyles(el);
-        displayElementProperties(el);
       }
 
       function selectElement(event) {
         var el = event.target;
         updateActiveElement(el);
-        displayElementProperties(el);
-        displayElementStyles(el);
       }
 
       function trackElement(event) {
@@ -156,29 +123,9 @@
         }
         el.classList.add('active');
         activeElement = el;
-      }
 
-      function displayElementProperties(el) {
-        for (var i = 0; i < propertiesList.length; i++) {
-          var inputEl = document.querySelector(`[name=${propertiesList[i]}]`);
-          if (propertiesList[i] === 'attributes') {
-            var v = '';
-            for(var a = 0; a < el.attributes.length; a++) {
-              var name = el.attributes[a].name;
-              if (name != 'class' && name != 'style' && name != 'id') {
-                v += name + '=' + el.attributes[a].value + ' ';
-              }
-            }
-            inputEl.value = v.trim();
-          } else if (propertiesList[i] === 'className') {
-            inputEl.value = el[propertiesList[i]].replace('active', '');
-          } else {
-            inputEl.value = el[propertiesList[i]];
-          }
-        }
-      }
-
-      function displayElementStyles(el) {
+        // Show its properties
+        propertiesContainer.display(el);
         stylesContainer.display(window.getComputedStyle(el));
       }
 
@@ -190,7 +137,6 @@
           activeElement[detail.name] = detail.value;
         }
       }
-
     </script>
   </body>
 </html>

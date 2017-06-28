@@ -1,0 +1,84 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="element-properties">
+  <template>
+    <style>
+      :host{
+        display: block;
+        box-sizing: border-box;
+      }
+      label {
+        float: left;
+        display: block;
+        width: 150px;
+        margin-right: 20px;
+        line-height: 1.2em;
+      }
+    </style>
+    <label>textContent</label>
+    <input name="textContent">
+    <label>id</label>
+    <input name="id">
+    <label>className</label>
+    <input name="className">
+    <label>attributes</label>
+    <input name="attributes">
+  </template>
+  <script>
+    class ElementProperties extends Polymer.Element {
+      static get is() { return 'element-properties'; }
+      ready() {
+        super.ready();
+        this._props = [];
+
+        var els = this.root.querySelectorAll('[name]');
+        for (var i = 0 ; i < els.length; i++) {
+          this._props.push(els[i].name);
+        }
+
+        this.root.addEventListener('input', this._do.bind(this));
+      }
+
+      _do(event) {
+        var newEvent = new Event('update-element', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        var target = event.path[0];
+
+        newEvent.detail = {
+          type: 'property',
+          name: target.name,
+          value: target.value
+        };
+        this.dispatchEvent(newEvent);
+      }
+
+      display(target) {
+        for (var i = 0; i < this._props.length; i++) {
+          var prop = this._props[i];
+          var el = this.root.querySelector(`[name=${prop}]`);
+
+          // Ugh
+          if (prop === 'attributes') {
+            var v = '';
+            for(var a = 0; a < target.attributes.length; a++) {
+              var name = target.attributes[a].name;
+              if (name != 'class' && name != 'style' && name != 'id') {
+                v += name + '=' + target.attributes[a].value + ' ';
+              }
+            }
+            el.value = v.trim();
+          } else if (prop === 'className') {
+            el.value = target[prop].replace('active', '');
+          } else {
+            el.value = target[prop];
+          }
+        }
+
+      }
+    }
+    customElements.define(ElementProperties.is, ElementProperties);
+  </script>
+</dom-module>
