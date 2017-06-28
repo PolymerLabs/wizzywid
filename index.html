@@ -84,6 +84,8 @@
       <div slot="elements" id="elementsContainer">
         <button>input</button>
         <button>div</button>
+        <button>paper-input</button>
+        <button>paper-button</button>
       </div>
       <div class="main" slot="main" id="viewContainer"></div>
     </app-shell>
@@ -112,23 +114,31 @@
 
       function addElement(event) {
         var kind = event.target.textContent;
-        try {
-          var el = document.createElement(kind);
-        } catch(err) {
+        if (!event.target.tagName === 'BUTTON') {
           return;
         }
-
-        if (kind === 'div') {
-          //el.setAttribute('draggable', 'true');
-          el.style.height = el.style.width = '200px';
-          el.style.backgroundColor = '#CDDC39';
+        var el;
+        if (kind !== 'div' && kind !== 'input') {
+          Polymer.Base.importHref(`bower_components/${kind}/${kind}.html`, function(e) {
+            finishCreatingElement(kind);
+          });
+        } else {
+          var el = finishCreatingElement(kind);
+          if (kind === 'div') {
+            el.style.height = el.style.width = '200px';
+            el.style.backgroundColor = '#CDDC39';
+          }
         }
+      }
+
+      function finishCreatingElement(kind) {
+        var el = document.createElement(kind);
+        viewContainer.appendChild(el);
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
-        viewContainer.appendChild(el);
-
         shell.updateActiveElement(el);
         recomputeTree();
+        return el;
       }
 
       function elementWasUpdated(event) {
