@@ -65,7 +65,7 @@
               <designer-tab name="properties">
                 <button>properties</button>
               </designer-tab>
-              <designer-tab name="styles" selected>
+              <designer-tab name="styles">
                 <button>styles</button>
               </designer-tab>
               <designer-tab name="flex">
@@ -146,7 +146,7 @@
 
       ready() {
         super.ready();
-        this.stylePage = 'flex';
+        this.stylePage = 'styles';
         this.elementsPage = 'elements';
       }
 
@@ -186,11 +186,12 @@
         this.computeActiveElementName();
         // TODO: ew.
         window.displayElement();
+        window.recomputeTree();
       }
 
       // TODO: ugh, this can probably be better.
       computeActiveElementName() {
-        if (this.activeElement.id == 'viewContainer') {
+        if (this.activeElement === null || this.activeElement.id == 'viewContainer') {
           this.activeElementName = 'main-app';
         } else {
           var name = this.activeElement.tagName.toLowerCase();

@@ -57,7 +57,11 @@
         border: none;
         font-size: inherit;
         display: block;
-        margin-bottom: 12px;
+        margin-bottom: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        color: #E91E63;
       }
     </style>
     <custom-style>
@@ -71,7 +75,9 @@
       <div slot="tree" id="treeContainer">
         <dom-repeat id="repeater">
           <template>
-            <button onclick="findElement(event)" data-index$="[[index]]">[[item.name]]</button>
+            <button onclick="findElement(event)"
+                data-index$="[[index]]"
+                style="margin-left:calc(14*[[item.level]]px">[[item.name]]</button>
           </template>
         </dom-repeat>
       </div>
