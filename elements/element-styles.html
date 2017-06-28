@@ -16,7 +16,9 @@
         line-height: 1.2em;
       }
     </style>
+    <label>color</label><input name="color" type="color"><br>
     <label>background color</label><input name="backgroundColor" type="color">
+    <label>box-sizing</label><input name="boxSizing">
     <label>border</label><input name="border">
     <label>box shadow</label><input name="boxShadow">
     <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
@@ -45,7 +47,7 @@
         for (var i = 0; i < this._stuff.length; i++) {
           var name = this._stuff[i];
           var el = this.root.querySelector(`[name=${name}]`);
-          if (name === 'backgroundColor') {
+          if (name === 'backgroundColor' || name === 'color') {
             el.value = this._rgb2hex(elementStyles[name]);
           } else {
             el.value = elementStyles[name];

@@ -81,18 +81,20 @@
       var grid = 10;
 
       window.addEventListener('WebComponentsReady', function() {
+        shell.activeElement = viewContainer;
+        console.log(shell.activeElement)
         // Add a new element
         elementsContainer.addEventListener('click', addElement);
 
         // Focus an element
         viewContainer.addEventListener('click', function() {
           shell.updateActiveElement(event.target);
+          displayElement();
         });
 
         document.addEventListener('element-updated', elementWasUpdated);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 
-        shell.activeElement = viewContainer;
       });
 
       function addElement(event) {
@@ -114,9 +116,17 @@
         var detail = event.detail;
 
         shell.updateActiveElementValues(detail.type, detail.name, detail.value);
+        displayElement();
+      }
 
-        propertiesContainer.display(shell.activeElement);
-        stylesContainer.display(window.getComputedStyle(shell.activeElement));
+      function displayElement() {
+        if (!shell.activeElement) {
+          propertiesContainer.display(viewContainer);
+          stylesContainer.display(window.getComputedStyle(viewContainer));
+        } else {
+          propertiesContainer.display(shell.activeElement);
+          stylesContainer.display(window.getComputedStyle(shell.activeElement));
+        }
       }
 
       function trackElement(event) {
@@ -124,7 +134,6 @@
         if (el.id === 'viewContainer') {
           return;
         }
-
         switch(event.detail.state) {
           case 'start':
             el.classList.add('dragging');
@@ -176,6 +185,8 @@
             el.style.transform = el.style.webkitTransform = 'none';
             break;
         }
+        shell.updateActiveElement(el);
+        displayElement();
       }
     </script>
   </body>
