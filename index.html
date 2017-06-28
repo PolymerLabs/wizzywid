@@ -10,6 +10,7 @@
 
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+    <link rel="import" href="bower_components/polymer/lib/elements/dom-repeat.html">
     <link rel="import" href="elements/app-shell.html">
     <link rel="import" href="elements/element-styles.html">
     <link rel="import" href="elements/element-flex.html">
@@ -33,19 +34,20 @@
         /* 10px grid, using http://www.patternify.com/ */
         background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGUlEQVQYV2NkIBIwEqmOYVQh3pAiNnj+AwALaAEKfsPrZgAAAABJRU5ErkJggg==);
         background-position: 0px 0px;
+        margin: 2px;
       }
       .main > * {
         cursor: pointer;
       }
-      .main > *.active {
+      .active {
         outline: solid 2px rgba(66, 87, 203, 0.8) !important;
-        outline-offset: -2px;
+        xoutline-offset: 2px !important;
       }
-      .main > *.dragging {
+      .dragging {
         opacity: 0.6;
         z-index: 1000;
       }
-      .main > *.over {
+      .over {
         border: 2px dashed black;
         outline: none;
         opacity: 0.6;
@@ -65,7 +67,14 @@
       <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <element-flex slot="flex" id="flexContainer"></element-flex>
-
+      <!-- todo: move this to an element -->
+      <div slot="tree" id="treeContainer">
+        <dom-repeat id="repeater">
+          <template>
+            <button onclick="findElement(event)" data-index$="[[index]]">[[item.name]]</button>
+          </template>
+        </dom-repeat>
+      </div>
       <div slot="elements" id="elementsContainer">
         <button>input</button>
         <button>div</button>
@@ -79,8 +88,6 @@
 
     <script>
       var grid = 10;
-
-      tree = [];
       window.addEventListener('WebComponentsReady', function() {
         shell.activeElement = viewContainer;
 
@@ -95,12 +102,16 @@
 
         document.addEventListener('element-updated', elementWasUpdated);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
-
       });
 
       function addElement(event) {
         var kind = event.target.textContent;
-        var el = document.createElement(kind);
+        try {
+          var el = document.createElement(kind);
+        } catch(err) {
+          return;
+        }
+
         if (kind === 'div') {
           //el.setAttribute('draggable', 'true');
           el.style.height = el.style.width = '200px';
@@ -111,12 +122,12 @@
         viewContainer.appendChild(el);
 
         shell.updateActiveElement(el);
+        recomputeTree();
       }
 
       function elementWasUpdated(event) {
         var detail = event.detail;
         shell.updateActiveElementValues(detail.type, detail.name, detail.value);
-        //displayElement();
       }
 
       function displayElement() {
@@ -125,6 +136,27 @@
         propertiesContainer.display(el);
         stylesContainer.display(window.getComputedStyle(el));
         flexContainer.display(window.getComputedStyle(el));
+      }
+
+      function recomputeTree() {
+        var nodes = getChildren(viewContainer, 0);
+        repeater.items = nodes;
+      }
+
+      function getChildren(parent, level) {
+        var nodes = [{name: getFancyName(parent), level: level, ref:parent}];
+        for (var i = 0; i < parent.children.length; i++) {
+          var child = parent.children[i];
+          nodes = nodes.concat(getChildren(child, level + 1));
+        }
+        return nodes;
+      }
+
+      function findElement(event) {
+        var index = event.target.dataset.index;
+        var el = repeater.items[index].ref;
+        shell.updateActiveElement(el);
+        displayElement();
       }
 
       function trackElement(event) {
@@ -170,6 +202,7 @@
               window._dropTarget.appendChild(el);
               window._dropTarget.classList.remove('over');
               window._dropTarget = null;
+              recomputeTree();
             } else if (el.parentElement) {
               // If there's no drop target and the el used to be in a different
               // parent, move it to the main view.
@@ -190,7 +223,17 @@
         displayElement();
         var size = el.getBoundingClientRect();
         stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
+      }
 
+      function getFancyName(el) {
+        if (el.id == 'viewContainer') {
+          return 'main-app';
+        }
+        var name = el.tagName.toLowerCase();
+        if (el.id) {
+          name += '#' + el.id;
+        }
+        return name;
       }
     </script>
   </body>

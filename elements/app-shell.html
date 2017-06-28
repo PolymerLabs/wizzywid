@@ -93,13 +93,12 @@
                 <button>tree</button>
               </designer-tab>
             </designer-tabs>
-
             <iron-pages selected="[[elementsPage]]" attr-for-selected="name" selected-attribute="visible">
               <div name="elements">
                 <slot name="elements"></slot>
               </div>
               <div name="tree">
-                <p> This doesn't work yet! </p>
+                <slot name="tree"></slot>
               </div>
             </iron-pages>
           </div>
@@ -155,12 +154,8 @@
         if (this.activeElement) {
           this.activeElement.classList.remove('active');
         }
-        if (el.id === 'viewContainer') {
-          this.activeElement = null;
-        } else {
-          el.classList.add('active');
-          this.activeElement = el;
-        }
+        el.classList.add('active');
+        this.activeElement = el;
         this.computeActiveElementName();
       }
 
@@ -195,7 +190,7 @@
 
       // TODO: ugh, this can probably be better.
       computeActiveElementName() {
-        if (!this.activeElement) {
+        if (this.activeElement.id == 'viewContainer') {
           this.activeElementName = 'main-app';
         } else {
           var name = this.activeElement.tagName.toLowerCase();
