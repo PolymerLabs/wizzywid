@@ -15,6 +15,11 @@
         margin-right: 20px;
         line-height: 1.2em;
       }
+      #bonus {
+        margin-top: 4px;
+        padding-top: 8px;
+        border-top: #ccc solid 1px;
+      }
     </style>
     <label>textContent</label>
     <input name="textContent">
@@ -24,6 +29,9 @@
     <input name="className">
     <label>attributes</label>
     <input name="attributes" disabled>
+    <div id="bonus">
+    </div>
+
   </template>
   <script>
     class ElementProperties extends ElementStuff(Polymer.Element) {
@@ -35,10 +43,10 @@
       }
 
       display(target) {
+        // Native properties.
         for (var i = 0; i < this._stuff.length; i++) {
           var prop = this._stuff[i];
           var el = this.root.querySelector(`[name=${prop}]`);
-
           // Ugh
           if (prop === 'attributes') {
             var v = '';
@@ -57,6 +65,27 @@
           }
         }
 
+        // Custom properties, oh boy. Let the hacks begin.
+        this.$.bonus.innerHTML = '';
+        var classProps = target.__dataHasAccessor;
+        if (!classProps)
+          return;
+
+        var newProps = Object.keys(classProps);
+        for (var i = 0; i < newProps.length; i++) {
+          var p = newProps[i];
+          // Skip everything that starts with a _
+          if (p.charAt(0) === '_') {
+            continue;
+          }
+          var label = document.createElement('label');
+          label.textContent = p;
+          this.$.bonus.appendChild(label);
+          var input = document.createElement('input');
+          input.name = p;
+          input.value = target.p || '';
+          this.$.bonus.appendChild(input);
+        }
       }
     }
     customElements.define(ElementProperties.is, ElementProperties);

@@ -146,7 +146,7 @@
 
       ready() {
         super.ready();
-        this.stylePage = 'styles';
+        this.stylePage = 'properties';
         this.elementsPage = 'elements';
       }
 
@@ -169,12 +169,14 @@
               children[i].style.top = children[i].style.left = 'auto';
             }
           }
-
           this.activeElement.style[name] = value;
         } else {
           // We're displaying the id
           if (name === 'id') {
             this.computeActiveElementName();
+          }
+          if (value === 'true' || value === 'false') {
+            this.activeElement[name] = Boolean(value);
           }
           this.activeElement[name] = value;
         }

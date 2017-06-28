@@ -117,7 +117,6 @@
         if (!event.target.tagName === 'BUTTON') {
           return;
         }
-        var el;
         if (kind !== 'div' && kind !== 'input') {
           Polymer.Base.importHref(`bower_components/${kind}/${kind}.html`, function(e) {
             finishCreatingElement(kind);
@@ -136,6 +135,8 @@
         viewContainer.appendChild(el);
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
+        el.style.backgroundColor = 'white';
+        el.textContent = kind;
         shell.updateActiveElement(el);
         recomputeTree();
         return el;
