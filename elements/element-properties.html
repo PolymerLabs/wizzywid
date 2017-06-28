@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="element-stuff.html">
 
 <dom-module id="element-properties">
   <template>
@@ -25,39 +26,17 @@
     <input name="attributes">
   </template>
   <script>
-    class ElementProperties extends Polymer.Element {
+    class ElementProperties extends ElementStuff(Polymer.Element) {
       static get is() { return 'element-properties'; }
-      ready() {
-        super.ready();
-        this._props = [];
-
-        var els = this.root.querySelectorAll('[name]');
-        for (var i = 0 ; i < els.length; i++) {
-          this._props.push(els[i].name);
+      static get properties() {
+        return {
+          stuffType: {type: String, value: 'property'}
         }
-
-        this.root.addEventListener('input', this._do.bind(this));
-      }
-
-      _do(event) {
-        var newEvent = new Event('element-updated', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        var target = event.path[0];
-
-        newEvent.detail = {
-          type: 'property',
-          name: target.name,
-          value: target.value
-        };
-        this.dispatchEvent(newEvent);
       }
 
       display(target) {
-        for (var i = 0; i < this._props.length; i++) {
-          var prop = this._props[i];
+        for (var i = 0; i < this._stuff.length; i++) {
+          var prop = this._stuff[i];
           var el = this.root.querySelector(`[name=${prop}]`);
 
           // Ugh

@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="element-stuff.html">
 
 <dom-module id="element-styles">
   <template>
@@ -33,39 +34,16 @@
     <label>height</label><input name="height">
   </template>
   <script>
-    class ElementStyles extends Polymer.Element {
+    class ElementStyles extends ElementStuff(Polymer.Element) {
       static get is() { return 'element-styles'; }
-      ready() {
-        super.ready();
-        this._styles = [];
-
-        var els = this.root.querySelectorAll('[name]');
-        for (var i = 0 ; i < els.length; i++) {
-          this._styles.push(els[i].name);
+      static get properties() {
+        return {
+          stuffType: {type: String, value: 'style'}
         }
-
-        this.root.addEventListener('input', this._do.bind(this));
       }
-
-      _do(event) {
-        var newEvent = new Event('element-updated', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        var target = event.path[0];
-
-        newEvent.detail = {
-          type: 'style',
-          name: target.name,
-          value: target.value
-        };
-        this.dispatchEvent(newEvent);
-      }
-
       display(elementStyles) {
-        for (var i = 0; i < this._styles.length; i++) {
-          var name = this._styles[i];
+        for (var i = 0; i < this._stuff.length; i++) {
+          var name = this._stuff[i];
           var el = this.root.querySelector(`[name=${name}]`);
           if (name === 'backgroundColor') {
             el.value = this._rgb2hex(elementStyles[name]);
@@ -74,7 +52,6 @@
           }
         }
       }
-
       _rgb2hex(rgb) {
        rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
        return (rgb && rgb.length === 4) ? "#" +

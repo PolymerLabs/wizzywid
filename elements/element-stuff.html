@@ -1,0 +1,36 @@
+<script>
+  (function() {
+    window.ElementStuff = function(base) {
+      return class extends base {
+        constructor() {
+          super();
+        }
+        ready() {
+          super.ready();
+
+          this._stuff = [];
+          var els = this.root.querySelectorAll('[name]');
+          for (var i = 0 ; i < els.length; i++) {
+            this._stuff.push(els[i].name);
+          }
+          this.root.addEventListener('input', this._do.bind(this));
+        }
+
+        _do(event) {
+          var newEvent = new Event('element-updated', {
+            bubbles: true,
+            cancelable: false,
+            composed: true
+          });
+          var target = event.path[0];
+          newEvent.detail = {
+            type: this.stuffType,
+            name: target.name,
+            value: target.value
+          };
+          this.dispatchEvent(newEvent);
+        }
+      }
+    }
+  })();
+</script>
