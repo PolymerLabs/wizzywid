@@ -114,6 +114,7 @@
         switch(event.detail.state) {
           case 'start':
             el.classList.add('dragging');
+            el.classList.add('active');
             break;
           case 'track':
             window._trackx = Math.round(event.detail.dx / grid) * grid;
