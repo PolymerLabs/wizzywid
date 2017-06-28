@@ -166,10 +166,21 @@
 
       updateActiveElementValues(type, name, value) {
         if (type === 'style') {
+          // If we switch to flexbox, automatically reposition the children
+          if (name === 'display' && value === 'flex') {
+            var children = this.activeElement.children;
+            for (var i = 0; i < children.length; i++) {
+              children[i].style.position = 'relative';
+              children[i].style.top = children[i].style.left = 'auto';
+            }
+          }
+
           this.activeElement.style[name] = value;
         } else {
-          if (name === 'id')
+          // We're displaying the id
+          if (name === 'id') {
             this.computeActiveElementName();
+          }
           this.activeElement[name] = value;
         }
       }
