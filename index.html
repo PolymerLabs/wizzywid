@@ -12,6 +12,7 @@
     <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
     <link rel="import" href="elements/app-shell.html">
     <link rel="import" href="elements/element-styles.html">
+    <link rel="import" href="elements/element-flex.html">
     <link rel="import" href="elements/element-properties.html">
 
     <custom-style>
@@ -20,7 +21,6 @@
         margin: 0;
         font-family: 'Roboto', 'Noto', sans-serif;
         line-height: 1.5;
-        min-height: 100vh;
         background-color: white;
       }
 
@@ -64,6 +64,8 @@
     <app-shell id="shell">
       <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
+      <element-flex slot="flex" id="flexContainer"></element-flex>
+
       <div slot="elements" id="elementsContainer">
         <button>input</button>
         <button>div</button>
@@ -190,6 +192,7 @@
         }
         updateActiveElement(activeElement);
       }
+
       function updateDisplayName() {
         if (!activeElement) {
           shell.activeElement = 'main-app';

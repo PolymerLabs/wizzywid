@@ -1,0 +1,40 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selectable.html">
+
+<dom-module id="designer-tabs">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eeeeee;
+        border-bottom: 1px solid #ccc;
+        text-transform: uppercase;
+        display: block;
+      }
+      #container {
+        position: relative;
+        width: 100%;
+      }
+    </style>
+    <div id="container">
+      <slot></slot>
+    </div>
+  </template>
+  <script>
+    class DesignerTabs extends Polymer.mixinBehaviors(
+        [Polymer.IronSelectableBehavior], Polymer.Element) {
+      static get is() { return 'designer-tabs'; }
+      static get observers() { return [
+        '_onSelectedItemChanged(selectedItem)'
+      ]}
+      _onSelectedItemChanged(selectedItem) {
+        if (selectedItem === undefined && this.selected) return;
+        console.log(selectedItem)
+        //this.$.overlay.target = selectedItem;
+      }
+    }
+    customElements.define(DesignerTabs.is, DesignerTabs);
+  </script>
+</dom-module>

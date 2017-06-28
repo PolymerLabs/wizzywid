@@ -1,0 +1,38 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="designer-tab">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+        border-bottom: 2px solid transparent;
+        color: #a9a9a9;
+      }
+      :host(.iron-selected) {
+        color: #5d5d5d;
+        border-bottom: 2px solid #5d5d5d;
+      }
+      :host ::slotted(*) {
+        display: inline-block;
+        outline: none;
+        background: transparent;
+        border: none;
+        padding: 9px 5px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        text-transform: uppercase;
+        line-height: 1.5;
+        color: inherit;
+      }
+    </style>
+    <slot></slot>
+  </template>
+  <script>
+    class DesignerTab extends Polymer.Element {
+      static get is() { return 'designer-tab'; }
+    }
+    customElements.define(DesignerTab.is, DesignerTab);
+  </script>
+</dom-module>

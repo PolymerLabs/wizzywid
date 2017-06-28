@@ -1,0 +1,110 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="element-flex">
+  <template>
+    <style>
+      :host{
+        display: block;
+        box-sizing: border-box;
+      }
+      label {
+        float: left;
+        display: block;
+        width: 150px;
+        margin-right: 20px;
+        line-height: 1.2em;
+      }
+    </style>
+    <label>display</label><input name="display">
+    <label>flex-direction</label>
+    <select name="flexDirection">
+      <option selected>row</option>
+      <option>row-reverse</option>
+      <option>column</option>
+      <option>column-reverse</option>
+    </select>
+    <label>flex-wrap</label>
+    <select name="flexWrap">
+      <option selected>nowrap</option>
+      <option>wrap</option>
+      <option>wrap-reverse</option>
+    </select>
+    <label>justify-content</label>
+    <select name="justifyContent">
+      <option selected>flex-start</option>
+      <option>flex-end</option>
+      <option>center</option>
+      <option>space-between</option>
+      <option>space-around</option>
+    </select>
+    <label>align-items</label>
+    <select name="alignItems">
+      <option selected>flex-start</option>
+      <option>flex-end</option>
+      <option>center</option>
+      <option>baseline</option>
+      <option>stretch</option>
+    </select>
+    <label>align-content</label>
+    <select name="alignContent">
+      <option selected>flex-start</option>
+      <option>flex-end</option>
+      <option>center</option>
+      <option>space-between</option>
+      <option>space-around</option>
+      <option>stretch</option>
+    </select>
+    <label>align-self</label>
+    <select name="alignSelf">
+      <option selected>auto</option>
+      <option>flex-start</option>
+      <option>flex-end</option>
+      <option>center</option>
+      <option>baseline</option>
+      <option>stretch</option>
+    </select>
+    <label>flex</label><input name="flex">
+
+  </template>
+  <script>
+    class ElementFlex extends Polymer.Element {
+      static get is() { return 'element-flex'; }
+      ready() {
+        super.ready();
+        this._styles = [];
+
+        var els = this.root.querySelectorAll('[name]');
+        for (var i = 0 ; i < els.length; i++) {
+          this._styles.push(els[i].name);
+        }
+
+        this.root.addEventListener('input', this._do.bind(this));
+      }
+
+      _do(event) {
+        var newEvent = new Event('update-element', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        var target = event.path[0];
+
+        newEvent.detail = {
+          type: 'style',
+          name: target.name,
+          value: target.value
+        };
+        this.dispatchEvent(newEvent);
+      }
+
+      display(elementStyles) {
+        for (var i = 0; i < this._styles.length; i++) {
+          var name = this._styles[i];
+          var el = this.root.querySelector(`[name=${name}]`);
+          el.value = elementStyles[name];
+        }
+      }
+    }
+    customElements.define(ElementFlex.is, ElementFlex);
+  </script>
+</dom-module>

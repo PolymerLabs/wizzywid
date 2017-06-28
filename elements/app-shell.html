@@ -5,8 +5,12 @@
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="app-icons.html">
+<link rel="import" href="designer-tabs.html">
+<link rel="import" href="designer-tab.html">
+
 <dom-module id="app-shell">
   <template>
     <style>
@@ -38,15 +42,12 @@
       paper-icon-button {
         margin: 8px;
       }
-      .section-header {
-        padding: 12px;
-        background-color: #eeeeee;
-        border-bottom: 1px solid #ccc;
-        text-transform: uppercase;
-        display: block;
-      }
-      .section-contents {
+      iron-pages {
         padding: 8px 14px;
+      }
+      iron-pages.styles {
+        height: 300px;
+        overflow: auto;
       }
     </style>
 
@@ -60,18 +61,47 @@
             <paper-icon-button icon="designer:menu"></paper-icon-button>
           </app-toolbar>
           <div>
-            <div class="section-header">Properties</div>
-            <div class="section-contents">
-              <slot name="properties"></slot>
-            </div>
-            <div class="section-header">Styles</div>
-            <div class="section-contents">
-              <slot name="styles"></slot>
-            </div>
-            <div class="section-header">Elements</div>
-            <div class="section-contents">
-              <slot name="elements"></slot>
-            </div>
+            <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
+              <designer-tab name="properties">
+                <button>properties</button>
+              </designer-tab>
+              <designer-tab name="styles">
+                <button>styles</button>
+              </designer-tab>
+              <designer-tab name="flex" selected>
+                <button>flex</button>
+              </designer-tab>
+            </designer-tabs>
+
+            <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
+              <div name="properties">
+                <slot name="properties"></slot>
+              </div>
+              <div name="styles">
+                <slot name="styles"></slot>
+              </div>
+              <div name="flex">
+                <slot name="flex"></slot>
+              </div>
+            </iron-pages>
+
+            <designer-tabs attr-for-selected="name" selected="{{elementsPage}}">
+              <designer-tab name="elements" selected>
+                <button>elements</button>
+              </designer-tab>
+              <designer-tab name="tree">
+                <button>tree</button>
+              </designer-tab>
+            </designer-tabs>
+
+            <iron-pages selected="[[elementsPage]]" attr-for-selected="name" selected-attribute="visible">
+              <div name="elements">
+                <slot name="elements"></slot>
+              </div>
+              <div name="tree">
+                <p> This doesn't work yet! </p>
+              </div>
+            </iron-pages>
           </div>
         </div>
       </app-drawer>
@@ -100,8 +130,15 @@
       static get is() { return 'app-shell'; }
       static get properties() {
         return {
-          activeElement: {type: String, value: 'main-app'}
+          activeElement: {type: String},
+          stylesPage: {type:String},
+          elementsPage: {type:String}
         }
+      }
+      ready() {
+        super.ready();
+        this.stylePage = 'flex';
+        this.elementsPage = 'elements';
       }
     }
     customElements.define(AppShell.is, AppShell);
