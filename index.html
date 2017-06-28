@@ -43,6 +43,10 @@
       }
       .main > *.dragging {
         opacity: 0.6;
+        z-index: 1000;
+      }
+      .main > *.over {
+        border: 2px dashed black;
       }
       button {
         background: transparent;
@@ -78,12 +82,21 @@
         viewContainer.addEventListener('click', selectElement);
         document.addEventListener('update-element', updateElement);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
+
+        viewContainer.addEventListener('dragstart', function( event ) {
+          console.log(event)
+        }, false);
+        viewContainer.addEventListener('dragend', function( event ) {
+          console.log(event)
+        }, false);
+
       });
 
       function addElement(event) {
         var kind = event.target.textContent;
         var el = document.createElement(kind);
         if (kind === 'div') {
+          //el.setAttribute('draggable', 'true');
           el.style.height = el.style.width = '200px';
           el.style.backgroundColor = '#CDDC39';
         }
@@ -113,16 +126,38 @@
             window._tracky = Math.round(event.detail.dy / grid) * grid;
             el.style.transform = el.style.webkitTransform =
               'translate(' + _trackx + 'px, ' + _tracky + 'px)';
+
+            // See if it's over anything
+            var targets = viewContainer.children;
+            var me = el.getBoundingClientRect();
+
+            for (var i = 0; i < targets.length; i++) {
+              var t = targets[i];
+              t.classList.remove('over');
+              var b = t.getBoundingClientRect();
+              if (me.left > b.left && me.left < b.left + b.width &&
+                  me.top > b.top && me.top < b.top + b.height) {
+                t.classList.add('over');
+                window._dropTarget = t;
+              }
+            }
             break;
           case 'end':
-            // Figure out if this needs to be added to a new parent
-            el.classList.remove('dragging');
+            // Save the position before we might reparent the item.
             var local = el.getBoundingClientRect();
+
+            // Does this need to be added to a new parent?
+            if (window._dropTarget) {
+              el.parentElement.removeChild(el);
+              window._dropTarget.appendChild(el);
+              window._dropTarget = null;
+            }
             var parent = el.parentElement.getBoundingClientRect();
             el.style.left = local.left - parent.left + 'px';
             el.style.top = local.top - parent.top + 'px';
+
+            el.classList.remove('dragging');
             el.style.transform = el.style.webkitTransform = 'none';
-            el.getBoundingClientRect();
             break;
         }
       }
