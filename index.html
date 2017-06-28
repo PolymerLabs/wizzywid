@@ -59,6 +59,7 @@
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <div slot="elements" id="elementsContainer">
         <button>input</button>
+        <button>div</button>
       </div>
       <div class="main" slot="main" id="viewContainer"></div>
     </app-shell>
@@ -94,6 +95,9 @@
 
       function trackElement(event) {
         var el = event.target;
+        if (el.id === 'viewContainer') {
+          return;
+        }
 
         switch(event.detail.state) {
           case 'start':
@@ -121,6 +125,11 @@
         if (activeElement) {
           activeElement.classList.remove('active');
         }
+        if (el.id === 'viewContainer') {
+          activeElement = null;
+          return;
+        }
+
         el.classList.add('active');
         activeElement = el;
 
