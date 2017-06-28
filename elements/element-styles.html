@@ -19,6 +19,8 @@
     <input name="backgroundColor" type="color">
     <label>border</label>
     <input name="border">
+    <label>box shadow</label>
+    <input name="boxShadow">
     <label>opacity</label>
     <input name="opacity" type="range" min="0" max="1" step="0.1" value="1">
     <label>padding</label>
@@ -49,7 +51,7 @@
       ready() {
         super.ready();
         this._styles = [];
-        
+
         var els = this.root.querySelectorAll('[name]');
         for (var i = 0 ; i < els.length; i++) {
           this._styles.push(els[i].name);
