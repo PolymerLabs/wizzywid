@@ -11,6 +11,7 @@
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
     <link rel="import" href="elements/app-shell.html">
+    <link rel="import" href="elements/element-styles.html">
 
     <custom-style>
     <style>
@@ -71,34 +72,7 @@
         <label>attributes</label>
         <input name="attributes">
       </div>
-      <div slot="styles" id="stylesContainer">
-        <label>background color</label>
-        <input name="backgroundColor" type="color">
-        <label>border</label>
-        <input name="border">
-        <label>opacity</label>
-        <input name="opacity" type="range" min="0" max="1" step="0.1" value="1">
-        <label>padding</label>
-        <input name="padding">
-        <label>margin</label>
-        <input name="margin">
-        <label>position</label>
-        <select name="position">
-          <option>static</option>
-          <option>absolute</option>
-          <option>relative</option>
-        </select>
-        <label>left</label>
-        <input name="left">
-        <label>top</label>
-        <input name="top">
-        <label>display</label>
-        <input name="display">
-        <label>width</label>
-        <input name="width">
-        <label>height</label>
-        <input name="height">
-      </div>
+      <element-styles slot="styles" id="stylesContainer"></element-styles>
       <div slot="elements" id="elementsContainer">
         <button>input</button>
       </div>
@@ -112,28 +86,19 @@
     <script>
       var activeElement;
       var grid = 10;
-      var stylesList = [];
+
       var propertiesList = [];
 
       window.addEventListener('WebComponentsReady', function() {
-        initializeAvailableStyles();
         initializeAvailableProperties();
 
-        elementsContainer.addEventListener('click', addElement);
+        document.addEventListener('update-element', updateElement);
 
-        stylesContainer.addEventListener('input', updateElementStyles);
-        propertiesContainer.addEventListener('input', updateElementProperties);
+        elementsContainer.addEventListener('click', addElement);
 
         viewContainer.addEventListener('click', selectElement);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
       });
-
-      function initializeAvailableStyles() {
-        var els = stylesContainer.querySelectorAll('[name]');
-        for (var i = 0 ; i < els.length; i++) {
-          stylesList.push(els[i].name);
-        }
-      }
 
       function initializeAvailableProperties() {
         var els = propertiesContainer.querySelectorAll('[name]');
@@ -214,37 +179,18 @@
       }
 
       function displayElementStyles(el) {
-        var styles = window.getComputedStyle(el);
+        stylesContainer.display(window.getComputedStyle(el));
+      }
 
-        for (var i = 0; i < stylesList.length; i++) {
-          var inputEl = document.querySelector(`[name=${stylesList[i]}]`);
-          if (stylesList[i] === 'backgroundColor') {
-            inputEl.value = rgb2hex(styles[stylesList[i]]);
-          } else {
-            inputEl.value = styles[stylesList[i]];
-          }
+      function updateElement(event) {
+        var detail = event.detail
+        if (detail.type === 'style') {
+          activeElement.style[detail.name] = detail.value;
+        } else {
+          activeElement[detail.name] = detail.value;
         }
       }
 
-      function updateElementStyles(event) {
-        var inputEl = event.target;
-        var name = inputEl.name;
-        activeElement.style[name] = inputEl.value;
-      }
-
-      function updateElementProperties(event) {
-        var inputEl = event.target;
-        var name = inputEl.name;
-        activeElement[name] = inputEl.value;
-      }
-
-      function rgb2hex(rgb){
-       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-       return (rgb && rgb.length === 4) ? "#" +
-        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
-        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
-      }
     </script>
   </body>
 </html>
