@@ -26,14 +26,6 @@
     class DesignerTabs extends Polymer.mixinBehaviors(
         [Polymer.IronSelectableBehavior], Polymer.Element) {
       static get is() { return 'designer-tabs'; }
-      static get observers() { return [
-        '_onSelectedItemChanged(selectedItem)'
-      ]}
-      _onSelectedItemChanged(selectedItem) {
-        if (selectedItem === undefined && this.selected) return;
-        console.log(selectedItem)
-        //this.$.overlay.target = selectedItem;
-      }
     }
     customElements.define(DesignerTabs.is, DesignerTabs);
   </script>

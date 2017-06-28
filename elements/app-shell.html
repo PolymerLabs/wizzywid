@@ -55,10 +55,10 @@
       <app-drawer slot="drawer" id="drawer" align="right">
         <div class="drawer-contents">
           <app-toolbar>
-            <paper-icon-button icon="designer:back"></paper-icon-button>
-            <span>{{activeElement}}</span>
-            <paper-icon-button icon="designer:fullscreen"></paper-icon-button>
-            <paper-icon-button icon="designer:menu"></paper-icon-button>
+            <!-- <paper-icon-button icon="designer:back"></paper-icon-button> -->
+            <span>{{activeElementName}}</span>
+            <!-- <paper-icon-button icon="designer:fullscreen"></paper-icon-button>-->
+            <paper-icon-button icon="designer:delete"></paper-icon-button>
           </app-toolbar>
           <div>
             <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
@@ -130,15 +130,59 @@
       static get is() { return 'app-shell'; }
       static get properties() {
         return {
-          activeElement: {type: String},
-          stylesPage: {type:String},
-          elementsPage: {type:String}
+          activeElement: {
+            type: Object
+          },
+          activeElementName: {
+            type: String
+          },
+          stylesPage: {
+            type:String
+          },
+          elementsPage: {
+            type:String
+          }
         }
       }
+
       ready() {
         super.ready();
         this.stylePage = 'flex';
         this.elementsPage = 'elements';
+      }
+
+      updateActiveElement(el) {
+        if (this.activeElement) {
+          this.activeElement.classList.remove('active');
+        }
+        if (el.id === 'viewContainer') {
+          this.activeElement = null;
+        } else {
+          el.classList.add('active');
+          this.activeElement = el;
+        }
+        this.activeElementName = this.computeActiveElementName(this.activeElement);
+      }
+
+      updateActiveElementValues(type, name, value) {
+        if (type === 'style') {
+          this.activeElement.style[name] = value;
+        } else {
+          this.activeElement[name] = value;
+        }
+      }
+
+      // TODO: ugh, this can probably be better.
+      computeActiveElementName(activeElement) {
+        if (!activeElement) {
+          return 'main-app';
+        } else {
+          var name = activeElement.tagName.toLowerCase();
+          if (activeElement.id) {
+            name += '#' + activeElement.id;
+          }
+          return name;
+        }
       }
     }
     customElements.define(AppShell.is, AppShell);
