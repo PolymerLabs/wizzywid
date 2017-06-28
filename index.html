@@ -80,6 +80,7 @@
     <script>
       var grid = 10;
 
+      tree = [];
       window.addEventListener('WebComponentsReady', function() {
         shell.activeElement = viewContainer;
 
@@ -133,6 +134,7 @@
         }
         switch(event.detail.state) {
           case 'start':
+            el.style.position = 'absolute';
             el.classList.add('dragging');
             el.classList.add('active');
             break;
