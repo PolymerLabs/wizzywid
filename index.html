@@ -61,7 +61,7 @@
     <custom-style>
   </head>
   <body>
-    <app-shell>
+    <app-shell id="shell">
       <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <div slot="elements" id="elementsContainer">
@@ -170,13 +170,13 @@
         }
         if (el.id === 'viewContainer') {
           activeElement = null;
-          return;
+        } else {
+          el.classList.add('active');
+          activeElement = el;
         }
 
-        el.classList.add('active');
-        activeElement = el;
-
-        // Show its properties
+        // Show its properties.
+        updateDisplayName();
         propertiesContainer.display(el);
         stylesContainer.display(window.getComputedStyle(el));
       }
@@ -188,6 +188,19 @@
         } else {
           activeElement[detail.name] = detail.value;
         }
+        updateActiveElement(activeElement);
+      }
+      function updateDisplayName() {
+        if (!activeElement) {
+          shell.activeElement = 'main-app';
+        } else {
+          var name = activeElement.tagName.toLowerCase();
+          if (activeElement.id) {
+            name += '#' + activeElement.id;
+          }
+          shell.activeElement = name;
+        }
+
       }
     </script>
   </body>

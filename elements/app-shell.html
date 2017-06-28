@@ -55,7 +55,7 @@
         <div class="drawer-contents">
           <app-toolbar>
             <paper-icon-button icon="designer:back"></paper-icon-button>
-            <span>my-element</span>
+            <span>{{activeElement}}</span>
             <paper-icon-button icon="designer:fullscreen"></paper-icon-button>
             <paper-icon-button icon="designer:menu"></paper-icon-button>
           </app-toolbar>
@@ -98,6 +98,11 @@
   <script>
     class AppShell extends Polymer.Element {
       static get is() { return 'app-shell'; }
+      static get properties() {
+        return {
+          activeElement: {type: String, value: 'main-app'}
+        }
+      }
     }
     customElements.define(AppShell.is, AppShell);
   </script>
