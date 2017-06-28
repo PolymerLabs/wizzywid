@@ -50,7 +50,8 @@
             }
             el.value = v.trim();
           } else if (prop === 'className') {
-            el.value = target[prop].replace('active', '');
+            // Lol what's a blacklist.
+            el.value = target[prop].replace('active', '').replace('dragging', '');
           } else {
             el.value = target[prop];
           }
