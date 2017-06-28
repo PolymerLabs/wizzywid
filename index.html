@@ -82,7 +82,7 @@
 
       window.addEventListener('WebComponentsReady', function() {
         shell.activeElement = viewContainer;
-        
+
         // Add a new element
         elementsContainer.addEventListener('click', addElement);
 
@@ -114,19 +114,15 @@
 
       function elementWasUpdated(event) {
         var detail = event.detail;
-
         shell.updateActiveElementValues(detail.type, detail.name, detail.value);
         //displayElement();
       }
 
       function displayElement() {
-        if (!shell.activeElement) {
-          propertiesContainer.display(viewContainer);
-          stylesContainer.display(window.getComputedStyle(viewContainer));
-        } else {
-          propertiesContainer.display(shell.activeElement);
-          stylesContainer.display(window.getComputedStyle(shell.activeElement));
-        }
+        var el = shell.activeElement ? shell.activeElement : viewContainer;
+        propertiesContainer.display(el);
+        stylesContainer.display(window.getComputedStyle(el));
+        flexContainer.display(window.getComputedStyle(el));
       }
 
       function trackElement(event) {
@@ -171,7 +167,7 @@
               window._dropTarget.appendChild(el);
               window._dropTarget.classList.remove('over');
               window._dropTarget = null;
-            } else if (el.parentElement){
+            } else if (el.parentElement) {
               // If there's no drop target and the el used to be in a different
               // parent, move it to the main view.
               el.parentElement.removeChild(el);

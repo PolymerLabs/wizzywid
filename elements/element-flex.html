@@ -17,6 +17,12 @@
       }
     </style>
     (doesn't really work)<br><br><br>
+    <label>position</label>
+    <select name="position">
+      <option>static</option>
+      <option>absolute</option>
+      <option>relative</option>
+    </select>
     <label>display</label><input name="display">
     <label>flex-direction</label>
     <select name="flexDirection">
@@ -73,7 +79,7 @@
       static get is() { return 'element-flex'; }
       static get properties() {
         return {
-          stuffType: {type: String, value: 'stule'}
+          stuffType: {type: String, value: 'style'}
         }
       }
 
