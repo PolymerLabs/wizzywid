@@ -175,8 +175,11 @@
           if (name === 'id') {
             this.computeActiveElementName();
           }
-          if (value === 'true' || value === 'false') {
-            this.activeElement[name] = Boolean(value);
+          if (value === 'true') {
+            this.activeElement[name] = true;
+          } else if (value === 'false') {
+            this.activeElement[name] = false;
+            this.activeElement.removeAttribute(name);
           }
           this.activeElement[name] = value;
         }

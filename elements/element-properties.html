@@ -75,7 +75,7 @@
         for (var i = 0; i < newProps.length; i++) {
           var p = newProps[i];
           // Skip everything that starts with a _
-          if (p.charAt(0) === '_') {
+          if (p.charAt(0) === '_' || p === 'keyEventTarget') {
             continue;
           }
           var label = document.createElement('label');
@@ -83,7 +83,7 @@
           this.$.bonus.appendChild(label);
           var input = document.createElement('input');
           input.name = p;
-          input.value = target.p || '';
+          input.value = target[p] || '';
           this.$.bonus.appendChild(input);
         }
       }
