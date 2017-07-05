@@ -117,6 +117,7 @@
         if (!event.target.tagName === 'BUTTON') {
           return;
         }
+        // TODO: use some kind of whitelist here
         if (kind !== 'div' && kind !== 'input') {
           Polymer.Base.importHref(`bower_components/${kind}/${kind}.html`, function(e) {
             finishCreatingElement(kind);
@@ -139,6 +140,7 @@
         el.textContent = kind;
         shell.updateActiveElement(el);
         recomputeTree();
+        displayElement();
         return el;
       }
 
