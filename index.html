@@ -52,7 +52,7 @@
         outline: none;
         opacity: 0.6;
       }
-      button {
+      #elementsContainer button {
         background: transparent;
         border: none;
         font-size: inherit;
@@ -60,8 +60,14 @@
         margin-bottom: 4px;
         cursor: pointer;
       }
-      button:hover {
+      #elementsContainer button:hover {
         color: #E91E63;
+      }
+      .elements-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
       }
     </style>
     <custom-style>
@@ -82,8 +88,11 @@
         </dom-repeat>
       </div>
       <div slot="elements" id="elementsContainer">
+        <span class="elements-title">Native elements</span>
         <button>input</button>
         <button>div</button>
+        <button>button</button>
+        <span class="elements-title">Polymer elements</span>
         <button>paper-input</button>
         <button>paper-button</button>
       </div>
@@ -96,6 +105,8 @@
 
     <script>
       var grid = 10;
+      var nativeElementsWhitelist = ['div', 'input', 'button'];
+
       window.addEventListener('WebComponentsReady', function() {
         shell.activeElement = viewContainer;
 
@@ -114,11 +125,11 @@
 
       function addElement(event) {
         var kind = event.target.textContent;
-        if (!event.target.tagName === 'BUTTON') {
+        if (event.target.tagName !== 'BUTTON') {
           return;
         }
         // TODO: use some kind of whitelist here
-        if (kind !== 'div' && kind !== 'input') {
+        if (nativeElementsWhitelist.indexOf(kind) === -1) {
           Polymer.Base.importHref(`bower_components/${kind}/${kind}.html`, function(e) {
             finishCreatingElement(kind);
           });
