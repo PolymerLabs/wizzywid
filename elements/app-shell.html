@@ -175,13 +175,18 @@
           if (name === 'id') {
             this.computeActiveElementName();
           }
+
           if (value === 'true') {
             this.activeElement[name] = true;
           } else if (value === 'false') {
-            this.activeElement[name] = false;
-            this.activeElement.removeAttribute(name);
+            if (this.activeElement.hasAttribute(name)) {
+              this.activeElement.removeAttribute(name);
+            } else {
+              this.activeElement[name] = false;
+            }
+          } else {
+            this.activeElement[name] = value;
           }
-          this.activeElement[name] = value;
         }
       }
 
