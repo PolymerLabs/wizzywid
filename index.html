@@ -69,6 +69,13 @@
         font-weight: bold;
         letter-spacing: 1px;
       }
+      .tree-id {
+        font-style: italic;
+        color: #009688;
+      }
+      .tree-text {
+        color: #2196F3;
+      }
     </style>
     <custom-style>
   </head>
@@ -83,7 +90,11 @@
           <template>
             <button onclick="findElement(event)"
                 data-index$="[[index]]"
-                style="margin-left:calc(14*[[item.level]]px">[[item.name]]</button>
+                style="margin-left:calc(14*[[item.level]]px">
+                <span class="tree-tag">[[item.tag]]</span>
+                <span class="tree-id">[[item.id]]</span>
+                <span class="tree-text">[[item.text]]</span>
+            </button>
           </template>
         </dom-repeat>
       </div>
@@ -174,7 +185,14 @@
       }
 
       function getChildren(parent, level) {
-        var nodes = [{name: getFancyName(parent), level: level, ref:parent}];
+        var isViewContainer = parent.id === 'viewContainer';
+        var nodes = [
+          { tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
+            id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
+            text: isViewContainer ? '' : '"' + parent.textContent + '"',
+            level: level,
+            ref: parent}
+          ];
         for (var i = 0; i < parent.children.length; i++) {
           var child = parent.children[i];
           nodes = nodes.concat(getChildren(child, level + 1));
@@ -183,7 +201,7 @@
       }
 
       function findElement(event) {
-        var index = event.target.dataset.index;
+        var index = event.currentTarget.dataset.index;
         var el = repeater.items[index].ref;
         shell.updateActiveElement(el);
         displayElement();
@@ -253,17 +271,6 @@
         displayElement();
         var size = el.getBoundingClientRect();
         stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
-      }
-
-      function getFancyName(el) {
-        if (el.id == 'viewContainer') {
-          return 'main-app';
-        }
-        var name = el.tagName.toLowerCase();
-        if (el.id) {
-          name += '#' + el.id;
-        }
-        return name;
       }
     </script>
   </body>
