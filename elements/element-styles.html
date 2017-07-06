@@ -15,25 +15,32 @@
         margin-right: 20px;
         line-height: 1.2em;
       }
+      .style-label {
+        width: 150px;
+        margin-right: 14px;
+      }
     </style>
-    <label>color</label><input name="color" type="color"><br>
-    <label>background color</label><input name="backgroundColor" type="color">
-    <label>box-sizing</label><input name="boxSizing">
-    <label>border</label><input name="border">
-    <label>box shadow</label><input name="boxShadow">
-    <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
-    <label>padding</label><input name="padding">
-    <label>margin</label><input name="margin">
-    <label>position</label>
-    <select name="position">
-      <option>static</option>
-      <option>absolute</option>
-      <option>relative</option>
-    </select>
-    <label>left</label><input name="left">
-    <label>top</label><input name="top">
-    <label>width</label><input name="width">
-    <label>height</label><input name="height">
+    <div id="container">
+      <label>color</label><input name="color" type="color"><br>
+      <label>background color</label><input name="backgroundColor" type="color">
+      <label>box-sizing</label><input name="boxSizing">
+      <label>border</label><input name="border">
+      <label>box shadow</label><input name="boxShadow">
+      <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
+      <label>padding</label><input name="padding">
+      <label>margin</label><input name="margin">
+      <label>position</label>
+      <select name="position">
+        <option>static</option>
+        <option>absolute</option>
+        <option>relative</option>
+      </select>
+      <label>left</label><input name="left">
+      <label>top</label><input name="top">
+      <label>width</label><input name="width">
+      <label>height</label><input name="height">
+    </div>
+    <button on-click="addStyle">Add style</button>
   </template>
   <script>
     class ElementStyles extends ElementStuff(Polymer.Element) {
@@ -55,6 +62,14 @@
             el.value = elementStyles[name];
           }
         }
+      }
+      addStyle(event) {
+        var label = document.createElement('input');
+        label.className = 'style-label';
+        var input = document.createElement('input');
+        input.className = 'style-value';
+        this.$.container.appendChild(label);
+        this.$.container.appendChild(input);
       }
       _rgb2hex(rgb) {
        rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);

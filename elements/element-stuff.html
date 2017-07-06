@@ -7,22 +7,34 @@
         }
         ready() {
           super.ready();
+          this._recomputeStuff();
+          this.root.addEventListener('input', this._do.bind(this));
+        }
 
+        _recomputeStuff() {
           this._stuff = [];
           var els = this.root.querySelectorAll('[name]');
           for (var i = 0 ; i < els.length; i++) {
             this._stuff.push(els[i].name);
           }
-          this.root.addEventListener('input', this._do.bind(this));
         }
 
         _do(event) {
+          var target = event.path[0];
+
+          // Is it a custom thing?
+          if (target.classList.contains('style-label')) {
+            // Set the name on the next input
+            target.nextElementSibling.name = target.value;
+            this._recomputeStuff();
+            return;
+          }
+
           var newEvent = new Event('element-updated', {
             bubbles: true,
             cancelable: false,
             composed: true
           });
-          var target = event.path[0];
           newEvent.detail = {
             type: this.stuffType,
             name: target.name,
