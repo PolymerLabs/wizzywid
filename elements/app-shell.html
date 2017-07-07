@@ -258,6 +258,10 @@
           style += this.dumpStyle(nodes[i], '      ');
         }
 
+        bonusHost = bonusHost.trimRight();
+        style = style.trimRight();
+        template = template.trimRight();
+
         var boilerplate = `${imports}
 <dom-module id="main-app">
   <template>
@@ -271,7 +275,6 @@ ${bonusHost}
       }
 ${style}
     </style>
-
 ${template}
   </template>
   <script>
