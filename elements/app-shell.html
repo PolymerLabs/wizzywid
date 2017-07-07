@@ -103,13 +103,12 @@
       <app-toolbar>
         <span title="it's like MSPaint but for Polymer apps">PolymerPaint</span>
         <div class="separator"></div>
-        <paper-icon-button class="button-code" icon="designer:code" on-click="dump"></paper-icon-button>
-        <div class="separator"></div>
-
         <elements-view></elements-view>
 
-        <!-- <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
-        <paper-icon-button disabled icon="designer:redo"></paper-icon-button> -->
+        <paper-icon-button class="button-code" icon="designer:code" on-click="dump"></paper-icon-button>
+        <div class="separator"></div>
+        <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
+        <paper-icon-button disabled icon="designer:redo"></paper-icon-button>
       </app-toolbar>
     </app-header>
     <div class="container" id="scrollingRegion">
@@ -117,6 +116,7 @@
         <designer-tabs attr-for-selected="name" selected="tree">
           <designer-tab name="tree">
             <button>tree</button>
+            <paper-icon-button icon="designer:delete" on-click="deleteActiveElement"></paper-icon-button>
           </designer-tab>
         </designer-tabs>
         <div name="tree">
