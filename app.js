@@ -1,20 +1,16 @@
 // TODO: ugh. refactor this.
-window.aceEditor = ace.edit("editor");
-window.aceEditor.setReadOnly(true);
-window.aceEditor.setTheme("ace/theme/monokai");
-window.aceEditor.getSession().setMode("ace/mode/html");
-window.aceEditor.$blockScrolling = Infinity;
-window.aceEditor.setOptions({fontSize: "14px"});
+aceEditor = ace.edit("editor");
+aceEditor.setReadOnly(true);
+aceEditor.setTheme("ace/theme/monokai");
+aceEditor.getSession().setMode("ace/mode/html");
+aceEditor.$blockScrolling = Infinity;
+aceEditor.setOptions({fontSize: "14px"});
 
 var grid = 10;
-var nativeElementsWhitelist = ['div', 'input', 'button'];
 
 window.addEventListener('WebComponentsReady', function() {
   shell.activeElement = viewContainer;
   treeView.recomputeTree(viewContainer);
-
-  // Add a new element
-  elementsContainer.addEventListener('click', addElement);
 
   // Focus an element
   viewContainer.addEventListener('click', function() {
@@ -26,36 +22,11 @@ window.addEventListener('WebComponentsReady', function() {
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
 
-function addElement(event) {
-  var kind = event.target.textContent;
-  if (event.target.tagName !== 'BUTTON') {
-    return;
-  }
-  // TODO: use some kind of whitelist here
-  if (nativeElementsWhitelist.indexOf(kind) === -1) {
-    Polymer.Base.importHref(`bower_components/${kind}/${kind}.html`, function(e) {
-      finishCreatingElement(kind);
-    });
-  } else {
-    var el = finishCreatingElement(kind);
-    if (kind === 'div') {
-      el.style.height = el.style.width = '200px';
-      el.style.backgroundColor = '#CDDC39';
-    }
-  }
-}
-
-function finishCreatingElement(kind) {
-  var el = document.createElement(kind);
+function addNewElement(el) {
   viewContainer.appendChild(el);
-  el.style.position = 'absolute';
-  el.style.left = el.style.top = '20px';
-  el.style.backgroundColor = 'white';
-  el.textContent = kind;
   shell.updateActiveElement(el);
   treeView.recomputeTree(viewContainer);
   displayElement();
-  return el;
 }
 
 function elementWasUpdated(event) {

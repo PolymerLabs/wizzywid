@@ -67,7 +67,7 @@
     </style>
     <!-- TODO: replace this with a cascading menu when possible -->
     <div class="links-container">
-      <button on-click="toggleMenu">Native elements</button>
+      <button class="toggle" on-click="toggleMenu">Native elements</button>
       <div class="links" hidden>
         <button>input</button>
         <button>div</button>
@@ -75,7 +75,7 @@
       </div>
     </div>
     <div class="links-container">
-      <button on-click="toggleMenu">Paper elements</button>
+      <button class="toggle" on-click="toggleMenu">Paper elements</button>
       <div class="links" hidden>
         <button>paper-input</button>
         <button>paper-button</button>
@@ -86,14 +86,57 @@
     class ElementsView extends Polymer.Element {
       static get is() { return 'elements-view'; }
 
-      toggleMenu(event) {
+      ready() {
+        super.ready();
+        this.addEventListener('click', this.addElement.bind(this));
+        this._nativeElementsWhitelist = ['div', 'input', 'button'];
+      }
+
+      hideAllMenus() {
         // Hide all the other links.
         var allLinks = this.root.querySelectorAll('.links');
         for (var i = 0; i < allLinks.length; i++) {
           allLinks[i].hidden = true;
         }
+      }
+
+      toggleMenu(event) {
+        this.hideAllMenus();
         var links = event.target.nextElementSibling;
         links.hidden = !links.hidden;
+      }
+
+      addElement(event) {
+        var target = event.path[0];
+        var kind = target.textContent;
+        if (target.tagName !== 'BUTTON' || target.classList.contains('toggle')) {
+          return;
+        }
+
+        if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
+          Polymer.Base.importHref(`../bower_components/${kind}/${kind}.html`, function(e) {
+            this.finishCreatingElement(kind);
+          }.bind(this));
+        } else {
+          var el = this.finishCreatingElement(kind);
+          if (kind === 'div') {
+            el.style.height = el.style.width = '200px';
+            el.style.backgroundColor = '#CDDC39';
+          }
+        }
+      }
+
+      finishCreatingElement(kind) {
+        this.hideAllMenus();
+
+        var el = document.createElement(kind);
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '20px';
+        el.style.backgroundColor = 'white';
+        el.textContent = kind;
+
+        window.addNewElement(el);
+        return el;
       }
     }
     customElements.define(ElementsView.is, ElementsView);

@@ -50,23 +50,7 @@
         outline: none;
         opacity: 0.6;
       }
-      #elementsContainer button {
-        background: transparent;
-        border: none;
-        font-size: inherit;
-        display: block;
-        padding: 4px 0;
-        cursor: pointer;
-      }
-      #elementsContainer button:hover {
-        color: #E91E63;
-      }
-      .elements-title {
-        font-size: 12px;
-        text-transform: uppercase;
-        font-weight: bold;
-        letter-spacing: 1px;
-      }
+
       [hidden] {
         display: none !important;
       }
@@ -86,16 +70,6 @@
       <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <element-flex slot="flex" id="flexContainer"></element-flex>
-
-      <div slot="elements" id="elementsContainer">
-        <span class="elements-title">Native elements</span>
-        <button>input</button>
-        <button>div</button>
-        <button>button</button>
-        <span class="elements-title">Polymer elements</span>
-        <button>paper-input</button>
-        <button>paper-button</button>
-      </div>
 
       <div class="main" slot="main" id="viewContainer"></div>
       <div id="editor" slot="code"></div>

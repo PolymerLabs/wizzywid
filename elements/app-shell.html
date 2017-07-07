@@ -7,6 +7,7 @@
 <link rel="import" href="app-icons.html">
 <link rel="import" href="designer-tabs.html">
 <link rel="import" href="designer-tab.html">
+<link rel="import" href="elements-view.html">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
@@ -59,7 +60,7 @@
       }
 
       .drawer.small {
-        width: 200px;
+        width: 250px;
       }
 
       .main {
@@ -104,39 +105,23 @@
         <div class="separator"></div>
         <paper-icon-button class="button-code" icon="designer:code" on-click="dump"></paper-icon-button>
         <div class="separator"></div>
-        <!-- <paper-icon-button disabled icon="designer:save"></paper-icon-button>
-        <paper-icon-button disabled icon="designer:share"></paper-icon-button>
-        <paper-icon-button disabled icon="designer:launch"></paper-icon-button>
-        <div class="separator"></div> -->
-        <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
-        <paper-icon-button disabled icon="designer:redo"></paper-icon-button>
+
+        <elements-view></elements-view>
+
+        <!-- <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
+        <paper-icon-button disabled icon="designer:redo"></paper-icon-button> -->
       </app-toolbar>
     </app-header>
     <div class="container" id="scrollingRegion">
       <div class="drawer small">
-        <!-- <designer-tabs attr-for-selected="name" selected="tree">
+        <designer-tabs attr-for-selected="name" selected="tree">
           <designer-tab name="tree">
             <button>tree</button>
           </designer-tab>
         </designer-tabs>
-        <slot name="tree"></slot> -->
-
-        <designer-tabs attr-for-selected="name" selected="{{elementsPage}}">
-          <designer-tab name="elements" selected>
-            <button>elements</button>
-          </designer-tab>
-          <designer-tab name="tree">
-            <button>tree</button>
-          </designer-tab>
-        </designer-tabs>
-        <iron-pages selected="[[elementsPage]]" attr-for-selected="name" selected-attribute="visible">
-          <div name="elements">
-            <slot name="elements"></slot>
-          </div>
-          <div name="tree">
-            <slot name="tree"></slot>
-          </div>
-        </iron-pages>
+        <div name="tree">
+          <slot name="tree"></slot>
+        </div>
       </div>
 
       <div class="main" id="mainContainer">
