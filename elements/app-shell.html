@@ -250,11 +250,11 @@
         // Imports
         var imports = '';
         var template = '';
-        var hostStyle = ':host {}';
         var style = '';
 
         var nodes = viewContainer.children;
         var indent = '    ';
+
         for (var i = 0; i < nodes.length; i++) {
           // Add to the import if needed.
           var tag = nodes[i].tagName.toLowerCase();
@@ -272,7 +272,12 @@ ${imports}
 <dom-module id="main-app">
   <template>
     <style>
-${hostStyle}
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
 ${style}
     </style>
 
