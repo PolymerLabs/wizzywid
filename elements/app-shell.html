@@ -236,6 +236,7 @@
 
       dump(event) {
         var button = event.target;
+
         if (event.target.classList.contains('active')) {
           event.target.classList.remove('active');
           this.$.mainContainer.hidden = false;
@@ -250,7 +251,7 @@
         var imports = '';
         var template = '';
         var hostStyle = ':host {}';
-        var style = 'div {}';
+        var style = '';
 
         var nodes = viewContainer.children;
         var indent = '    ';
@@ -260,7 +261,19 @@
           if (tag.indexOf('-') !== -1 && imports.indexOf(`${tag}.html`) === -1) {
             imports += this.dumpImports(tag, '') + '\n';
           }
+
+          // The HTML bit.
           template += this.dumpElement(nodes[i], indent) + '\n';
+
+          // The style bit. I don't know what happens for two divs with
+          // no IDs and styles.
+          var css = nodes[i].style.cssText.replace(/;/g, ';\n').trim();
+          style += `
+${tag} {
+  ${css}
+}
+
+`;
         }
 
         var boilerplate = `
@@ -295,6 +308,21 @@ ${template}
         return tag === 'input' ?
             `${indent}<${tag}${id}>` :
             `${indent}<${tag}${id}>${text}</${tag}>`
+      }
+
+      dumpCss(el) {
+        var sheets = document.styleSheets, ret = [];
+        el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector
+            || el.msMatchesSelector || el.oMatchesSelector;
+        for (var i in sheets) {
+            var rules = sheets[i].rules || sheets[i].cssRules;
+            for (var r in rules) {
+                if (el.matches(rules[r].selectorText)) {
+                    ret.push(rules[r].cssText);
+                }
+            }
+        }
+        return ret;
       }
 
       dumpImports(tag, indent) {
