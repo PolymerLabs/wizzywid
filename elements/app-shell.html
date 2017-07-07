@@ -109,7 +109,7 @@
           <app-toolbar>
             <span title="it's like MSPaint but for Polymer">PolymerPaint</span>
             <div class="separator"></div>
-            <paper-icon-button icon="designer:code"></paper-icon-button>
+            <paper-icon-button icon="designer:code" on-click="dump"></paper-icon-button>
             <div class="separator"></div>
             <!-- <paper-icon-button disabled icon="designer:save"></paper-icon-button>
             <paper-icon-button disabled icon="designer:share"></paper-icon-button>
@@ -121,7 +121,11 @@
             <paper-icon-button icon="designer:drawer" onclick="drawer.toggle()"></paper-icon-button>
           </app-toolbar>
         </app-header>
+
         <slot name="main"></slot>
+        <div>
+          <pre><code id="code"></code></pre>
+        </div>
       </app-header-layout>
     </app-drawer-layout>
 
@@ -218,6 +222,73 @@
           this.activeElementName = name;
         }
       }
+
+      dump() {
+        // Imports
+        var imports = '';
+        var template = '';
+        var hostStyle = ':host {}';
+        var style = 'div {}';
+
+        var nodes = viewContainer.children;
+        var indent = '      ';
+        for (var i = 0; i < nodes.length; i++) {
+          // Add to the import if needed.
+          var tag = nodes[i].tagName.toLowerCase();
+          if (tag.indexOf('-') !== -1 && imports.indexOf(`${tag}.html`) === -1) {
+            imports += this.dumpImports(tag, '  ') + '\n';
+          }
+          template += this.dumpElement(nodes[i], indent) + '\n';
+        }
+
+        var boilerplate = `
+${imports}
+  <dom-module id="main-app">
+    <template>
+      <style>
+      ${hostStyle}
+      ${style}
+      </style>
+
+${template}
+    </template>
+    <script>
+      class MainApp extends Polymer.Element {
+        static get is() { return 'main-app'; }
+      }
+      customElements.define(MainApp.is, MainApp);
+    &lt;/script>
+</dom-module>`;
+
+        boilerplate = boilerplate.replace(/</g, '&lt;');
+        boilerplate = boilerplate.replace(/>/g, '&gt;');
+        console.log(boilerplate);
+        this.$.code.innerHTML = boilerplate;
+      }
+
+      dumpElement(node, indent) {
+        var tag = node.tagName.toLowerCase();
+        var id = node.id ? ` id="${node.id}"` : '';
+        var text = node.textContent || '';
+        return tag === 'input' ?
+            `${indent}<${tag}${id}>` :
+            `${indent}<${tag}${id}>${text}</${tag}>`
+      }
+
+      dumpImports(tag, indent) {
+        return `${indent}<link rel="import" href="../${tag}/${tag}.html">`;
+      }
+      //
+      // dumpChildren(node, indent) {
+      //   var children = '';
+      //   var indent = indent || '';
+      //   Array.prototype.forEach.call(node.children, function(c) {
+      //     children += this.dumpTag(c, indent);
+      //   }, this);
+      //   return children || (indent + '\n');
+      // }
+
+
     }
     customElements.define(AppShell.is, AppShell);
   </script>
