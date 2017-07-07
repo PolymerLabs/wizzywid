@@ -39,7 +39,7 @@
         height: 24px;
         margin: 8px;
       }
-      paper-icon-button {
+      span, paper-icon-button {
         margin: 8px;
       }
       iron-pages {
@@ -107,12 +107,14 @@
       <app-header-layout>
         <app-header slot="header" fixed>
           <app-toolbar>
-            <paper-icon-button disabled icon="designer:code"></paper-icon-button>
+            <span title="it's like MSPaint but for Polymer">PolymerPaint</span>
             <div class="separator"></div>
-            <paper-icon-button disabled icon="designer:save"></paper-icon-button>
+            <paper-icon-button icon="designer:code"></paper-icon-button>
+            <div class="separator"></div>
+            <!-- <paper-icon-button disabled icon="designer:save"></paper-icon-button>
             <paper-icon-button disabled icon="designer:share"></paper-icon-button>
             <paper-icon-button disabled icon="designer:launch"></paper-icon-button>
-            <div class="separator"></div>
+            <div class="separator"></div> -->
             <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
             <paper-icon-button disabled icon="designer:redo"></paper-icon-button>
             <div class="separator"></div>
