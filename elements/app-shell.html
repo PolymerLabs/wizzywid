@@ -264,16 +264,7 @@
 
           // The HTML bit.
           template += this.dumpElement(nodes[i], indent) + '\n';
-
-          // The style bit. I don't know what happens for two divs with
-          // no IDs and styles.
-          var css = nodes[i].style.cssText.replace(/;/g, ';\n').trim();
-          style += `
-${tag} {
-  ${css}
-}
-
-`;
+          style += this.dumpStyle(nodes[i], '      ');
         }
 
         var boilerplate = `
@@ -310,19 +301,13 @@ ${template}
             `${indent}<${tag}${id}>${text}</${tag}>`
       }
 
-      dumpCss(el) {
-        var sheets = document.styleSheets, ret = [];
-        el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector
-            || el.msMatchesSelector || el.oMatchesSelector;
-        for (var i in sheets) {
-            var rules = sheets[i].rules || sheets[i].cssRules;
-            for (var r in rules) {
-                if (el.matches(rules[r].selectorText)) {
-                    ret.push(rules[r].cssText);
-                }
-            }
-        }
-        return ret;
+      dumpStyle(node, indent) {
+        var tag = node.tagName.toLowerCase();
+        var css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
+        return `${indent}${tag} {
+${indent}  ${css}
+${indent}}
+`
       }
 
       dumpImports(tag, indent) {
