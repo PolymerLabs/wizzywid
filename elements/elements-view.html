@@ -1,0 +1,101 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="elements-view">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+      }
+
+      .links-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      :not(.links) > button {
+        background: transparent;
+        border: none;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: white;
+      }
+      :not(.links) > button:after {
+        content: '▿';
+        margin-left: 4px;
+      }
+
+      .links {
+        position: absolute;
+        margin-top: 20px;
+        min-width: 150px;
+        background-color: #373737;
+        color: white;
+        border-radius: 3px;
+      }
+
+      .links:after {
+        bottom: 100%;
+      	left: 50%;
+      	border: solid transparent;
+      	content: " ";
+      	height: 0;
+      	width: 0;
+      	position: absolute;
+      	pointer-events: none;
+      	border-color: none;
+      	border-bottom-color: #373737;
+      	border-width: 5px;
+      	margin-left: -5px;
+      }
+
+      .links button {
+        background: none;
+        color: white;
+        border: none;
+        display: block;
+        font-size: 14px;
+        padding: 8px;
+        cursor: pointer;
+        width: 100%;
+      }
+      .links button:hover {
+        background: #daebff;
+        color:  #373737;
+      }
+    </style>
+    <!-- TODO: replace this with a cascading menu when possible -->
+    <div class="links-container">
+      <button on-click="toggleMenu">Native elements</button>
+      <div class="links" hidden>
+        <button>input</button>
+        <button>div</button>
+        <button>button</button>
+      </div>
+    </div>
+    <div class="links-container">
+      <button on-click="toggleMenu">Paper elements</button>
+      <div class="links" hidden>
+        <button>paper-input</button>
+        <button>paper-button</button>
+      </div>
+    </div>
+  </template>
+  <script>
+    class ElementsView extends Polymer.Element {
+      static get is() { return 'elements-view'; }
+
+      toggleMenu(event) {
+        // Hide all the other links.
+        var allLinks = this.root.querySelectorAll('.links');
+        for (var i = 0; i < allLinks.length; i++) {
+          allLinks[i].hidden = true;
+        }
+        var links = event.target.nextElementSibling;
+        links.hidden = !links.hidden;
+      }
+    }
+    customElements.define(ElementsView.is, ElementsView);
+  </script>
+</dom-module>
