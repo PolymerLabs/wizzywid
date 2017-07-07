@@ -49,6 +49,15 @@
         height: 300px;
         overflow: auto;
       }
+      #codeContainer {
+        padding: 20px;
+      }
+      .button-code {
+        transform: rotate(0deg);
+      }
+      .button-code.active {
+        transform: rotate(90deg);
+      }
     </style>
 
     <app-drawer-layout>
@@ -109,7 +118,7 @@
           <app-toolbar>
             <span title="it's like MSPaint but for Polymer">PolymerPaint</span>
             <div class="separator"></div>
-            <paper-icon-button icon="designer:code" on-click="dump"></paper-icon-button>
+            <paper-icon-button class="button-code" icon="designer:code" on-click="dump"></paper-icon-button>
             <div class="separator"></div>
             <!-- <paper-icon-button disabled icon="designer:save"></paper-icon-button>
             <paper-icon-button disabled icon="designer:share"></paper-icon-button>
@@ -122,8 +131,10 @@
           </app-toolbar>
         </app-header>
 
-        <slot name="main"></slot>
-        <div>
+        <div id="mainContainer">
+          <slot name="main"></slot>
+        </div>
+        <div id="codeContainer">
           <pre><code id="code"></code></pre>
         </div>
       </app-header-layout>
@@ -223,7 +234,18 @@
         }
       }
 
-      dump() {
+      dump(event) {
+        var button = event.target;
+        if (event.target.classList.contains('active')) {
+          event.target.classList.remove('active');
+          this.$.mainContainer.hidden = false;
+          this.$.codeContainer.hidden = true;
+        } else {
+          event.target.classList.add('active');
+          this.$.mainContainer.hidden = true;
+          this.$.codeContainer.hidden = false;
+        }
+
         // Imports
         var imports = '';
         var template = '';
