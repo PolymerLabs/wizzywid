@@ -69,12 +69,20 @@
         font-weight: bold;
         letter-spacing: 1px;
       }
-      .tree-id {
+      #treeContainer button {
+        width: 100%;
+        text-align: left;
+      }
+      #treeContainer .tree-id {
         font-style: italic;
         color: #009688;
       }
-      .tree-text {
+      #treeContainer .tree-text {
         color: #2196F3;
+      }
+      #treeContainer .selected {
+        background: rgba(72,154,254,.2);
+        outline: none;
       }
     </style>
     <custom-style>
@@ -90,7 +98,7 @@
           <template>
             <button onclick="findElement(event)"
                 data-index$="[[index]]"
-                style="margin-left:calc(14*[[item.level]]px">
+                style="padding-left:calc(14*[[item.level]]px">
                 <span class="tree-tag">[[item.tag]]</span>
                 <span class="tree-id">[[item.id]]</span>
                 <span class="tree-text">[[item.text]]</span>
@@ -177,11 +185,26 @@
         propertiesContainer.display(el);
         stylesContainer.display(window.getComputedStyle(el));
         flexContainer.display(window.getComputedStyle(el));
+
+        // Find it in the tree.
+        var nodes = recomputeTree();
+        var buttons = treeContainer.querySelectorAll('button');
+        if (buttons.length !== nodes.length) {
+          return;
+        }
+
+        for (var i = 0; i < nodes.length; i++) {
+          if (nodes[i].ref === el) {
+            selectTreeElement(buttons[i]);
+            return;
+          }
+        }
       }
 
       function recomputeTree() {
         var nodes = getChildren(viewContainer, 0);
         repeater.items = nodes;
+        return nodes;
       }
 
       function getChildren(parent, level) {
@@ -201,10 +224,20 @@
       }
 
       function findElement(event) {
+        selectTreeElement(event.currentTarget);
+
         var index = event.currentTarget.dataset.index;
         var el = repeater.items[index].ref;
         shell.updateActiveElement(el);
         displayElement();
+      }
+
+      function selectTreeElement(element) {
+        var previouslySelected = document.querySelector('.selected');
+        if (previouslySelected) {
+          previouslySelected.classList.remove('selected');
+        }
+        element.classList.add('selected');
       }
 
       function trackElement(event) {
