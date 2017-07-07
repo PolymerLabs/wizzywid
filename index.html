@@ -10,11 +10,11 @@
 
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
-    <link rel="import" href="bower_components/polymer/lib/elements/dom-repeat.html">
     <link rel="import" href="elements/app-shell.html">
     <link rel="import" href="elements/element-styles.html">
     <link rel="import" href="elements/element-flex.html">
     <link rel="import" href="elements/element-properties.html">
+    <link rel="import" href="elements/tree-view.html">
 
     <custom-style>
     <style>
@@ -52,7 +52,6 @@
         outline: none;
         opacity: 0.6;
       }
-      #treeContainer button,
       #elementsContainer button {
         background: transparent;
         border: none;
@@ -61,7 +60,6 @@
         padding: 4px 0;
         cursor: pointer;
       }
-      #treeContainer button:hover,
       #elementsContainer button:hover {
         color: #E91E63;
       }
@@ -71,24 +69,7 @@
         font-weight: bold;
         letter-spacing: 1px;
       }
-      #treeContainer button {
-        width: 100%;
-        text-align: left;
-      }
-      #treeContainer button:hover {
-        background: rgba(72,154,254,.2);
-      }
-      #treeContainer .tree-id {
-        font-style: italic;
-        color: #009688;
-      }
-      #treeContainer .tree-text {
-        color: #2196F3;
-      }
-      #treeContainer .selected {
-        background: rgba(72,154,254,.2);
-        outline: none;
-      }
+
       [hidden] {
         display: none !important;
       }
@@ -105,20 +86,9 @@
       <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <element-flex slot="flex" id="flexContainer"></element-flex>
-      <!-- todo: move this to an element -->
-      <div slot="tree" id="treeContainer">
-        <dom-repeat id="repeater">
-          <template>
-            <button onclick="findElement(event)"
-                data-index$="[[index]]"
-                style="padding-left:calc(14*[[item.level]]px">
-                <span class="tree-tag">[[item.tag]]</span>
-                <span class="tree-id">[[item.id]]</span>
-                <span class="tree-text">[[item.text]]</span>
-            </button>
-          </template>
-        </dom-repeat>
-      </div>
+
+      <tree-view slot="tree" id="treeView"></tree-view>
+
       <div slot="elements" id="elementsContainer">
         <span class="elements-title">Native elements</span>
         <button>input</button>

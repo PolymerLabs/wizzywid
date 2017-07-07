@@ -11,7 +11,7 @@ var nativeElementsWhitelist = ['div', 'input', 'button'];
 
 window.addEventListener('WebComponentsReady', function() {
   shell.activeElement = viewContainer;
-  recomputeTree();
+  treeView.recomputeTree(viewContainer);
 
   // Add a new element
   elementsContainer.addEventListener('click', addElement);
@@ -53,7 +53,7 @@ function finishCreatingElement(kind) {
   el.style.backgroundColor = 'white';
   el.textContent = kind;
   shell.updateActiveElement(el);
-  recomputeTree();
+  treeView.recomputeTree(viewContainer);
   displayElement();
   return el;
 }
@@ -61,35 +61,20 @@ function finishCreatingElement(kind) {
 function elementWasUpdated(event) {
   var detail = event.detail;
   shell.updateActiveElementValues(detail.type, detail.name, detail.value);
-  recomputeTree();
+  treeView.recomputeTree(viewContainer);
 }
 
 function displayElement() {
   var el = shell.activeElement ? shell.activeElement : viewContainer;
 
+  // Display its properties.
   propertiesContainer.display(el);
   stylesContainer.display(window.getComputedStyle(el));
   flexContainer.display(window.getComputedStyle(el));
 
-  // Find it in the tree.
-  var nodes = recomputeTree();
-  var buttons = treeContainer.querySelectorAll('button');
-  if (buttons.length !== nodes.length) {
-    return;
-  }
-
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i].ref === el) {
-      selectTreeElement(buttons[i]);
-      return;
-    }
-  }
-}
-
-function recomputeTree() {
-  var nodes = getChildren(viewContainer, 0);
-  repeater.items = nodes;
-  return nodes;
+  // Highlight it in the tree.
+  treeView.recomputeTree(viewContainer);
+  treeView.highlight(el);
 }
 
 function getChildren(parent, level) {
@@ -106,23 +91,6 @@ function getChildren(parent, level) {
     nodes = nodes.concat(getChildren(child, level + 1));
   }
   return nodes;
-}
-
-function findElement(event) {
-  selectTreeElement(event.currentTarget);
-
-  var index = event.currentTarget.dataset.index;
-  var el = repeater.items[index].ref;
-  shell.updateActiveElement(el);
-  displayElement();
-}
-
-function selectTreeElement(element) {
-  var previouslySelected = document.querySelector('.selected');
-  if (previouslySelected) {
-    previouslySelected.classList.remove('selected');
-  }
-  element.classList.add('selected');
 }
 
 function trackElement(event) {
@@ -168,7 +136,7 @@ function trackElement(event) {
         window._dropTarget.appendChild(el);
         window._dropTarget.classList.remove('over');
         window._dropTarget = null;
-        recomputeTree();
+        treeView.recomputeTree(viewContainer);
       } else if (el.parentElement) {
         // If there's no drop target and the el used to be in a different
         // parent, move it to the main view.

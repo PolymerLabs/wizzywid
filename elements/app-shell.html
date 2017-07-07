@@ -1,7 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -18,128 +15,188 @@
       :host{
         display: block;
         box-sizing: border-box;
+        position: relative;
       }
+
       app-header {
-        background-color: #eeeeee;
-        color: black;
+        background-color: #373737;
+        color: white;
+        height: 60px;
+        width: 100%;
+        position: fixed;
+        z-index: 100;
       }
-      app-drawer {
-        width: 350px;
-        border-left: 1px solid silver;
+
+      app-header span {
+        margin-right: 8px;
       }
-      .drawer-contents {
-        text-align: left;
+
+      app-header paper-icon-button {
+        margin: 8px;
       }
-      .drawer-contents app-toolbar {
-        background-color: #eeeeee;
-        color: black;
-      }
+
       .separator {
         border-left: #656565 solid 1px;
         opacity: .8;
         height: 24px;
         margin: 8px;
       }
-      span, paper-icon-button {
-        margin: 8px;
+
+      .container {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
+        padding-top: 60px;
+        height: 100vh;
       }
+
+      .drawer {
+        width: 350px;
+        height: 100%;
+        overflow: auto;
+        background: white;
+        color: #5d5d5d;
+      }
+
+      .drawer.small {
+        width: 200px;
+      }
+
+      .main {
+        height: 100%;
+        overflow: auto;
+        display: flex;
+        flex-grow: 1;
+        border-left: 1px solid #e5e5e5;
+        border-right: 1px solid #e5e5e5;
+      }
+
+      .drawer-title {
+        padding: 14px 0;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        line-height: 1.5;
+        color: inherit;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
       iron-pages {
         padding: 8px 14px;
-      }
-      iron-pages.styles {
-        height: 300px;
         overflow: auto;
       }
+
       #codeContainer {
         height: 100%;
         width: 100%;
       }
+
       .button-code {
         transform: rotate(0deg);
       }
+      
       .button-code.active {
         transform: rotate(90deg);
       }
     </style>
 
-    <app-drawer-layout>
-      <app-drawer slot="drawer" id="drawer" align="right">
-        <div class="drawer-contents">
+    <app-header fixed scroll-target="scrollingRegion">
+      <app-toolbar>
+        <span title="it's like MSPaint but for Polymer apps">PolymerPaint</span>
+        <div class="separator"></div>
+        <paper-icon-button class="button-code" icon="designer:code" on-click="dump"></paper-icon-button>
+        <div class="separator"></div>
+        <!-- <paper-icon-button disabled icon="designer:save"></paper-icon-button>
+        <paper-icon-button disabled icon="designer:share"></paper-icon-button>
+        <paper-icon-button disabled icon="designer:launch"></paper-icon-button>
+        <div class="separator"></div> -->
+        <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
+        <paper-icon-button disabled icon="designer:redo"></paper-icon-button>
+      </app-toolbar>
+    </app-header>
+    <div class="container" id="scrollingRegion">
+      <div class="drawer small">
+        <!-- <designer-tabs attr-for-selected="name" selected="tree">
+          <designer-tab name="tree">
+            <button>tree</button>
+          </designer-tab>
+        </designer-tabs>
+        <slot name="tree"></slot> -->
+
+        <designer-tabs attr-for-selected="name" selected="{{elementsPage}}">
+          <designer-tab name="elements" selected>
+            <button>elements</button>
+          </designer-tab>
+          <designer-tab name="tree">
+            <button>tree</button>
+          </designer-tab>
+        </designer-tabs>
+        <iron-pages selected="[[elementsPage]]" attr-for-selected="name" selected-attribute="visible">
+          <div name="elements">
+            <slot name="elements"></slot>
+          </div>
+          <div name="tree">
+            <slot name="tree"></slot>
+          </div>
+        </iron-pages>
+      </div>
+
+      <div class="main" id="mainContainer">
+        <slot name="main"></slot>
+      </div>
+      <div class="main" id="codeContainer" hidden>
+        <slot name="code"></slot>
+      </div>
+
+      <div class="drawer">
+        <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
+          <designer-tab name="properties">
+            <button>properties</button>
+          </designer-tab>
+          <designer-tab name="styles">
+            <button>styles</button>
+          </designer-tab>
+          <designer-tab name="flex">
+            <button>flex</button>
+          </designer-tab>
+        </designer-tabs>
+        <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
+          <div name="properties">
+            <slot name="properties"></slot>
+          </div>
+          <div name="styles">
+            <slot name="styles"></slot>
+          </div>
+          <div name="flex">
+            <slot name="flex"></slot>
+          </div>
+        </iron-pages>
+      </div>
+    </div>
+
+        <!-- <div class="drawer-contents">
           <app-toolbar>
-            <!-- <paper-icon-button icon="designer:back"></paper-icon-button> -->
             <span>{{activeElementName}}</span>
-            <!-- <paper-icon-button icon="designer:fullscreen"></paper-icon-button>-->
             <paper-icon-button icon="designer:delete" on-click="deleteActiveElement"></paper-icon-button>
           </app-toolbar>
           <div>
-            <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
-              <designer-tab name="properties">
-                <button>properties</button>
-              </designer-tab>
-              <designer-tab name="styles">
-                <button>styles</button>
-              </designer-tab>
-              <designer-tab name="flex">
-                <button>flex</button>
-              </designer-tab>
-            </designer-tabs>
 
-            <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
-              <div name="properties">
-                <slot name="properties"></slot>
-              </div>
-              <div name="styles">
-                <slot name="styles"></slot>
-              </div>
-              <div name="flex">
-                <slot name="flex"></slot>
-              </div>
-            </iron-pages>
 
-            <designer-tabs attr-for-selected="name" selected="{{elementsPage}}">
-              <designer-tab name="elements" selected>
-                <button>elements</button>
-              </designer-tab>
-              <designer-tab name="tree">
-                <button>tree</button>
-              </designer-tab>
-            </designer-tabs>
-            <iron-pages selected="[[elementsPage]]" attr-for-selected="name" selected-attribute="visible">
-              <div name="elements">
-                <slot name="elements"></slot>
-              </div>
-              <div name="tree">
-                <slot name="tree"></slot>
-              </div>
-            </iron-pages>
+
           </div>
         </div>
-      </app-drawer>
-      <app-header-layout>
-        <app-header slot="header" fixed>
-          <app-toolbar>
-            <span title="it's like MSPaint but for Polymer">PolymerPaint</span>
-            <div class="separator"></div>
-            <paper-icon-button class="button-code" icon="designer:code" on-click="dump"></paper-icon-button>
-            <div class="separator"></div>
-            <!-- <paper-icon-button disabled icon="designer:save"></paper-icon-button>
-            <paper-icon-button disabled icon="designer:share"></paper-icon-button>
-            <paper-icon-button disabled icon="designer:launch"></paper-icon-button>
-            <div class="separator"></div> -->
-            <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
-            <paper-icon-button disabled icon="designer:redo"></paper-icon-button>
-            <div class="separator"></div>
-            <paper-icon-button icon="designer:drawer" onclick="drawer.toggle()"></paper-icon-button>
-          </app-toolbar>
-        </app-header>
+
+
+
         <div id="mainContainer">
           <slot name="main"></slot>
         </div>
         <div id="codeContainer" hidden>
           <slot name="code"></slot>
-        </div>
-      </app-header-layout>
-    </app-drawer-layout>
+        </div> -->
 
   </template>
   <script>
