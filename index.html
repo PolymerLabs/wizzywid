@@ -99,10 +99,7 @@
     <custom-style>
   </head>
   <body>
-
-
     <app-shell id="shell">
-
       <element-properties slot="properties" id="propertiesContainer"></element-properties>
       <element-styles slot="styles" id="stylesContainer"></element-styles>
       <element-flex slot="flex" id="flexContainer"></element-flex>
@@ -140,6 +137,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" type="text/javascript" charset="utf-8"></script>
 
     <script>
+      // TODO: ugh. refactor this.
       window.aceEditor = ace.edit("editor");
       window.aceEditor.setTheme("ace/theme/monokai");
       window.aceEditor.getSession().setMode("ace/mode/html");
