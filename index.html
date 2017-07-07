@@ -57,7 +57,7 @@
         border: none;
         font-size: inherit;
         display: block;
-        margin-bottom: 4px;
+        padding: 4px 0;
         cursor: pointer;
       }
       div:not(#viewContainer) button:hover {
@@ -72,6 +72,9 @@
       #treeContainer button {
         width: 100%;
         text-align: left;
+      }
+      #treeContainer button:hover {
+        background: rgba(72,154,254,.2);
       }
       #treeContainer .tree-id {
         font-style: italic;
@@ -128,6 +131,7 @@
 
       window.addEventListener('WebComponentsReady', function() {
         shell.activeElement = viewContainer;
+        recomputeTree();
 
         // Add a new element
         elementsContainer.addEventListener('click', addElement);
@@ -140,6 +144,7 @@
 
         document.addEventListener('element-updated', elementWasUpdated);
         Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
+
       });
 
       function addElement(event) {
