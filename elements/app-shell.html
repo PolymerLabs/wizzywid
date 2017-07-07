@@ -11,6 +11,7 @@
 <link rel="import" href="designer-tabs.html">
 <link rel="import" href="designer-tab.html">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
   <template>
     <style>
@@ -50,7 +51,8 @@
         overflow: auto;
       }
       #codeContainer {
-        padding: 20px;
+        height: 100%;
+        width: 100%;
       }
       .button-code {
         transform: rotate(0deg);
@@ -130,12 +132,11 @@
             <paper-icon-button icon="designer:drawer" onclick="drawer.toggle()"></paper-icon-button>
           </app-toolbar>
         </app-header>
-
         <div id="mainContainer">
           <slot name="main"></slot>
         </div>
-        <div id="codeContainer">
-          <pre><code id="code"></code></pre>
+        <div id="codeContainer" hidden>
+          <slot name="code"></slot>
         </div>
       </app-header-layout>
     </app-drawer-layout>
@@ -235,18 +236,6 @@
       }
 
       dump(event) {
-        var button = event.target;
-
-        if (event.target.classList.contains('active')) {
-          event.target.classList.remove('active');
-          this.$.mainContainer.hidden = false;
-          this.$.codeContainer.hidden = true;
-        } else {
-          event.target.classList.add('active');
-          this.$.mainContainer.hidden = true;
-          this.$.codeContainer.hidden = false;
-        }
-
         // Imports
         var imports = '';
         var template = '';
@@ -267,8 +256,7 @@
           style += this.dumpStyle(nodes[i], '      ');
         }
 
-        var boilerplate = `
-${imports}
+        var boilerplate = `${imports}
 <dom-module id="main-app">
   <template>
     <style>
@@ -290,11 +278,21 @@ ${template}
     customElements.define(MainApp.is, MainApp);
   &lt;/script>
 </dom-module>`;
+        boilerplate = boilerplate.replace(/&lt;/g, '<');
+        window.aceEditor.setValue(boilerplate);
+        window.aceEditor.clearSelection();
 
-        boilerplate = boilerplate.replace(/</g, '&lt;');
-        boilerplate = boilerplate.replace(/>/g, '&gt;');
-        console.log(boilerplate);
-        this.$.code.innerHTML = boilerplate;
+        var button = event.target;
+
+        if (event.target.classList.contains('active')) {
+          event.target.classList.remove('active');
+          this.$.mainContainer.hidden = false;
+          this.$.codeContainer.hidden = true;
+        } else {
+          event.target.classList.add('active');
+          this.$.mainContainer.hidden = true;
+          this.$.codeContainer.hidden = false;
+        }
       }
 
       dumpElement(node, indent) {
