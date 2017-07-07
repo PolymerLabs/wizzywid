@@ -1,5 +1,6 @@
 // TODO: ugh. refactor this.
 window.aceEditor = ace.edit("editor");
+window.aceEditor.setReadOnly(true);
 window.aceEditor.setTheme("ace/theme/monokai");
 window.aceEditor.getSession().setMode("ace/mode/html");
 window.aceEditor.$blockScrolling = Infinity;
