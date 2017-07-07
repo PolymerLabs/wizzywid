@@ -64,6 +64,5 @@
   },
   "_source": "https://github.com/PolymerElements/iron-selector.git",
   "_target": "^2.0.0",
-  "_originalSource": "PolymerElements/iron-selector",
-  "_direct": true
+  "_originalSource": "PolymerElements/iron-selector"
 }
