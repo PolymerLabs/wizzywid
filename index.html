@@ -328,6 +328,11 @@
         var size = el.getBoundingClientRect();
         stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
+
+      function updateCode(code) {
+        window.aceEditor.setValue(code);
+        window.aceEditor.clearSelection();
+      }
     </script>
   </body>
 </html>

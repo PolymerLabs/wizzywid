@@ -241,17 +241,19 @@
         var template = '';
         var style = '';
 
+        // Host styles.
+        var hostCss = viewContainer.style.cssText.replace(/;/g, `;\n       `).trim();
+        var bonusHost = `        ${hostCss}`;
+
+        // Children styles.
         var nodes = viewContainer.children;
         var indent = '    ';
-
         for (var i = 0; i < nodes.length; i++) {
           // Add to the import if needed.
           var tag = nodes[i].tagName.toLowerCase();
           if (tag.indexOf('-') !== -1 && imports.indexOf(`${tag}.html`) === -1) {
             imports += this.dumpImports(tag, '') + '\n';
           }
-
-          // The HTML bit.
           template += this.dumpElement(nodes[i], indent) + '\n';
           style += this.dumpStyle(nodes[i], '      ');
         }
@@ -265,6 +267,7 @@
         width: 100%;
         height: 100%;
         box-sizing: border-box;
+${bonusHost}
       }
 ${style}
     </style>
@@ -279,20 +282,9 @@ ${template}
   &lt;/script>
 </dom-module>`;
         boilerplate = boilerplate.replace(/&lt;/g, '<');
-        window.aceEditor.setValue(boilerplate);
-        window.aceEditor.clearSelection();
+        window.updateCode(boilerplate);
 
-        var button = event.target;
-
-        if (event.target.classList.contains('active')) {
-          event.target.classList.remove('active');
-          this.$.mainContainer.hidden = false;
-          this.$.codeContainer.hidden = true;
-        } else {
-          event.target.classList.add('active');
-          this.$.mainContainer.hidden = true;
-          this.$.codeContainer.hidden = false;
-        }
+        this.toggleMainView(event.target);
       }
 
       dumpElement(node, indent) {
@@ -316,16 +308,19 @@ ${indent}}
       dumpImports(tag, indent) {
         return `${indent}<link rel="import" href="../${tag}/${tag}.html">`;
       }
-      //
-      // dumpChildren(node, indent) {
-      //   var children = '';
-      //   var indent = indent || '';
-      //   Array.prototype.forEach.call(node.children, function(c) {
-      //     children += this.dumpTag(c, indent);
-      //   }, this);
-      //   return children || (indent + '\n');
-      // }
 
+      toggleMainView(button) {
+        var showMain = button.classList.contains('active');
+
+        if (showMain) {
+          button.classList.remove('active');
+        } else {
+          button.classList.add('active');
+        }
+
+        this.$.mainContainer.hidden = !showMain;
+        this.$.codeContainer.hidden = showMain;
+      }
 
     }
     customElements.define(AppShell.is, AppShell);
