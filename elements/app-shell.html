@@ -89,15 +89,10 @@
         overflow: auto;
       }
 
-      #codeContainer {
-        height: 100%;
-        width: 100%;
-      }
-
       .button-code {
         transform: rotate(0deg);
       }
-      
+
       .button-code.active {
         transform: rotate(90deg);
       }
@@ -176,27 +171,6 @@
         </iron-pages>
       </div>
     </div>
-
-        <!-- <div class="drawer-contents">
-          <app-toolbar>
-            <span>{{activeElementName}}</span>
-            <paper-icon-button icon="designer:delete" on-click="deleteActiveElement"></paper-icon-button>
-          </app-toolbar>
-          <div>
-
-
-
-          </div>
-        </div>
-
-
-
-        <div id="mainContainer">
-          <slot name="main"></slot>
-        </div>
-        <div id="codeContainer" hidden>
-          <slot name="code"></slot>
-        </div> -->
 
   </template>
   <script>
