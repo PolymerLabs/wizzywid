@@ -231,33 +231,33 @@
         var style = 'div {}';
 
         var nodes = viewContainer.children;
-        var indent = '      ';
+        var indent = '    ';
         for (var i = 0; i < nodes.length; i++) {
           // Add to the import if needed.
           var tag = nodes[i].tagName.toLowerCase();
           if (tag.indexOf('-') !== -1 && imports.indexOf(`${tag}.html`) === -1) {
-            imports += this.dumpImports(tag, '  ') + '\n';
+            imports += this.dumpImports(tag, '') + '\n';
           }
           template += this.dumpElement(nodes[i], indent) + '\n';
         }
 
         var boilerplate = `
 ${imports}
-  <dom-module id="main-app">
-    <template>
-      <style>
-      ${hostStyle}
-      ${style}
-      </style>
+<dom-module id="main-app">
+  <template>
+    <style>
+${hostStyle}
+${style}
+    </style>
 
 ${template}
-    </template>
-    <script>
-      class MainApp extends Polymer.Element {
-        static get is() { return 'main-app'; }
-      }
-      customElements.define(MainApp.is, MainApp);
-    &lt;/script>
+  </template>
+  <script>
+    class MainApp extends Polymer.Element {
+      static get is() { return 'main-app'; }
+    }
+    customElements.define(MainApp.is, MainApp);
+  &lt;/script>
 </dom-module>`;
 
         boilerplate = boilerplate.replace(/</g, '&lt;');
