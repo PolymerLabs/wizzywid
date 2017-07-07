@@ -171,11 +171,6 @@
           }
           this.activeElement.style[name] = value;
         } else {
-          // We're displaying the id
-          if (name === 'id') {
-            this.computeActiveElementName();
-          }
-
           if (value === 'true') {
             this.activeElement[name] = true;
           } else if (value === 'false') {
@@ -186,6 +181,11 @@
             }
           } else {
             this.activeElement[name] = value;
+          }
+
+          // We're displaying the id, so update it in the title bar.
+          if (name === 'id') {
+            this.computeActiveElementName();
           }
         }
       }

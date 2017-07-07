@@ -177,6 +177,7 @@
       function elementWasUpdated(event) {
         var detail = event.detail;
         shell.updateActiveElementValues(detail.type, detail.name, detail.value);
+        recomputeTree();
       }
 
       function displayElement() {
