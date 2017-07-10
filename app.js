@@ -23,10 +23,21 @@ window.addEventListener('WebComponentsReady', function() {
 });
 
 function addNewElement(el) {
+  // Give it a unique ID.
+  var tag = el.tagName.toLowerCase();
+  var newId = makeUniqueId(el, tag.replace('-', '_'));
+  el.id = newId;
   viewContainer.appendChild(el);
   shell.updateActiveElement(el);
   treeView.recomputeTree(viewContainer);
   displayElement();
+}
+
+function makeUniqueId(node, id, suffix) {
+  var uId = id + (suffix || '');
+  return viewContainer.querySelector('#' + uId) ?
+    this.makeUniqueId(node, id, suffix ? ++suffix : 1) :
+      uId;
 }
 
 function elementWasUpdated(event) {
