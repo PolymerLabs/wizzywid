@@ -114,7 +114,8 @@
         }
 
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
-          this.importHref(this.resolveURL(`../bower_components/${kind}/${kind}.html`), function(e) {
+          var url = `../bower_components/${kind}/${kind}.html`;
+          Polymer.Base.importHref(url, function(e) {
             this.finishCreatingElement(kind);
           }.bind(this));
         } else {
