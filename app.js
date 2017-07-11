@@ -33,10 +33,7 @@ function updateHistory(action, node, detail) {
   var topItem = undoHistory[undoHistory.length - 1];
 
   if (topItem && item.action === topItem.action &&
-      item.detail.type === topItem.detail.type &&
-      item.detail.name === topItem.detail.name &&
-      item.detail.oldValue === topItem.detail.oldValue &&
-      item.detail.newValue === topItem.detail.newValue) {
+      JSON.stringify(item) === JSON.stringify(topItem)) {
     console.log('choosing not to add a dupe');
     return;
   }
@@ -59,16 +56,15 @@ function undoAction() {
   var item = undoHistory.pop();
   var detail = item.detail;
   redoHistory.push(item);
+  updateButtons();
 
   if (item.action === 'update') {
     shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
     displayElement();
-    updateButtons();
   } else if (item.action === 'new') {
     // Delete the item.
     viewContainer.removeChild(item.node);
     updateActiveElement(viewContainer);
-    updateButtons();
   } else if (item.action === 'delete') {
     // If the node is the viewContainer, the `type` property contains the old innerHTML
     if (item.node.id === 'viewContainer') {
@@ -78,7 +74,9 @@ function undoAction() {
       detail.parent.appendChild(item.node);
     }
     updateActiveElement(item.node);
-    updateButtons();
+  } else if (item.action === 'move') {
+    item.node.style.left = detail.oldLeft;
+    item.node.style.top = detail.oldTop;
   }
 }
 
@@ -87,16 +85,15 @@ function redoAction() {
   var item = redoHistory.pop();
   var detail = item.detail;
   undoHistory.push(item);
+  updateButtons();
 
   if (item.action === 'update') {
     shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
     displayElement();
-    updateButtons();
   } else if (item.action === 'new') {
     // Re-add the item to the parent.
     viewContainer.appendChild(item.node);
     updateActiveElement(item.node);
-    updateButtons();
   } else if (item.action === 'delete') {
     // If the node is the viewContainer, clear its inner HTML.
     if (item.node.id === 'viewContainer') {
@@ -106,7 +103,9 @@ function redoAction() {
       updateActiveElement(item.node.parentElement);
       item.node.parentElement.removeChild(item.node);
     }
-    updateButtons();
+  } else if (item.action === 'move') {
+    item.node.style.left = detail.newLeft;
+    item.node.style.top = detail.newTop;
   }
 }
 
@@ -225,11 +224,13 @@ function trackElement(event) {
         viewContainer.appendChild(el);
       }
       var parent = el.parentElement.getBoundingClientRect();
+
+      var oldLeft = el.style.left;
+      var oldTop = el.style.top;
       el.style.left = local.left - parent.left + 'px';
       el.style.top = local.top - parent.top + 'px';
-
-      //updateHistory('move', shell.activeElement, detail.type, detail.name, detail.value, oldValue);
-
+      updateHistory('move', shell.activeElement,
+          {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop});
 
       el.classList.remove('dragging');
       el.style.transform = el.style.webkitTransform = 'none';
