@@ -231,20 +231,14 @@
       }
 
       deleteActiveElement() {
-        // Deleting the whole app should remove the children I guess.
-        if (this.activeElement.id === 'viewContainer') {
-          this.activeElement.innerHTML = '';
-        } else {
-          this.activeElement.parentElement.removeChild(this.activeElement);
-          this.activeElement = null;
-        }
-        this.computeActiveElementName();
-
         var newEvent = new Event('delete-element', {
           bubbles: true,
           cancelable: false,
           composed: true
         });
+        newEvent.detail = {
+          target: this.activeElement
+        };
         this.dispatchEvent(newEvent);
       }
 

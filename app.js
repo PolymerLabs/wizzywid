@@ -11,7 +11,7 @@ window.addEventListener('WebComponentsReady', function() {
 
   // New/Delete/Edit an element.
   document.addEventListener('new-element', addNewElement);
-  document.addEventListener('delete-element', displayElement);
+  document.addEventListener('delete-element', deleteElement);
   document.addEventListener('element-updated', elementWasUpdated);
 
   document.addEventListener('update-code', function(event) {
@@ -71,6 +71,17 @@ function undoAction() {
     viewContainer.removeChild(item.node);
     updateActiveElement(viewContainer);
     updateButtons();
+  } else if (item.action === 'delete') {
+    // TODO: should probably be less gross and not re-use properties like this.
+    // If the node is the viewContainer, the `type` property contains the old innerHTML
+    if (item.node.id === 'viewContainer') {
+      item.node.innerHTML = item.type;
+    } else {
+      // The `type` property contains the original parent.
+      item.node.type.appendChild(item.node);
+    }
+    updateActiveElement(item.node);
+    updateButtons();
   }
 }
 
@@ -84,9 +95,19 @@ function redoAction() {
     displayElement();
     updateButtons();
   } else if (item.action === 'new') {
-    // Readd the item to the parent.
+    // Re-add the item to the parent.
     viewContainer.appendChild(item.node);
     updateActiveElement(item.node);
+    updateButtons();
+  } else if (item.action === 'delete') {
+    // If the node is the viewContainer, clear its inner HTML.
+    if (item.node.id === 'viewContainer') {
+      item.node.innerHTML = '';
+      updateActiveElement(viewContainer);
+    } else {
+      updateActiveElement(item.node.parent);
+      item.node.parent.removeChild(item.node);
+    }
     updateButtons();
   }
 }
@@ -103,6 +124,21 @@ function addNewElement(event) {
     el.click();
   });
   updateHistory('new', el);
+}
+
+function deleteElement(event) {
+  var el = event.detail.target;
+
+  // Deleting the whole app should remove the children I guess.
+  if (el.id === 'viewContainer') {
+    updateHistory('delete', el, el.innerHTML);
+    el.innerHTML = '';
+    updateActiveElement(el);
+  } else {
+    el.parentElement.removeChild(el);
+    updateActiveElement(el.parentElement);
+    updateHistory('delete', el, el.parentElement);
+  }
 }
 
 function makeUniqueId(node, id, suffix) {
