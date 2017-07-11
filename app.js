@@ -58,28 +58,35 @@ function undoAction() {
   redoHistory.push(item);
   updateButtons();
 
-  if (item.action === 'update') {
-    shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
-    displayElement();
-  } else if (item.action === 'new') {
-    // Delete the item.
-    viewContainer.removeChild(item.node);
-    updateActiveElement(viewContainer);
-  } else if (item.action === 'delete') {
-    // If the node is the viewContainer, the `type` property contains the old innerHTML
-    if (item.node.id === 'viewContainer') {
-      item.node.innerHTML = detail.innerHTML;
-    } else {
-      // The `type` property contains the original parent.
-      detail.parent.appendChild(item.node);
-    }
-    updateActiveElement(item.node);
-  } else if (item.action === 'move') {
-    item.node.style.left = detail.oldLeft;
-    item.node.style.top = detail.oldTop;
-  } else if (item.action === 'reparent') {
-    detail.newParent.removeChild(item.node);
-    detail.oldParent.appendChild(item.node);
+  switch(item.action) {
+    case 'update':
+        shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
+        displayElement();
+        break;
+    case 'new':
+        viewContainer.removeChild(item.node);
+        updateActiveElement(viewContainer);
+        break;
+    case 'delete':
+        // If the node is the viewContainer, the `type` property contains the old innerHTML
+        if (item.node.id === 'viewContainer') {
+          item.node.innerHTML = detail.innerHTML;
+        } else {
+          // The `type` property contains the original parent.
+          detail.parent.appendChild(item.node);
+        }
+        updateActiveElement(item.node);
+        break;
+    case 'move':
+        item.node.style.left = detail.oldLeft;
+        item.node.style.top = detail.oldTop;
+        updateActiveElement(item.node);
+        break;
+    case 'reparent':
+        detail.newParent.removeChild(item.node);
+        detail.oldParent.appendChild(item.node);
+        updateActiveElement(item.node);
+        break;
   }
 }
 
@@ -90,28 +97,36 @@ function redoAction() {
   undoHistory.push(item);
   updateButtons();
 
-  if (item.action === 'update') {
-    shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
-    displayElement();
-  } else if (item.action === 'new') {
-    // Re-add the item to the parent.
-    viewContainer.appendChild(item.node);
-    updateActiveElement(item.node);
-  } else if (item.action === 'delete') {
-    // If the node is the viewContainer, clear its inner HTML.
-    if (item.node.id === 'viewContainer') {
-      item.node.innerHTML = '';
-      updateActiveElement(viewContainer);
-    } else {
-      updateActiveElement(item.node.parentElement);
-      item.node.parentElement.removeChild(item.node);
-    }
-  } else if (item.action === 'move') {
-    item.node.style.left = detail.newLeft;
-    item.node.style.top = detail.newTop;
-  } else if (item.action === 'reparent') {
-    detail.oldParent.removeChild(item.node);
-    detail.newParent.appendChild(item.node);
+  switch(item.action) {
+    case 'update':
+        updateActiveElement(item.node);
+        shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
+        updateActiveElement(item.node);
+        break;
+    case 'new':
+        viewContainer.appendChild(item.node);
+        updateActiveElement(item.node);
+        break;
+    case 'delete':
+        // If the node is the viewContainer, clear its inner HTML.
+        if (item.node.id === 'viewContainer') {
+          item.node.innerHTML = '';
+          updateActiveElement(viewContainer);
+        } else {
+          updateActiveElement(item.node.parentElement);
+          item.node.parentElement.removeChild(item.node);
+        }
+        break;
+    case 'move':
+        item.node.style.left = detail.newLeft;
+        item.node.style.top = detail.newTop;
+        updateActiveElement(item.node);
+        break;
+    case 'reparent':
+        detail.oldParent.removeChild(item.node);
+        detail.newParent.appendChild(item.node);
+        updateActiveElement(item.node);
+        break;
   }
 }
 
