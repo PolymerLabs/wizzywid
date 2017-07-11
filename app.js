@@ -77,6 +77,9 @@ function undoAction() {
   } else if (item.action === 'move') {
     item.node.style.left = detail.oldLeft;
     item.node.style.top = detail.oldTop;
+  } else if (item.action === 'reparent') {
+    detail.newParent.removeChild(item.node);
+    detail.oldParent.appendChild(item.node);
   }
 }
 
@@ -106,6 +109,9 @@ function redoAction() {
   } else if (item.action === 'move') {
     item.node.style.left = detail.newLeft;
     item.node.style.top = detail.newTop;
+  } else if (item.action === 'reparent') {
+    detail.oldParent.removeChild(item.node);
+    detail.newParent.appendChild(item.node);
   }
 }
 
@@ -213,13 +219,16 @@ function trackElement(event) {
 
       // Does this need to be added to a new parent?
       if (window._dropTarget) {
+        var oldParent = el.parentElement;
         el.parentElement.removeChild(el);
         window._dropTarget.appendChild(el);
         window._dropTarget.classList.remove('over');
+        updateHistory('reparent', el, {newParent: window._dropTarget, oldParent: oldParent});
         window._dropTarget = null;
       } else if (el.parentElement) {
         // If there's no drop target and the el used to be in a different
         // parent, move it to the main view.
+        updateHistory('reparent', el, {newParent: viewContainer, oldParent: el.parentElement});
         el.parentElement.removeChild(el);
         viewContainer.appendChild(el);
       }
@@ -229,7 +238,7 @@ function trackElement(event) {
       var oldTop = el.style.top;
       el.style.left = local.left - parent.left + 'px';
       el.style.top = local.top - parent.top + 'px';
-      updateHistory('move', shell.activeElement,
+      updateHistory('move', el,
           {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop});
 
       el.classList.remove('dragging');
