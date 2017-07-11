@@ -66,6 +66,11 @@ function undoAction() {
     shell.updateActiveElementValues(item.type, item.name, item.oldValue);
     displayElement();
     updateButtons();
+  } else if (item.action === 'new') {
+    // Delete the item.
+    viewContainer.removeChild(item.node);
+    updateActiveElement(viewContainer);
+    updateButtons();
   }
 }
 
@@ -77,6 +82,11 @@ function redoAction() {
   if (item.action === 'update') {
     shell.updateActiveElementValues(item.type, item.name, item.newValue);
     displayElement();
+    updateButtons();
+  } else if (item.action === 'new') {
+    // Readd the item to the parent.
+    viewContainer.appendChild(item.node);
+    updateActiveElement(item.node);
     updateButtons();
   }
 }
@@ -92,7 +102,7 @@ function addNewElement(event) {
   requestAnimationFrame(function() {
     el.click();
   });
-
+  updateHistory('new', el);
 }
 
 function makeUniqueId(node, id, suffix) {
