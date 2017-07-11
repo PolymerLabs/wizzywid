@@ -33,7 +33,7 @@ function updateHistory(action, node, detail) {
   var topItem = undoHistory[undoHistory.length - 1];
 
   if (topItem && item.action === topItem.action &&
-      JSON.stringify(item) === JSON.stringify(topItem)) {
+      JSON.stringify(item.detail) === JSON.stringify(topItem.detail)) {
     console.log('choosing not to add a dupe');
     return;
   }
