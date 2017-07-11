@@ -21,25 +21,22 @@ window.addEventListener('WebComponentsReady', function() {
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
 
-function updateHistory(action, node, type, name, newValue, oldValue) {
+function updateHistory(action, node, detail) {
   // Don't try to add two identical items since that looks weird.
   // TODO: figure out why you get double actions sometimes.
   var item = {
     action: action,
     node: node,
-    type: type,
-    name: name,
-    oldValue: oldValue,
-    newValue: newValue
+    detail: detail
   };
 
   var topItem = undoHistory[undoHistory.length - 1];
 
   if (topItem && item.action === topItem.action &&
-      item.type === topItem.type &&
-      item.name === topItem.name &&
-      item.oldValue === topItem.oldValue &&
-      item.newValue === topItem.newValue) {
+      item.detail.type === topItem.detail.type &&
+      item.detail.name === topItem.detail.name &&
+      item.detail.oldValue === topItem.detail.oldValue &&
+      item.detail.newValue === topItem.detail.newValue) {
     console.log('choosing not to add a dupe');
     return;
   }
@@ -60,10 +57,11 @@ function updateButtons() {
 function undoAction() {
   // Take the top action off the undo stack and move it to the redo stack.
   var item = undoHistory.pop();
+  var detail = item.detail;
   redoHistory.push(item);
 
   if (item.action === 'update') {
-    shell.updateActiveElementValues(item.type, item.name, item.oldValue);
+    shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
     displayElement();
     updateButtons();
   } else if (item.action === 'new') {
@@ -72,13 +70,12 @@ function undoAction() {
     updateActiveElement(viewContainer);
     updateButtons();
   } else if (item.action === 'delete') {
-    // TODO: should probably be less gross and not re-use properties like this.
     // If the node is the viewContainer, the `type` property contains the old innerHTML
     if (item.node.id === 'viewContainer') {
-      item.node.innerHTML = item.type;
+      item.node.innerHTML = detail.innerHTML;
     } else {
       // The `type` property contains the original parent.
-      item.node.type.appendChild(item.node);
+      detail.parent.appendChild(item.node);
     }
     updateActiveElement(item.node);
     updateButtons();
@@ -88,10 +85,11 @@ function undoAction() {
 function redoAction() {
   // Take the top action off the redo stack and move it to the undo stack.
   var item = redoHistory.pop();
+  var detail = item.detail;
   undoHistory.push(item);
 
   if (item.action === 'update') {
-    shell.updateActiveElementValues(item.type, item.name, item.newValue);
+    shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
     displayElement();
     updateButtons();
   } else if (item.action === 'new') {
@@ -105,8 +103,8 @@ function redoAction() {
       item.node.innerHTML = '';
       updateActiveElement(viewContainer);
     } else {
-      updateActiveElement(item.node.parent);
-      item.node.parent.removeChild(item.node);
+      updateActiveElement(item.node.parentElement);
+      item.node.parentElement.removeChild(item.node);
     }
     updateButtons();
   }
@@ -131,13 +129,14 @@ function deleteElement(event) {
 
   // Deleting the whole app should remove the children I guess.
   if (el.id === 'viewContainer') {
-    updateHistory('delete', el, el.innerHTML);
+    updateHistory('delete', el, {innerHtml: el.innerHTML});
     el.innerHTML = '';
     updateActiveElement(el);
   } else {
-    el.parentElement.removeChild(el);
-    updateActiveElement(el.parentElement);
-    updateHistory('delete', el, el.parentElement);
+    var parent = el.parentElement
+    parent.removeChild(el);
+    updateActiveElement(parent);
+    updateHistory('delete', el, {parent: parent});
   }
 }
 
@@ -152,7 +151,8 @@ function elementWasUpdated(event) {
   var detail = event.detail;
   var oldValue = shell.updateActiveElementValues(detail.type, detail.name, detail.value);
   treeView.recomputeTree(viewContainer, shell.activeElement);
-  updateHistory('update', shell.activeElement, detail.type, detail.name, detail.value, oldValue);
+  updateHistory('update', shell.activeElement,
+      {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
 }
 
 function updateActiveElement(el) {
@@ -227,6 +227,9 @@ function trackElement(event) {
       var parent = el.parentElement.getBoundingClientRect();
       el.style.left = local.left - parent.left + 'px';
       el.style.top = local.top - parent.top + 'px';
+
+      //updateHistory('move', shell.activeElement, detail.type, detail.name, detail.value, oldValue);
+
 
       el.classList.remove('dragging');
       el.style.transform = el.style.webkitTransform = 'none';
