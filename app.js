@@ -1,11 +1,3 @@
-// TODO: ugh. refactor this.
-aceEditor = ace.edit("editor");
-aceEditor.setReadOnly(true);
-aceEditor.setTheme("ace/theme/monokai");
-aceEditor.getSession().setMode("ace/mode/html");
-aceEditor.$blockScrolling = Infinity;
-aceEditor.setOptions({fontSize: "14px"});
-
 var grid = 10;
 
 window.addEventListener('WebComponentsReady', function() {
@@ -21,10 +13,10 @@ window.addEventListener('WebComponentsReady', function() {
   document.addEventListener('delete-element', displayElement);
   document.addEventListener('element-updated', elementWasUpdated);
 
-  viewContainer.addEventListener('update-code', function() {
-    aceEditor.setValue(code);
-    aceEditor.clearSelection();
-  });
+
+  document.addEventListener('update-code', function(event) {
+    codeView.update(event.detail.code);
+  }, true);
 
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });

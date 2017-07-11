@@ -15,6 +15,7 @@
     <link rel="import" href="elements/element-flex.html">
     <link rel="import" href="elements/element-properties.html">
     <link rel="import" href="elements/tree-view.html">
+    <link rel="import" href="elements/code-view.html">
 
     <custom-style>
     <style>
@@ -23,6 +24,12 @@
         font-family: 'Roboto', 'Noto', sans-serif;
         line-height: 1.5;
         background-color: white;
+      }
+
+      code-view {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
       }
 
       .main {
@@ -54,12 +61,6 @@
       [hidden] {
         display: none !important;
       }
-      #editor {
-        box-sizing: border-box;
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-      }
     </style>
     <custom-style>
   </head>
@@ -72,7 +73,7 @@
       <element-flex slot="flex" id="flexContainer"></element-flex>
 
       <div class="main" slot="main" id="viewContainer"></div>
-      <div id="editor" slot="code"></div>
+      <code-view id="codeView" slot="code"></code-view>
     </app-shell>
 
     <noscript>

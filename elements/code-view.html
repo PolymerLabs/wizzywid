@@ -1,0 +1,46 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="code-view">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #__editor {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+    </style>
+    <div id="__editor"></div>
+  </template>
+  <script>
+    class CodeView extends Polymer.Element {
+      static get is() { return 'code-view'; }
+
+      // Yeah so Ace editor doesn't work with shadow roots because
+      // it probably does a document.getElementById in the edit function.
+      _attachDom(dom) {
+        return this.appendChild(dom);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._aceEditor = ace.edit('__editor');
+        this._aceEditor.setReadOnly(true);
+        this._aceEditor.setTheme("ace/theme/monokai");
+        this._aceEditor.getSession().setMode("ace/mode/html");
+        this._aceEditor.$blockScrolling = Infinity;
+        this._aceEditor.setOptions({fontSize: "14px"});
+      }
+
+      update(code) {
+        this._aceEditor.setValue(code);
+        this._aceEditor.clearSelection();
+      }
+    }
+    customElements.define(CodeView.is, CodeView);
+  </script>
+</dom-module>
