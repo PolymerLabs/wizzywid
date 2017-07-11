@@ -8,7 +8,7 @@
         ready() {
           super.ready();
           this._recomputeStuff();
-          this.root.addEventListener('input', this._do.bind(this));
+          this.root.addEventListener('change', this._do.bind(this));
         }
 
         _recomputeStuff() {
