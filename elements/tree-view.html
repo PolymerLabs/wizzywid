@@ -54,9 +54,11 @@
     class TreeView extends Polymer.Element {
       static get is() { return 'tree-view'; }
 
-      recomputeTree(parent) {
+      recomputeTree(parent, active) {
         var nodes = this.getChildren(parent, 0);
         this.$.repeater.items = nodes;
+        Polymer.flush();
+        this.highlight(active);
         return nodes;
       }
 

@@ -81,7 +81,6 @@ function redoAction() {
   }
 }
 
-
 function addNewElement(event) {
   var el = event.detail.target;
   // Give it a unique ID.
@@ -89,7 +88,11 @@ function addNewElement(event) {
   var newId = makeUniqueId(el, tag.replace('-', '_'));
   el.id = newId;
   viewContainer.appendChild(el);
-  updateActiveElement(el);
+  // You need the item to render first.
+  requestAnimationFrame(function() {
+    el.click();
+  });
+
 }
 
 function makeUniqueId(node, id, suffix) {
@@ -102,8 +105,7 @@ function makeUniqueId(node, id, suffix) {
 function elementWasUpdated(event) {
   var detail = event.detail;
   var oldValue = shell.updateActiveElementValues(detail.type, detail.name, detail.value);
-  treeView.recomputeTree(viewContainer);
-
+  treeView.recomputeTree(viewContainer, shell.activeElement);
   updateHistory('update', shell.activeElement, detail.type, detail.name, detail.value, oldValue);
 }
 
@@ -123,8 +125,7 @@ function displayElement() {
   flexContainer.display(window.getComputedStyle(el));
 
   // Highlight it in the tree.
-  treeView.recomputeTree(viewContainer);
-  treeView.highlight(el);
+  treeView.recomputeTree(viewContainer, shell.activeElement);
 }
 
 function trackElement(event) {
