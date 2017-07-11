@@ -334,7 +334,8 @@ ${this._template.trimRight()}
       dumpStyle(node, indent) {
         var tag = node.tagName.toLowerCase();
         var css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
-        return `${indent}${tag} {
+        var id = node.id ? '#' + node.id : '';
+        return `${indent}${tag}${id} {
 ${indent}  ${css}
 ${indent}}
 `

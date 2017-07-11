@@ -59,22 +59,6 @@ function displayElement() {
   treeView.highlight(el);
 }
 
-function getChildren(parent, level) {
-  var isViewContainer = parent.id === 'viewContainer';
-  var nodes = [
-    { tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
-      id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
-      text: isViewContainer ? '' : '"' + parent.textContent + '"',
-      level: level,
-      ref: parent}
-    ];
-  for (var i = 0; i < parent.children.length; i++) {
-    var child = parent.children[i];
-    nodes = nodes.concat(getChildren(child, level + 1));
-  }
-  return nodes;
-}
-
 function trackElement(event) {
   var el = event.target;
   if (el.id === 'viewContainer') {
