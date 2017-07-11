@@ -9,28 +9,34 @@ aceEditor.setOptions({fontSize: "14px"});
 var grid = 10;
 
 window.addEventListener('WebComponentsReady', function() {
-  shell.activeElement = viewContainer;
-  treeView.recomputeTree(viewContainer);
+  updateActiveElement(viewContainer.target);
 
-  // Focus an element
+  // Focus an element.
   viewContainer.addEventListener('click', function() {
-    shell.updateActiveElement(event.target);
-    displayElement();
+    updateActiveElement(event.target);
   });
 
+  // New/Delete/Edit an element.
+  document.addEventListener('new-element', addNewElement);
+  document.addEventListener('delete-element', displayElement);
   document.addEventListener('element-updated', elementWasUpdated);
+
+  viewContainer.addEventListener('update-code', function() {
+    aceEditor.setValue(code);
+    aceEditor.clearSelection();
+  });
+
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
 
-function addNewElement(el) {
+function addNewElement(event) {
+  var el = event.detail.target;
   // Give it a unique ID.
   var tag = el.tagName.toLowerCase();
   var newId = makeUniqueId(el, tag.replace('-', '_'));
   el.id = newId;
   viewContainer.appendChild(el);
-  shell.updateActiveElement(el);
-  treeView.recomputeTree(viewContainer);
-  displayElement();
+  updateActiveElement(el);
 }
 
 function makeUniqueId(node, id, suffix) {
@@ -44,6 +50,13 @@ function elementWasUpdated(event) {
   var detail = event.detail;
   shell.updateActiveElementValues(detail.type, detail.name, detail.value);
   treeView.recomputeTree(viewContainer);
+}
+
+function updateActiveElement(el) {
+  if (el !== shell.activeElement) {
+    shell.updateActiveElement(el);
+  }
+  displayElement();
 }
 
 function displayElement() {
@@ -102,7 +115,6 @@ function trackElement(event) {
         window._dropTarget.appendChild(el);
         window._dropTarget.classList.remove('over');
         window._dropTarget = null;
-        treeView.recomputeTree(viewContainer);
       } else if (el.parentElement) {
         // If there's no drop target and the el used to be in a different
         // parent, move it to the main view.
@@ -117,15 +129,7 @@ function trackElement(event) {
       el.style.transform = el.style.webkitTransform = 'none';
       break;
   }
-  if (el !== shell.activeElement) {
-    shell.updateActiveElement(el);
-  }
-  displayElement();
+  updateActiveElement(el)
   var size = el.getBoundingClientRect();
   stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
-}
-
-function updateCode(code) {
-  window.aceEditor.setValue(code);
-  window.aceEditor.clearSelection();
 }

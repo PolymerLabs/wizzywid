@@ -136,7 +136,15 @@
         el.style.backgroundColor = 'white';
         el.textContent = kind;
 
-        window.addNewElement(el);
+        var newEvent = new Event('new-element', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        newEvent.detail = {
+          target: el
+        };
+        this.dispatchEvent(newEvent);
         return el;
       }
     }

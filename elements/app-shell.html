@@ -233,9 +233,13 @@
           this.activeElement = null;
         }
         this.computeActiveElementName();
-        // TODO: ew.
-        window.displayElement();
-        window.recomputeTree();
+
+        var newEvent = new Event('delete-element', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        this.dispatchEvent(newEvent);
       }
 
       // TODO: ugh, this can probably be better.
@@ -287,8 +291,16 @@ ${this._template.trimRight()}
   &lt;/script>
 </dom-module>`;
         boilerplate = boilerplate.replace(/&lt;/g, '<');
-        window.updateCode(boilerplate);
 
+        var newEvent = new Event('update-code', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        newEvent.detail = {
+          code: boilerplate
+        };
+        this.dispatchEvent(newEvent);
         this.toggleMainView(event.target);
       }
 

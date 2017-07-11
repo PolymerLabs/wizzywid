@@ -83,10 +83,7 @@
         // Find the actual element it points to.
         var index = item.dataset.index;
         var el = this.$.repeater.items[index].ref;
-
-        // This is still gross.
-        window.shell.updateActiveElement(el);
-        window.displayElement();
+        el.click();
       }
 
       selectTreeElement(item) {
