@@ -107,8 +107,8 @@
 
         <paper-icon-button class="button-code" icon="designer:code" on-click="viewCode"></paper-icon-button>
         <div class="separator"></div>
-        <paper-icon-button disabled icon="designer:undo"></paper-icon-button>
-        <paper-icon-button disabled icon="designer:redo"></paper-icon-button>
+        <paper-icon-button id="undoBtn" disabled icon="designer:undo" on-click="undo"></paper-icon-button>
+        <paper-icon-button id="redoBtn" disabled icon="designer:redo" on-click="redo"></paper-icon-button>
       </app-toolbar>
     </app-header>
     <div class="container" id="scrollingRegion">
@@ -193,7 +193,10 @@
         this.computeActiveElementName();
       }
 
+
       updateActiveElementValues(type, name, value) {
+        var previousValue;
+
         if (type === 'style') {
           // If we switch to flexbox, automatically reposition the children
           if (name === 'display' && value === 'flex') {
@@ -203,8 +206,10 @@
               children[i].style.top = children[i].style.left = 'auto';
             }
           }
+          previousValue = this.activeElement.style[name];
           this.activeElement.style[name] = value;
         } else {
+          previousValue = this.activeElement[name];
           if (value === 'true') {
             this.activeElement[name] = true;
           } else if (value === 'false') {
@@ -222,6 +227,7 @@
             this.computeActiveElementName();
           }
         }
+        return previousValue;
       }
 
       deleteActiveElement() {
@@ -276,6 +282,20 @@
 
         this.$.mainContainer.hidden = !showMain;
         this.$.codeContainer.hidden = showMain;
+      }
+
+      updateUndoButton(length) {
+        this.$.undoBtn.disabled = (length === 0);
+      }
+      updateRedoButton(length) {
+        this.$.redoBtn.disabled = (length === 0);
+      }
+      // TODO: fix this obviously.
+      undo() {
+        window.undoAction();
+      }
+      redo() {
+        window.redoAction();
       }
 
     }

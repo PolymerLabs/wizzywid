@@ -1,4 +1,5 @@
-var grid = 10;
+window.undoHistory = [];
+window.redoHistory = [];
 
 window.addEventListener('WebComponentsReady', function() {
   updateActiveElement(viewContainer.target);
@@ -20,6 +21,67 @@ window.addEventListener('WebComponentsReady', function() {
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
 
+function updateHistory(action, node, type, name, newValue, oldValue) {
+  // Don't try to add two identical items since that looks weird.
+  // TODO: figure out why you get double actions sometimes.
+  var item = {
+    action: action,
+    node: node,
+    type: type,
+    name: name,
+    oldValue: oldValue,
+    newValue: newValue
+  };
+
+  var topItem = undoHistory[undoHistory.length - 1];
+
+  if (topItem && item.action === topItem.action &&
+      item.type === topItem.type &&
+      item.name === topItem.name &&
+      item.oldValue === topItem.oldValue &&
+      item.newValue === topItem.newValue) {
+    console.log('choosing not to add a dupe');
+    return;
+  }
+
+  undoHistory.push(item);
+  // A new item in the undo stack means you have nothing to redo.
+  redoHistory = [];
+  updateButtons();
+}
+
+function updateButtons() {
+  console.log('undo', undoHistory);
+  console.log('redo', redoHistory);
+  shell.updateUndoButton(undoHistory.length);
+  shell.updateRedoButton(redoHistory.length);
+}
+
+function undoAction() {
+  // Take the top action off the undo stack and move it to the redo stack.
+  var item = undoHistory.pop();
+  redoHistory.push(item);
+
+  if (item.action === 'update') {
+    shell.updateActiveElementValues(item.type, item.name, item.oldValue);
+    displayElement();
+    updateButtons();
+  }
+}
+
+function redoAction() {
+  // Take the top action off the redo stack and move it to the undo stack.
+  var item = redoHistory.pop();
+  undoHistory.push(item);
+
+  if (item.action === 'update') {
+    shell.updateActiveElementValues(item.type, item.name, item.newValue);
+    displayElement();
+    updateButtons();
+  }
+}
+
+
 function addNewElement(event) {
   var el = event.detail.target;
   // Give it a unique ID.
@@ -39,8 +101,10 @@ function makeUniqueId(node, id, suffix) {
 
 function elementWasUpdated(event) {
   var detail = event.detail;
-  shell.updateActiveElementValues(detail.type, detail.name, detail.value);
+  var oldValue = shell.updateActiveElementValues(detail.type, detail.name, detail.value);
   treeView.recomputeTree(viewContainer);
+
+  updateHistory('update', shell.activeElement, detail.type, detail.name, detail.value, oldValue);
 }
 
 function updateActiveElement(el) {
@@ -75,8 +139,9 @@ function trackElement(event) {
       el.classList.add('active');
       break;
     case 'track':
-      window._trackx = Math.round(event.detail.dx / grid) * grid;
-      window._tracky = Math.round(event.detail.dy / grid) * grid;
+      // Grid is 10.
+      window._trackx = Math.round(event.detail.dx / 10) * 10;
+      window._tracky = Math.round(event.detail.dy / 10) * 10;
       el.style.transform = el.style.webkitTransform =
         'translate(' + _trackx + 'px, ' + _tracky + 'px)';
 
@@ -120,7 +185,7 @@ function trackElement(event) {
       el.style.transform = el.style.webkitTransform = 'none';
       break;
   }
-  updateActiveElement(el)
+  updateActiveElement(el);
   var size = el.getBoundingClientRect();
   stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
 }
