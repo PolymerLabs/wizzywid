@@ -40,6 +40,99 @@
         this._aceEditor.setValue(code);
         this._aceEditor.clearSelection();
       }
+
+      dump(parent) {
+        // Imports
+        this._imports = '';
+        this._template = '';
+        this._style = '';
+
+        // Host styles.
+        var hostCss = parent.style.cssText.replace(/;/g, `;\n       `).trim();
+        var bonusHost = `        ${hostCss}`;
+
+        this.dumpChildren(parent, '    ');
+
+        var boilerplate = `${this._imports.trimRight()}
+<dom-module id="main-app">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+${bonusHost.trimRight()}
+      }
+${this._style.trimRight()}
+    </style>
+${this._template.trimRight()}
+  </template>
+  <script>
+    class MainApp extends Polymer.Element {
+      static get is() { return 'main-app'; }
+    }
+    customElements.define(MainApp.is, MainApp);
+  &lt;/script>
+</dom-module>`;
+        boilerplate = boilerplate.replace(/&lt;/g, '<');
+        this.update(boilerplate);
+      }
+
+      dumpChildren(parent, indent) {
+        var nodes = parent.children;
+
+        for (var i = 0; i < nodes.length; i++) {
+          // Add to the import if needed.
+          var tag = nodes[i].tagName.toLowerCase();
+          if (tag.indexOf('-') !== -1 && this._imports.indexOf(`${tag}.html`) === -1) {
+            this._imports += this.dumpImports(tag, '') + '\n';
+          }
+          this._style += this.dumpStyle(nodes[i], '      ');
+
+          if (nodes[i].children.length !== 0) {
+            this._template += this.dumpElementStartTag(nodes[i], indent) + '\n';
+            this.dumpChildren(nodes[i], indent + '  ') + '\n';
+            this._template += this.dumpElementEndTag(nodes[i], indent) + '\n';
+          } else {
+            this._template += this.dumpElement(nodes[i], indent) + '\n';
+          }
+        }
+      }
+
+      dumpElement(node, indent) {
+        var tag = node.tagName.toLowerCase();
+        var id = node.id ? ` id="${node.id}"` : '';
+        var text = node.textContent || '';
+        return tag === 'input' ?
+            `${indent}<${tag}${id}>` :
+            `${indent}<${tag}${id}>${text}</${tag}>`
+      }
+
+      dumpElementStartTag(node, indent) {
+        var tag = node.tagName.toLowerCase();
+        var id = node.id ? ` id="${node.id}"` : '';
+        return `${indent}<${tag}${id}>`;
+      }
+
+      dumpElementEndTag(node, indent) {
+        var tag = node.tagName.toLowerCase();
+        return `${indent}</${tag}>`;
+      }
+
+      dumpStyle(node, indent) {
+        var tag = node.tagName.toLowerCase();
+        var css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
+        var id = node.id ? '#' + node.id : '';
+        return `${indent}${tag}${id} {
+${indent}  ${css}
+${indent}}
+`
+      }
+
+      dumpImports(tag, indent) {
+        return `${indent}<link rel="import" href="../${tag}/${tag}.html">`;
+      }
     }
     customElements.define(CodeView.is, CodeView);
   </script>

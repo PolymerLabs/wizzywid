@@ -13,9 +13,8 @@ window.addEventListener('WebComponentsReady', function() {
   document.addEventListener('delete-element', displayElement);
   document.addEventListener('element-updated', elementWasUpdated);
 
-
   document.addEventListener('update-code', function(event) {
-    codeView.update(event.detail.code);
+    codeView.dump(viewContainer);
   }, true);
 
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
