@@ -39,6 +39,9 @@
         text-align: center;
         margin: 8px;
       }
+      app-header button[disabled] {
+        opacity: 0.3;
+      }
 
       .separator {
         border-left: #656565 solid 1px;
@@ -113,11 +116,11 @@
           <span>Code</span>
         </button>
         <div class="separator"></div>
-        <button on-click="undo" id="undoBtn">
+        <button on-click="undo" id="undoBtn" disabled>
           <iron-icon icon="designer:undo"></iron-icon>
           <span>Undo</span>
         </button>
-        <button on-click="redo" id="redoBtn">
+        <button on-click="redo" id="redoBtn" disabled>
           <iron-icon icon="designer:redo"></iron-icon>
           <span>Redo</span>
         </button>
