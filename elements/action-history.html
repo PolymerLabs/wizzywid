@@ -119,11 +119,9 @@
       }
 
       updateButtons() {
-        console.log(this.undoHistory);
         shell.updateUndoButton(this.undoHistory.length);
         shell.updateRedoButton(this.redoHistory.length);
       }
-
     }
     customElements.define(ActionHistory.is, ActionHistory);
   </script>

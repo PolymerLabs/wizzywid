@@ -156,7 +156,7 @@ function trackElement(event) {
         window._dropTarget.classList.remove('over');
         actionHistory.update('reparent', el, {newParent: window._dropTarget, oldParent: oldParent});
         window._dropTarget = null;
-      } else if (el.parentElement) {
+      } else if (el.parentElement && (el.parentElement !== viewContainer)) {
         // If there's no drop target and the el used to be in a different
         // parent, move it to the main view.
         actionHistory.update('reparent', el, {newParent: viewContainer, oldParent: el.parentElement});
