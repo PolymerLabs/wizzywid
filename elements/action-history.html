@@ -49,12 +49,12 @@
 
         switch(item.action) {
           case 'update':
-              updateActiveElement(item.node);
+              item.node.click();
               shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
               break;
           case 'new':
               viewContainer.removeChild(item.node);
-              updateActiveElement(viewContainer);
+              viewContainer.click();
               break;
           case 'delete':
               // If the node is the viewContainer, the `type` property contains the old innerHTML
@@ -64,17 +64,17 @@
                 // The `type` property contains the original parent.
                 detail.parent.appendChild(item.node);
               }
-              updateActiveElement(item.node);
+              item.node.click();
               break;
           case 'move':
               item.node.style.left = detail.oldLeft;
               item.node.style.top = detail.oldTop;
-              updateActiveElement(item.node);
+              item.node.click();
               break;
           case 'reparent':
               detail.newParent.removeChild(item.node);
               detail.oldParent.appendChild(item.node);
-              updateActiveElement(item.node);
+              item.node.click();
               break;
         }
       }
@@ -88,37 +88,38 @@
 
         switch(item.action) {
           case 'update':
-              updateActiveElement(item.node);
+              item.node.click();
               shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
               break;
           case 'new':
               viewContainer.appendChild(item.node);
-              updateActiveElement(item.node);
+              item.node.click();
               break;
           case 'delete':
               // If the node is the viewContainer, clear its inner HTML.
               if (item.node.id === 'viewContainer') {
                 item.node.innerHTML = '';
-                updateActiveElement(viewContainer);
+                viewContainer.click();
               } else {
-                updateActiveElement(item.node.parentElement);
+                item.node.parentElement.click();
                 item.node.parentElement.removeChild(item.node);
               }
               break;
           case 'move':
               item.node.style.left = detail.newLeft;
               item.node.style.top = detail.newTop;
-              updateActiveElement(item.node);
+              item.node.click();
               break;
           case 'reparent':
               detail.oldParent.removeChild(item.node);
               detail.newParent.appendChild(item.node);
-              updateActiveElement(item.node);
+              item.node.click();
               break;
         }
       }
 
       updateButtons() {
+        console.log(this.undoHistory);
         shell.updateUndoButton(this.undoHistory.length);
         shell.updateRedoButton(this.redoHistory.length);
       }
