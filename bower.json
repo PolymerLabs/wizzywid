@@ -17,7 +17,11 @@
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.0",
     "iron-selector": "PolymerElements/iron-selector#^2.0.0",
     "iron-pages": "PolymerElements/iron-pages#^2.0.0",
+    "paper-cascading-menu": "polymerelements/paper-cascading-menu#initial-implementation",
     "paper-input": "PolymerElements/paper-input#^2.0.1",
-    "paper-button": "PolymerElements/paper-button#^2.0.0"
+    "paper-button": "PolymerElements/paper-button#^2.0.0",
+  },
+  "resolutions": {
+    "paper-cascading-menu": "initial-implementation"
   }
 }
