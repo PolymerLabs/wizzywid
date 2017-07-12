@@ -1,8 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="app-icons.html">
 <link rel="import" href="designer-tabs.html">
@@ -28,11 +28,15 @@
         z-index: 100;
       }
 
-      app-header span {
+      app-header .app-title {
         margin-right: 8px;
       }
 
-      app-header paper-icon-button {
+      app-header button {
+        color: white;
+        background: transparent;
+        border: none;
+        text-align: center;
         margin: 8px;
       }
 
@@ -101,14 +105,22 @@
 
     <app-header fixed scroll-target="scrollingRegion">
       <app-toolbar>
-        <span title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
+        <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
         <div class="separator"></div>
         <elements-view></elements-view>
-
-        <paper-icon-button class="button-code" icon="designer:code" on-click="viewCode"></paper-icon-button>
+        <button on-click="viewCode">
+          <iron-icon class="button-code" icon="designer:code"></iron-icon>
+          <span>Code</span>
+        </button>
         <div class="separator"></div>
-        <paper-icon-button id="undoBtn" disabled icon="designer:undo" on-click="undo"></paper-icon-button>
-        <paper-icon-button id="redoBtn" disabled icon="designer:redo" on-click="redo"></paper-icon-button>
+        <button on-click="undo" id="undoBtn">
+          <iron-icon icon="designer:undo"></iron-icon>
+          <span>Undo</span>
+        </button>
+        <button on-click="redo" id="redoBtn">
+          <iron-icon icon="designer:redo"></iron-icon>
+          <span>Redo</span>
+        </button>
       </app-toolbar>
     </app-header>
     <div class="container" id="scrollingRegion">
