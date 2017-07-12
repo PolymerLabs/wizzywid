@@ -119,32 +119,21 @@
             this.finishCreatingElement(kind);
           }.bind(this));
         } else {
-          var el = this.finishCreatingElement(kind);
-          if (kind === 'div') {
-            el.style.height = el.style.width = '200px';
-            el.style.backgroundColor = '#CDDC39';
-          }
+            this.finishCreatingElement(kind);
         }
       }
 
       finishCreatingElement(kind) {
         this.hideAllMenus();
-
-        var el = document.createElement(kind);
-        el.style.position = 'absolute';
-        el.style.left = el.style.top = '20px';
-        //el.textContent = kind;
-
         var newEvent = new Event('new-element', {
           bubbles: true,
           cancelable: false,
           composed: true
         });
         newEvent.detail = {
-          target: el
+          type: kind
         };
         this.dispatchEvent(newEvent);
-        return el;
       }
     }
     customElements.define(ElementsView.is, ElementsView);

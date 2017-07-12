@@ -131,12 +131,29 @@ function redoAction() {
 }
 
 function addNewElement(event) {
-  var el = event.detail.target;
+  var tag = event.detail.type.toLowerCase();
+  var el = document.createElement(tag);
+  el.style.position = 'absolute';
+  el.style.left = el.style.top = '20px';
+
   // Give it a unique ID.
-  var tag = el.tagName.toLowerCase();
   var newId = makeUniqueId(el, tag.replace('-', '_'));
   el.id = newId;
   viewContainer.appendChild(el);
+
+  // TODO: what should happen with named slots?
+  var slots = el.root ? el.root.querySelectorAll('slot:not([name])') : [];
+  // TODO: fix this and make it less this and more something else.
+  if (tag === 'div') {
+    el.style.height = el.style.width = '200px';
+    el.style.backgroundColor = '#CDDC39';
+    el.textContent = 'div';
+  } else if (tag === 'input') {
+    el.placeholder = 'input';
+  } else if (tag === 'button' || slots.length != 0) {
+    el.textContent = tag;
+  }
+
   // You need the item to render first.
   requestAnimationFrame(function() {
     el.click();
