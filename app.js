@@ -237,8 +237,12 @@ function trackElement(event) {
       for (var i = 0; i < targets.length; i++) {
         var t = targets[i];
         t.classList.remove('over');
+
+        var slots = t.root ? t.root.querySelectorAll('slot:not([name])') : [];
+        var canDrop = t.tagName === 'DIV' || t.tagName === 'BUTTON' || slots.length !== 0;
         var b = t.getBoundingClientRect();
-        if (me.left > b.left && me.left < b.left + b.width &&
+        if (canDrop &&
+            me.left > b.left && me.left < b.left + b.width &&
             me.top > b.top && me.top < b.top + b.height) {
           t.classList.add('over');
           window._dropTarget = t;
