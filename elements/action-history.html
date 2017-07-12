@@ -1,0 +1,129 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="action-history">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+
+  </template>
+  <script>
+    class ActionHistory extends Polymer.Element {
+      static get is() { return 'action-history'; }
+      ready() {
+        this.undoHistory = [];
+        this.redoHistory = [];
+      }
+
+      update(action, node, detail) {
+        // Don't try to add two identical items since that looks weird.
+        // TODO: figure out why you get double actions sometimes.
+        var item = {
+          action: action,
+          node: node,
+          detail: detail
+        };
+
+        var topItem = this.undoHistory[this.undoHistory.length - 1];
+
+        if (topItem && item.action === topItem.action &&
+            JSON.stringify(item.detail) === JSON.stringify(topItem.detail)) {
+          console.log('choosing not to add a dupe');
+          return;
+        }
+
+        this.undoHistory.push(item);
+        // A new item in the undo stack means you have nothing to redo.
+        this.redoHistory = [];
+        this.updateButtons();
+      }
+
+      undo() {
+        // Take the top action off the undo stack and move it to the redo stack.
+        var item = this.undoHistory.pop();
+        var detail = item.detail;
+        this.redoHistory.push(item);
+        this.updateButtons();
+
+        switch(item.action) {
+          case 'update':
+              updateActiveElement(item.node);
+              shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
+              break;
+          case 'new':
+              viewContainer.removeChild(item.node);
+              updateActiveElement(viewContainer);
+              break;
+          case 'delete':
+              // If the node is the viewContainer, the `type` property contains the old innerHTML
+              if (item.node.id === 'viewContainer') {
+                item.node.innerHTML = detail.innerHTML;
+              } else {
+                // The `type` property contains the original parent.
+                detail.parent.appendChild(item.node);
+              }
+              updateActiveElement(item.node);
+              break;
+          case 'move':
+              item.node.style.left = detail.oldLeft;
+              item.node.style.top = detail.oldTop;
+              updateActiveElement(item.node);
+              break;
+          case 'reparent':
+              detail.newParent.removeChild(item.node);
+              detail.oldParent.appendChild(item.node);
+              updateActiveElement(item.node);
+              break;
+        }
+      }
+
+      redo() {
+        // Take the top action off the redo stack and move it to the undo stack.
+        var item = this.redoHistory.pop();
+        var detail = item.detail;
+        this.undoHistory.push(item);
+        this.updateButtons();
+
+        switch(item.action) {
+          case 'update':
+              updateActiveElement(item.node);
+              shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
+              break;
+          case 'new':
+              viewContainer.appendChild(item.node);
+              updateActiveElement(item.node);
+              break;
+          case 'delete':
+              // If the node is the viewContainer, clear its inner HTML.
+              if (item.node.id === 'viewContainer') {
+                item.node.innerHTML = '';
+                updateActiveElement(viewContainer);
+              } else {
+                updateActiveElement(item.node.parentElement);
+                item.node.parentElement.removeChild(item.node);
+              }
+              break;
+          case 'move':
+              item.node.style.left = detail.newLeft;
+              item.node.style.top = detail.newTop;
+              updateActiveElement(item.node);
+              break;
+          case 'reparent':
+              detail.oldParent.removeChild(item.node);
+              detail.newParent.appendChild(item.node);
+              updateActiveElement(item.node);
+              break;
+        }
+      }
+
+      updateButtons() {
+        shell.updateUndoButton(this.undoHistory.length);
+        shell.updateRedoButton(this.redoHistory.length);
+      }
+
+    }
+    customElements.define(ActionHistory.is, ActionHistory);
+  </script>
+</dom-module>

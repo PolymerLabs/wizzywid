@@ -284,12 +284,20 @@
       updateRedoButton(length) {
         this.$.redoBtn.disabled = (length === 0);
       }
-      // TODO: fix this obviously.
+
       undo() {
-        window.undoAction();
+        this.dispatchEvent(new Event('undo', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }));
       }
       redo() {
-        window.redoAction();
+        this.dispatchEvent(new Event('redo', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }));
       }
 
     }
