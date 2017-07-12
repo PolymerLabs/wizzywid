@@ -44,14 +44,14 @@
     </style>
     <paper-cascading-menu-bar id="menu">
       <paper-cascading-option>
-        <button class="insert">
+        <button class="nope insert">
           <iron-icon icon="designer:insert"></iron-icon>
           <span>Insert</span>
         </button>
 
         <paper-cascading-menu slot="menu" narrow>
           <paper-cascading-option>
-            <button>Native elements</button>
+            <button class="nope">Native elements</button>
             <paper-cascading-menu narrow slot="menu">
               <button>input</button>
               <button>div</button>
@@ -60,7 +60,7 @@
           </paper-cascading-option>
 
           <paper-cascading-option>
-            <button>Paper elements</button>
+            <button class="nope">Paper elements</button>
             <paper-cascading-menu narrow slot="menu">
               <button>paper-input</button>
               <button>paper-button</button>
@@ -83,7 +83,7 @@
       addElement(event) {
         var target = event.path[0];
         var kind = target.textContent;
-        if (target.tagName !== 'BUTTON' || target.classList.contains('toggle')) {
+        if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
           return;
         }
 
