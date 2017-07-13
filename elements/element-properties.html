@@ -55,7 +55,11 @@
         // Element's prototype chain properties.
         this.$.bonus.innerHTML = '';
 
-        this.doProtoProperties(target);
+        var proto = target.__proto__;
+        while (proto.constructor.name !== 'Node') {
+          this.doProtoProperties(target, proto);
+          proto = proto.__proto__;
+        }
       }
 
       doBasicProperties(target) {
@@ -81,9 +85,8 @@
         }
       }
 
-      doProtoProperties(target) {
+      doProtoProperties(target, proto) {
         // Start walking up the prototype chain to get the things.
-        var proto = target.__proto__;
 
         var constructorName = document.createElement('div');
         constructorName.textContent = proto.constructor.name;
@@ -106,7 +109,8 @@
           if (name.charAt(0) === '_' ||
               name === 'keyEventTarget' ||
               blacklist.indexOf(name) !== -1 ||
-              name.indexOf('webkit') === 0) {
+              name.indexOf('webkit') === 0 ||
+              name.indexOf('on') === 0) {
             continue;
           }
 
