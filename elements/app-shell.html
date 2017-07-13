@@ -38,6 +38,7 @@
         border: none;
         text-align: center;
         margin: 8px;
+        cursor: pointer;
       }
       app-header button[disabled] {
         opacity: 0.3;
@@ -97,11 +98,11 @@
         overflow: auto;
       }
 
-      .button-code {
+      button.button-code iron-icon {
         transform: rotate(0deg);
       }
 
-      .button-code.active {
+      button.button-code.active iron-icon {
         transform: rotate(90deg);
       }
     </style>
@@ -111,8 +112,8 @@
         <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
         <div class="separator"></div>
         <elements-view></elements-view>
-        <button on-click="viewCode">
-          <iron-icon class="button-code" icon="designer:code"></iron-icon>
+        <button on-click="viewCode" class="button-code">
+          <iron-icon icon="designer:code"></iron-icon>
           <span>Code</span>
         </button>
         <div class="separator"></div>
@@ -277,7 +278,7 @@
           composed: true
         });
         this.dispatchEvent(newEvent);
-        this.toggleMainView(event.target);
+        this.toggleMainView(event.currentTarget);
       }
 
       toggleMainView(button) {
