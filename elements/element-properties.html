@@ -45,6 +45,20 @@
 
       display(target) {
         // Native properties.
+        this.doBasicProperties(target);
+
+        // If this is the top level div, we don't want any other properties shows.
+        if (target.id === 'viewContainer') {
+          return;
+        }
+
+        // Element's prototype chain properties.
+        this.$.bonus.innerHTML = '';
+
+        this.doProtoProperties(target);
+      }
+
+      doBasicProperties(target) {
         for (var i = 0; i < this._stuff.length; i++) {
           var prop = this._stuff[i];
           var el = this.root.querySelector(`[name=${prop}]`);
@@ -65,17 +79,12 @@
             el.value = target[prop];
           }
         }
+      }
 
-        // If this is the top level div, we don't want any other properties shows.
-        if (target.id === 'viewContainer') {
-          return;
-        }
-
-        // Custom properties, oh boy. Let the hacks begin.
-        this.$.bonus.innerHTML = '';
-
+      doProtoProperties(target) {
         // Start walking up the prototype chain to get the things.
         var proto = target.__proto__;
+
         var constructorName = document.createElement('div');
         constructorName.textContent = proto.constructor.name;
         this.$.bonus.appendChild(constructorName);
@@ -101,10 +110,8 @@
             continue;
           }
 
-          var prop = classProps[name];
-
           // Skip everything that doesn't have a setter.
-          if (!prop.set) {
+          if (!classProps[name].set) {
             continue;
           }
 
