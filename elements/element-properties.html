@@ -26,6 +26,8 @@
     <input name="textContent">
     <label>id</label>
     <input name="id">
+    <label>slot</label>
+    <input name="slot">
     <label>className</label>
     <input name="className">
     <label>attributes</label>
@@ -56,7 +58,7 @@
         this.$.bonus.innerHTML = '';
 
         var proto = target.__proto__;
-        while (proto.constructor.name !== 'Node') {
+        while (proto.constructor.name !== 'HTMLElement') {
           this.doProtoProperties(target, proto);
           proto = proto.__proto__;
         }

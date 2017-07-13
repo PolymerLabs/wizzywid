@@ -36,8 +36,7 @@ function addNewElement(event) {
   el.id = newId;
   viewContainer.appendChild(el);
 
-  // TODO: what should happen with named slots?
-  var slots = el.root ? el.root.querySelectorAll('slot:not([name])') : [];
+  var slots = el.root ? el.root.querySelectorAll('slot') : [];
   // TODO: fix this and make it less this and more something else.
   if (tag === 'div') {
     el.style.height = el.style.width = '200px';
@@ -133,7 +132,7 @@ function trackElement(event) {
         var t = targets[i];
         t.classList.remove('over');
 
-        var slots = t.root ? t.root.querySelectorAll('slot:not([name])') : [];
+        var slots = t.root ? t.root.querySelectorAll('slot') : [];
         var canDrop = t.tagName === 'DIV' || t.tagName === 'BUTTON' || slots.length !== 0;
         var b = t.getBoundingClientRect();
         if (canDrop &&
