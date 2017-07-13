@@ -47,11 +47,13 @@
         cursor: pointer;
       }
 
-      .main > *:hover {
+      .main > *:hover:not(.active) {
         outline: solid 2px rgba(66, 87, 203, 0.4) !important;
+        outline-offset: 4px;
       }
       .active {
         outline: solid 2px rgba(66, 87, 203, 0.8) !important;
+        outline-offset: 4px;
       }
       .dragging {
         opacity: 0.6;
