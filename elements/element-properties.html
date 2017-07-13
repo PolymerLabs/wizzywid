@@ -58,7 +58,7 @@
         this.$.bonus.innerHTML = '';
 
         var proto = target.__proto__;
-        while (proto.constructor.name !== 'HTMLElement') {
+        while (proto.constructor.name !== 'Element') {
           this.doProtoProperties(target, proto);
           proto = proto.__proto__;
         }
