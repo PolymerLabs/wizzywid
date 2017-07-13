@@ -54,14 +54,16 @@
           return;
         }
 
-        // Element's prototype chain properties.
+        // Start walking up the prototype chain to get all the props it has.
         this.$.bonus.innerHTML = '';
 
         var proto = target.__proto__;
+        var protoProps = {};
         while (proto.constructor.name !== 'Element') {
-          this.doProtoProperties(target, proto);
+          Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
           proto = proto.__proto__;
         }
+        this.doProtoProperties(target, protoProps);
       }
 
       doBasicProperties(target) {
@@ -87,15 +89,19 @@
         }
       }
 
-      doProtoProperties(target, proto) {
-        // Start walking up the prototype chain to get the things.
-        var classProps = Object.getOwnPropertyDescriptors(proto);
+      doProtoProperties(target, classProps) {
         var propNames = Object.keys(classProps).sort();
 
         // Skip some very Polymer specific ones
-        var blacklist = ['constructor', 'created', 'ready', 'attached', 'detached',
+        var blacklist = [
+            // Polymer specific
+            'constructor', 'created', 'ready', 'attached', 'detached',
             'attributeChanged', 'is', 'listeners', 'observers', 'properties',
-            'validity', 'useMap', 'outerText', 'style'];
+            // Native elements ones we don't care about
+            'validity', 'useMap', 'outerText', 'style', 'accessKey',
+            // Spefic elements stuff
+            'receivedFocusFromKeyboard', 'pointerDown'
+            ];
 
         for (var i = 0; i < propNames.length; i++) {
           var name = propNames[i];
