@@ -89,18 +89,13 @@
 
       doProtoProperties(target, proto) {
         // Start walking up the prototype chain to get the things.
-
-        var constructorName = document.createElement('div');
-        constructorName.textContent = proto.constructor.name;
-        this.$.bonus.appendChild(constructorName);
-
         var classProps = Object.getOwnPropertyDescriptors(proto);
         var propNames = Object.keys(classProps).sort();
 
         // Skip some very Polymer specific ones
         var blacklist = ['constructor', 'created', 'ready', 'attached', 'detached',
             'attributeChanged', 'is', 'listeners', 'observers', 'properties',
-            'validity', 'useMap'];
+            'validity', 'useMap', 'outerText', 'style'];
 
         for (var i = 0; i < propNames.length; i++) {
           var name = propNames[i];
