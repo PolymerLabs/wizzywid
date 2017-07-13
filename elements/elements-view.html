@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-menu.html">
 <link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-menu-bar.html">
 <link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-option.html">
@@ -63,22 +65,40 @@
           <paper-cascading-option>
             <button class="nope">Paper elements</button>
             <paper-cascading-menu narrow slot="menu">
-              <button>paper-input</button>
-              <button>paper-button</button>
+
+              <dom-repeat items="[[elementNames]]">
+                <template>
+                  <button>[[item]]</button>
+                </template>
+              </dom-repeat>
+
             </paper-cascading-menu>
           </paper-cascading-option>
         </paper-cascading-menu>
       </paper-cascading-option>
     </paper-cascading-menu-bar>
+    <iron-ajax auto url="bower.json" handle-as="json" on-response="elementsReady"></iron-ajax>
   </template>
   <script>
     class ElementsView extends Polymer.Element {
       static get is() { return 'elements-view'; }
+      static get properties() {
+        return {
+          elementNames: {
+            type: Array
+          }
+        }
+      }
 
       ready() {
         super.ready();
         this.addEventListener('click', this.addElement.bind(this));
         this._nativeElementsWhitelist = ['div', 'input', 'button'];
+      }
+
+      elementsReady(event) {
+        var list = event.detail.response.devDependencies;
+        this.elementNames = Object.keys(list);
       }
 
       addElement(event) {
