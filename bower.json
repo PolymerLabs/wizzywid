@@ -12,14 +12,16 @@
     "polymer": "polymer/polymer#^2.0.0",
     "app-layout": "PolymerElements/app-layout#^2.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "iron-icon": "PolymerElements/iron-icon#^2.0.0",
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.0",
     "iron-selector": "PolymerElements/iron-selector#^2.0.0",
     "iron-pages": "PolymerElements/iron-pages#^2.0.0",
-    "iron-ajax": "PolymerElements/iron-ajax#^2.0.0",
-    "paper-cascading-menu": "polymerelements/paper-cascading-menu#initial-implementation"
+    "iron-ajax": "PolymerElements/iron-ajax#^2.0.0"
   },
   "devDependencies": {
+    "iron-icons": "PolymerElements/iron-icons#^2.0.0",
+    "iron-icon": "PolymerElements/iron-icon#^2.0.0",
     "paper-checkbox": "PolymerElements/paper-checkbox#*",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#*",
     "paper-input": "PolymerElements/paper-input#*",
@@ -40,10 +42,6 @@
     "paper-spinner": "PolymerElements/paper-spinner#*",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
     "paper-tabs": "PolymerElements/paper-tabs#*",
-    "paper-toolbar": "PolymerElements/paper-toolbar#*",
-    "paper-tooltip": "PolymerElements/paper-tooltip#*"
-  },
-  "resolutions": {
-    "paper-cascading-menu": "initial-implementation"
+    "paper-toolbar": "PolymerElements/paper-toolbar#*"
   }
 }
