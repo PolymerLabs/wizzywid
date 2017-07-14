@@ -10,6 +10,7 @@ window.addEventListener('WebComponentsReady', function() {
   document.addEventListener('new-element', addNewElement);
   document.addEventListener('delete-element', deleteElement);
   document.addEventListener('element-updated', elementWasUpdated);
+  document.addEventListener('fit-element', fitElement);
 
   document.addEventListener('update-code', function(event) {
     codeView.dump(viewContainer);
@@ -58,8 +59,9 @@ function addNewElement(event) {
 function deleteElement(event) {
   var el = event.detail.target;
 
-  if (!el)
+  if (!el) {
     return;
+  }
 
   // Deleting the whole app should remove the children I guess.
   if (el.id === 'viewContainer') {
@@ -72,6 +74,24 @@ function deleteElement(event) {
     updateActiveElement(parent);
     actionHistory.update('delete', el, {parent: parent});
   }
+}
+
+function fitElement(event) {
+  var el = event.detail.target;
+  if (!el || el.id === 'viewContainer') {
+    return;
+  }
+  actionHistory.update('fit', shell.activeElement,
+    {oldPosition: el.style.position,
+    newPosition: 'absolute',
+    oldLeft: el.style.left, oldTop: el.style.top,
+    newLeft: '0', newTop: '0',
+    oldWidth: el.style.width, oldHeight: el.style.height,
+    newWidth: '100%', newHeight: '100%'});
+
+  el.style.position = 'absolute';
+  el.style.left = el.style.top = '0px';
+  el.style.height = el.style.width = '100%';
 }
 
 function makeUniqueId(node, id, suffix) {

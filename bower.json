@@ -22,7 +22,6 @@
   "devDependencies": {
     "app-layout": "PolymerElements/app-layout#^2.0.0",
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
-
     "communication-icons.html": "PolymerElements/iron-icons#^2.0.0",
     "device-icons.html": "PolymerElements/iron-icons#^2.0.0",
     "editor-icons": "PolymerElements/iron-icons#^2.0.0",

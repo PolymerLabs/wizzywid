@@ -39,6 +39,10 @@
         cursor: pointer;
       }
 
+      .inline-button {
+        margin: 4px;
+      }
+
       app-header button {
         color: white;
         text-align: center;
@@ -109,12 +113,6 @@
       button.button-code.active iron-icon {
         transform: rotate(90deg);
       }
-
-      .horizontal {
-        display: flex;
-        flex-direction: row;
-        background-color: #efefef;
-      }
     </style>
 
     <app-header fixed scroll-target="scrollingRegion">
@@ -123,16 +121,25 @@
         <div class="separator"></div>
         <button on-click="viewCode" class="button-code">
           <iron-icon icon="designer:code"></iron-icon>
-          <span>Code</span>
+          <div>Code</div>
         </button>
         <div class="separator"></div>
         <button on-click="undo" id="undoBtn" disabled>
           <iron-icon icon="designer:undo"></iron-icon>
-          <span>Undo</span>
+          <div>Undo</div>
         </button>
         <button on-click="redo" id="redoBtn" disabled>
           <iron-icon icon="designer:redo"></iron-icon>
-          <span>Redo</span>
+          <div>Redo</div>
+        </button>
+        <div class="separator"></div>
+        <button on-click="deleteActiveElement">
+          <iron-icon icon="designer:delete"></iron-icon>
+          <div>Delete</div>
+        </button>
+        <button on-click="fitActiveElement">
+          <iron-icon icon="designer:fit"></iron-icon>
+          <div>Fit to parent</div>
         </button>
       </app-toolbar>
     </app-header>
@@ -164,20 +171,17 @@
       </div>
 
       <div class="drawer">
-        <div class="horizontal">
-          <button class="delete" on-click="deleteActiveElement"><iron-icon icon="designer:delete"><iron-icon></button>
-          <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
-            <designer-tab name="properties">
-              <button>properties</button>
-            </designer-tab>
-            <designer-tab name="styles">
-              <button>styles</button>
-            </designer-tab>
-            <designer-tab name="flex">
-              <button>flex</button>
-            </designer-tab>
-          </designer-tabs>
-        </div>
+        <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
+          <designer-tab name="properties">
+            <button>properties</button>
+          </designer-tab>
+          <designer-tab name="styles">
+            <button>styles</button>
+          </designer-tab>
+          <designer-tab name="flex">
+            <button>flex</button>
+          </designer-tab>
+        </designer-tabs>
         <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
           <div name="properties">
             <slot name="properties"></slot>
@@ -267,6 +271,18 @@
 
       deleteActiveElement() {
         var newEvent = new Event('delete-element', {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        newEvent.detail = {
+          target: this.activeElement
+        };
+        this.dispatchEvent(newEvent);
+      }
+
+      fitActiveElement() {
+        var newEvent = new Event('fit-element', {
           bubbles: true,
           cancelable: false,
           composed: true

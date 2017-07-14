@@ -76,6 +76,14 @@
               detail.oldParent.appendChild(item.node);
               item.node.click();
               break;
+          case 'fit':
+              item.node.style.left = detail.oldLeft;
+              item.node.style.top = detail.oldTop;
+              item.node.style.width = detail.oldWidth;
+              item.node.style.height = detail.oldHeight;
+              item.node.style.position = detail.oldPosition;
+              item.node.click();
+              break;
         }
       }
 
@@ -113,6 +121,14 @@
           case 'reparent':
               detail.oldParent.removeChild(item.node);
               detail.newParent.appendChild(item.node);
+              item.node.click();
+              break;
+          case 'fit':
+              item.node.style.left = detail.newLeft;
+              item.node.style.top = detail.newTop;
+              item.node.style.width = detail.newWidth;
+              item.node.style.height = detail.newHeight;
+              item.node.style.position = detail.newPosition;
               item.node.click();
               break;
         }
