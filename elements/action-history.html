@@ -88,6 +88,14 @@
               item.node.style.position = detail.oldPosition;
               item.node.click();
               break;
+          case 'move-back':
+              window.moveElementForward(item.node, false);
+              item.node.click();
+              break;
+          case 'move-forward':
+              window.moveElementBack(item.node, false);
+              item.node.click();
+              break;
         }
       }
 
@@ -137,6 +145,14 @@
               item.node.style.width = detail.newWidth;
               item.node.style.height = detail.newHeight;
               item.node.style.position = detail.newPosition;
+              item.node.click();
+              break;
+          case 'move-back':
+              window.moveElementForward(item.node, false);
+              item.node.click();
+              break;
+          case 'move-forward':
+              window.moveElementBack(item.node, false);
               item.node.click();
               break;
         }

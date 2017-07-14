@@ -13,8 +13,12 @@ window.addEventListener('WebComponentsReady', function() {
   document.addEventListener('fit-element', fitElement);
 
   document.addEventListener('move-up', moveElementUp);
-  document.addEventListener('move-back', moveElementBack);
-  document.addEventListener('move-forward', moveElementForward);
+  document.addEventListener('move-back', function(event) {
+    moveElementBack(event.detail.target, true);
+  });
+  document.addEventListener('move-forward', function(event) {
+    moveElementForward(event.detail.target, true);
+  });
 
   document.addEventListener('update-code', function(event) {
     codeView.dump(viewContainer);
@@ -277,7 +281,7 @@ function moveElementUp(event) {
   displayElement();
 }
 
-function moveElementBack(event) {
+function moveElementBack(el, updateHistory) {
   var el = event.detail.target;
   var parent = el.parentElement;
   if (el.id === 'viewContainer') {
@@ -289,12 +293,13 @@ function moveElementBack(event) {
   } else {
     parent.appendChild(el);
   }
-
+  if (updateHistory) {
+    actionHistory.update('move-back', el);
+  }
   displayElement();
 }
 
-function moveElementForward(event) {
-  var el = event.detail.target;
+function moveElementForward(el, updateHistory) {
   var parent = el.parentElement;
   if (el.id === 'viewContainer') {
     return;
@@ -311,6 +316,9 @@ function moveElementForward(event) {
     }
   } else {
     parent.insertBefore(el, parent.firstChild);
+  }
+  if (updateHistory) {
+    actionHistory.update('move-forward', el);
   }
   displayElement();
 }
