@@ -14,11 +14,12 @@
       button {
         background: transparent;
         border: none;
-        font-size: inherit;
+        font-size: 13px;
         display: block;
         cursor: pointer;
         width: 100%;
         text-align: left;
+        padding: 8px 14px;
       }
       button:hover {
         background: rgba(72,154,254,.2);
@@ -28,16 +29,13 @@
         text-transform: uppercase;
         font-size: 12px;
         font-weight: bold;
-        margin: 14px 0;
+        padding: 4px 14px;
       }
     </style>
 
-    <div>Native elements</div>
     <button>input</button>
     <button>div</button>
     <button>button</button>
-
-    <div>Custom elements</div>
     <dom-repeat items="[[elementNames]]">
       <template>
         <button>[[item]]</button>
