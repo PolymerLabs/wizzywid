@@ -12,6 +12,10 @@ window.addEventListener('WebComponentsReady', function() {
   document.addEventListener('element-updated', elementWasUpdated);
   document.addEventListener('fit-element', fitElement);
 
+  document.addEventListener('move-up', moveElementUp);
+  document.addEventListener('move-back', moveElementBack);
+  document.addEventListener('move-forward', moveElementForward);
+
   document.addEventListener('update-code', function(event) {
     codeView.dump(viewContainer);
   }, true);
@@ -256,4 +260,54 @@ function resizeElement(event, el) {
 function dragShouldSize(event, rect) {
   return (Math.abs(rect.right - event.detail.x) < 10) &&
     (Math.abs(rect.bottom - event.detail.y) < 10);
+}
+
+function moveElementUp(event) {
+  var el = event.detail.target;
+  var parent = el.parentElement;
+  // If the parent isn't already the viewContainer, move it one up.
+  if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
+    return;
+  }
+  parent.removeChild(el);
+  parent.parentElement.appendChild(el);
+  displayElement();
+}
+
+function moveElementBack(event) {
+  var el = event.detail.target;
+  var parent = el.parentElement;
+  if (el.id === 'viewContainer') {
+    return;
+  }
+  var previous = el.previousElementSibling;
+  if (previous) {
+    parent.insertBefore(el, previous);
+  } else {
+    parent.appendChild(el);
+  }
+
+  displayElement();
+}
+
+function moveElementForward(event) {
+  var el = event.detail.target;
+  var parent = el.parentElement;
+  if (el.id === 'viewContainer') {
+    return;
+  }
+  // Since you can't insertAfter your next sibling, you need to
+  // insert before two siblings over.
+  var next = el.nextElementSibling;
+  if (next) {
+    next = next.nextElementSibling;
+    if (next) {
+      parent.insertBefore(el, next);
+    } else {
+      parent.appendChild(el);
+    }
+  } else {
+    parent.insertBefore(el, parent.firstChild);
+  }
+  displayElement();
 }

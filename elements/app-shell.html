@@ -130,22 +130,38 @@
           <div>Code</div>
         </button>
         <div class="separator"></div>
-        <button on-click="undo" id="undoBtn" disabled>
+        <button on-click="fireEvent" id="undoBtn" disabled data-event="undo">
           <iron-icon icon="designer:undo"></iron-icon>
           <div>Undo</div>
         </button>
-        <button on-click="redo" id="redoBtn" disabled>
+        <button on-click="fireEvent" id="redoBtn" disabled data-event="redo">
           <iron-icon icon="designer:redo"></iron-icon>
           <div>Redo</div>
         </button>
         <div class="separator"></div>
-        <button on-click="deleteActiveElement">
+        <button on-click="fireEvent" data-event="delete-element">
           <iron-icon icon="designer:delete"></iron-icon>
           <div>Delete</div>
         </button>
-        <button on-click="fitActiveElement">
+        <button on-click="fireEvent" data-event="fit-element">
           <iron-icon icon="designer:fit"></iron-icon>
           <div>Fit to parent</div>
+        </button>
+        <div class="separator"></div>
+        <button on-click="fireEvent" data-event="move-up">
+          <!-- <iron-icon icon="designer:delete"></iron-icon> -->
+          <div>⬆️</div>
+          <div>Move up</div>
+        </button>
+        <button on-click="fireEvent" data-event="move-back">
+          <!-- <iron-icon icon="designer:delete"></iron-icon> -->
+          <div>⬅️</div>
+          <div>Move back</div>
+        </button>
+        <button on-click="fireEvent" data-event="move-forward">
+          <!-- <iron-icon icon="designer:delete"></iron-icon> -->
+          <div>➡️</div>
+          <div>Move forward</div>
         </button>
       </app-toolbar>
     </app-header>
@@ -275,8 +291,9 @@
         return previousValue;
       }
 
-      deleteActiveElement() {
-        var newEvent = new Event('delete-element', {
+      fireEvent(event) {
+        var name = event.currentTarget.dataset['event'];
+        var newEvent = new Event(name, {
           bubbles: true,
           cancelable: false,
           composed: true
@@ -287,17 +304,6 @@
         this.dispatchEvent(newEvent);
       }
 
-      fitActiveElement() {
-        var newEvent = new Event('fit-element', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        newEvent.detail = {
-          target: this.activeElement
-        };
-        this.dispatchEvent(newEvent);
-      }
 
       // TODO: ugh, this can probably be better.
       computeActiveElementName() {
@@ -341,22 +347,6 @@
       updateRedoButton(length) {
         this.$.redoBtn.disabled = (length === 0);
       }
-
-      undo() {
-        this.dispatchEvent(new Event('undo', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        }));
-      }
-      redo() {
-        this.dispatchEvent(new Event('redo', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        }));
-      }
-
     }
     customElements.define(AppShell.is, AppShell);
   </script>
