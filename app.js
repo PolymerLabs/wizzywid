@@ -209,7 +209,7 @@ function dragElement(event, el) {
       var oldTop = el.style.top;
       var oldPosition = el.style.position;
       if (reparented) {
-        el.style.position = 'relative';
+        el.style.position = 'static';
         el.style.left = el.style.top = '0px';
       } else {
         el.style.position = 'absolute';
