@@ -88,6 +88,11 @@
               item.node.style.position = detail.oldPosition;
               item.node.click();
               break;
+          case 'move-up':
+              item.detail.newParent.removeChild(item.node);
+              item.detail.oldParent.appendChild(item.node);
+              item.node.click();
+              break;
           case 'move-back':
               window.moveElementForward(item.node, false);
               item.node.click();
@@ -147,6 +152,11 @@
               item.node.style.position = detail.newPosition;
               item.node.click();
               break;
+        case 'move-up':
+            item.detail.oldParent.removeChild(item.node);
+            item.detail.newParent.appendChild(item.node);
+            item.node.click();
+            break;
           case 'move-back':
               window.moveElementForward(item.node, false);
               item.node.click();

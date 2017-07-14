@@ -276,6 +276,7 @@ function moveElementUp(event) {
   if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
     return;
   }
+  actionHistory.update('move-up', el, {oldParent: parent, newParent: parent.parentElement});
   parent.removeChild(el);
   parent.parentElement.appendChild(el);
   displayElement();
