@@ -134,6 +134,7 @@ function trackElement(event) {
     return;
   }
   if (window._resizing || dragShouldSize(event, el.getBoundingClientRect())) {
+    window._resizing = true;
     resizeElement(event, el);
     return;
   }
@@ -215,7 +216,6 @@ function dragElement(event, el) {
 function resizeElement(event, el) {
   switch(event.detail.state) {
     case 'start':
-      window._resizing = true;
       var rekt = el.getBoundingClientRect();
       window._initialWidth = rekt.width;
       window._initialHeight = rekt.height;
