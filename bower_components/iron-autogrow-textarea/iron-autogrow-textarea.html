@@ -101,6 +101,7 @@ Custom property | Description | Default
     <div class="textarea-container fit">
       <textarea id="textarea"
         name$="[[name]]"
+        aria-label$="[[label]]"
         autocomplete$="[[autocomplete]]"
         autofocus$="[[autofocus]]"
         inputmode$="[[inputmode]]"
@@ -230,6 +231,13 @@ Custom property | Description | Default
        */
       maxlength: {
         type: Number
+      },
+
+      /**
+       * Bound to the textarea's `aria-label` attribute.
+       */
+      label: {
+        type: String
       }
 
     },
