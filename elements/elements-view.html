@@ -1,82 +1,48 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-menu.html">
-<link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-menu-bar.html">
-<link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-option.html">
-<link rel="import" href="../bower_components/paper-cascading-menu/paper-cascading-menu-item-styles.html">
 <link rel="import" href="app-icons.html">
 
 <dom-module id="elements-view">
   <template strip-whitespace>
-    <style include="paper-cascading-menu-item-styles">
+    <style>
       :host {
         display: block;
         width: 100%;
       }
 
-      paper-cascading-menu-bar {
+      button {
         background: transparent;
-        color: white;
-        padding: 0;
-        margin: 8px;
+        border: none;
+        font-size: inherit;
+        display: block;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+      }
+      button:hover {
+        background: rgba(72,154,254,.2);
       }
 
-      paper-cascading-menu-bar > paper-cascading-option > :not(paper-cascading-menu) {
-        padding: 0;
-      }
-
-      paper-cascading-menu-bar .iron-selected {
-        background: transparent;
-        color: white;
-        font-weight: normal;
-      }
-
-      paper-cascading-menu[narrow] {
-        width: 200px
-      }
-
-      button.insert {
-        color: white;
-        display: flex;
-        flex-direction: column;
-      }
-      button.insert span {
-        font-size: 10px;
+      div {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: bold;
+        margin: 14px 0;
       }
     </style>
-    <paper-cascading-menu-bar id="menu">
-      <paper-cascading-option>
-        <button class="nope insert">
-          <iron-icon icon="designer:insert"></iron-icon>
-          <span>Insert</span>
-        </button>
 
-        <paper-cascading-menu slot="menu" narrow>
-          <paper-cascading-option>
-            <button class="nope">Native elements</button>
-            <paper-cascading-menu narrow slot="menu">
-              <button>input</button>
-              <button>div</button>
-              <button>button</button>
-            </paper-cascading-menu>
-          </paper-cascading-option>
+    <div>Native elements</div>
+    <button>input</button>
+    <button>div</button>
+    <button>button</button>
 
-          <paper-cascading-option>
-            <button class="nope">Paper elements</button>
-            <paper-cascading-menu narrow slot="menu">
-
-              <dom-repeat items="[[elementNames]]">
-                <template>
-                  <button>[[item]]</button>
-                </template>
-              </dom-repeat>
-
-            </paper-cascading-menu>
-          </paper-cascading-option>
-        </paper-cascading-menu>
-      </paper-cascading-option>
-    </paper-cascading-menu-bar>
+    <div>Custom elements</div>
+    <dom-repeat items="[[elementNames]]">
+      <template>
+        <button>[[item]]</button>
+      </template>
+    </dom-repeat>
     <iron-ajax auto url="bower.json" handle-as="json" on-response="elementsReady"></iron-ajax>
   </template>
   <script>

@@ -58,6 +58,9 @@ function addNewElement(event) {
 function deleteElement(event) {
   var el = event.detail.target;
 
+  if (!el)
+    return;
+
   // Deleting the whole app should remove the children I guess.
   if (el.id === 'viewContainer') {
     actionHistory.update('delete', el, {innerHtml: el.innerHTML});

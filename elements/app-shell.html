@@ -32,14 +32,18 @@
         margin-right: 8px;
       }
 
-      app-header button {
-        color: white;
+      button {
         background: transparent;
         border: none;
-        text-align: center;
         margin: 8px;
         cursor: pointer;
       }
+
+      app-header button {
+        color: white;
+        text-align: center;
+      }
+
       app-header button[disabled] {
         opacity: 0.3;
       }
@@ -105,13 +109,18 @@
       button.button-code.active iron-icon {
         transform: rotate(90deg);
       }
+
+      .horizontal {
+        display: flex;
+        flex-direction: row;
+        background-color: #efefef;
+      }
     </style>
 
     <app-header fixed scroll-target="scrollingRegion">
       <app-toolbar>
         <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
         <div class="separator"></div>
-        <elements-view></elements-view>
         <button on-click="viewCode" class="button-code">
           <iron-icon icon="designer:code"></iron-icon>
           <span>Code</span>
@@ -129,15 +138,22 @@
     </app-header>
     <div class="container" id="scrollingRegion">
       <div class="drawer small">
-        <designer-tabs attr-for-selected="name" selected="tree">
+        <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
           <designer-tab name="tree">
             <button>tree</button>
-            <button on-click="deleteActiveElement"><iron-icon icon="designer:delete"><iron-icon></button>
+          </designer-tab>
+          <designer-tab name="palette">
+            <button>Palette</button>
           </designer-tab>
         </designer-tabs>
-        <div name="tree">
-          <slot name="tree"></slot>
-        </div>
+        <iron-pages selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
+          <div name="tree">
+            <slot name="tree"></slot>
+          </div>
+          <div name="palette">
+            <elements-view></elements-view>
+          </div>
+        </iron-pages>
       </div>
 
       <div class="main" id="mainContainer">
@@ -148,17 +164,20 @@
       </div>
 
       <div class="drawer">
-        <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
-          <designer-tab name="properties">
-            <button>properties</button>
-          </designer-tab>
-          <designer-tab name="styles">
-            <button>styles</button>
-          </designer-tab>
-          <designer-tab name="flex">
-            <button>flex</button>
-          </designer-tab>
-        </designer-tabs>
+        <div class="horizontal">
+          <button class="delete" on-click="deleteActiveElement"><iron-icon icon="designer:delete"><iron-icon></button>
+          <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
+            <designer-tab name="properties">
+              <button>properties</button>
+            </designer-tab>
+            <designer-tab name="styles">
+              <button>styles</button>
+            </designer-tab>
+            <designer-tab name="flex">
+              <button>flex</button>
+            </designer-tab>
+          </designer-tabs>
+        </div>
         <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
           <div name="properties">
             <slot name="properties"></slot>
@@ -188,7 +207,7 @@
           stylesPage: {
             type:String
           },
-          elementsPage: {
+          viewPage: {
             type:String
           }
         }
@@ -197,7 +216,7 @@
       ready() {
         super.ready();
         this.stylePage = 'properties';
-        this.elementsPage = 'elements';
+        this.viewPage = 'tree';
       }
 
       updateActiveElement(el) {
