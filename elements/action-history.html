@@ -69,6 +69,10 @@
           case 'move':
               item.node.style.left = detail.oldLeft;
               item.node.style.top = detail.oldTop;
+              // During reparent-and-move we may have switched to position:relative.
+              if (detail.oldPosition) {
+                item.node.style.position = detail.oldPosition;
+              }
               item.node.click();
               break;
           case 'reparent':
@@ -116,6 +120,10 @@
           case 'move':
               item.node.style.left = detail.newLeft;
               item.node.style.top = detail.newTop;
+              // During reparent-and-move we may have switched to position:relative.
+              if (detail.oldPosition) {
+                item.node.style.position = detail.newPosition;
+              }
               item.node.click();
               break;
           case 'reparent':

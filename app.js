@@ -178,12 +178,20 @@ function dragElement(event, el) {
     case 'end':
       // Save the position before we might reparent the item.
       var local = el.getBoundingClientRect();
+      var reparented = false;
 
       // Does this need to be added to a new parent?
       if (window._dropTarget) {
+        reparented = true;
+
         var oldParent = el.parentElement;
         el.parentElement.removeChild(el);
-        window._dropTarget.textContent = '';
+
+        // If there was a textContent nuke it, or else you'll
+        // never be able to again.
+        if (window._dropTarget.children.length === 0) {
+          window._dropTarget.textContent = '';
+        }
         window._dropTarget.appendChild(el);
         window._dropTarget.classList.remove('over');
         actionHistory.update('reparent', el, {newParent: window._dropTarget, oldParent: oldParent});
@@ -199,11 +207,19 @@ function dragElement(event, el) {
 
       var oldLeft = el.style.left;
       var oldTop = el.style.top;
-      el.style.left = local.left - parent.left + 'px';
-      el.style.top = local.top - parent.top + 'px';
-      actionHistory.update('move', el,
-          {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop});
+      var oldPosition = el.style.position;
+      if (reparented) {
+        el.style.position = 'relative';
+        el.style.left = el.style.top = '0px';
+      } else {
+        el.style.position = 'absolute';
+        el.style.left = local.left - parent.left + 'px';
+        el.style.top = local.top - parent.top + 'px';
+      }
 
+      actionHistory.update('move', el,
+          {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop,
+          oldPosition:oldPosition, newPosition: el.style.position});
       el.classList.remove('dragging');
       el.style.transform = el.style.webkitTransform = 'none';
       break;
