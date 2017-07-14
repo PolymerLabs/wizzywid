@@ -133,6 +133,14 @@ function trackElement(event) {
   if (el.id === 'viewContainer') {
     return;
   }
+  if (window._resizing || dragShouldSize(event, el.getBoundingClientRect())) {
+    resizeElement(event, el);
+    return;
+  }
+  dragElement(event, el);
+}
+
+function dragElement(event, el) {
   switch(event.detail.state) {
     case 'start':
       el.style.position = 'absolute';
@@ -201,4 +209,36 @@ function trackElement(event) {
   updateActiveElement(el);
   var size = el.getBoundingClientRect();
   stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
+}
+
+function resizeElement(event, el) {
+  switch(event.detail.state) {
+    case 'start':
+      window._resizing = true;
+      var rekt = el.getBoundingClientRect();
+      window._initialWidth = rekt.width;
+      window._initialHeight = rekt.height;
+      el.classList.add('resizing');
+      el.classList.add('active');
+      break;
+    case 'track':
+      // Grid is 10.
+      var trackX = Math.round(event.detail.dx / 10) * 10;
+      var trackY = Math.round(event.detail.dy / 10) * 10;
+      el.style.width = _initialWidth + trackX + 'px';
+      el.style.height = _initialHeight + trackY + 'px';
+      break;
+    case 'end':
+      window._resizing = false;
+      el.classList.remove('resizing');
+      break;
+  }
+  updateActiveElement(el);
+//  var size = el.getBoundingClientRect();
+//  stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
+}
+
+function dragShouldSize(event, rect) {
+  return (Math.abs(rect.right - event.detail.x) < 10) &&
+    (Math.abs(rect.bottom - event.detail.y) < 10);
 }
