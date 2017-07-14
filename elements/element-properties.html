@@ -8,18 +8,33 @@
         display: block;
         box-sizing: border-box;
       }
+      label, input, select {
+        height: 24px;
+        margin: 2px 0;
+        padding: 0 2px 0 4px;
+        width: 140px;
+      }
       label {
         float: left;
         display: block;
-        width: 150px;
         margin-right: 20px;
-        line-height: 1.2em;
         font-size: 13px;
+      }
+      input, select {
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        box-sizing: border-box;
+        font-size: 11px;
+      }
+      input[disabled] {
+        color: #BDBDBD;
+      }
+      select {
+        background: transparent;
       }
       #bonus {
         margin-top: 4px;
         padding-top: 8px;
-        xborder-top: #ccc solid 1px;
       }
     </style>
     <label>textContent</label>

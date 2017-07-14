@@ -8,13 +8,33 @@
         display: block;
         box-sizing: border-box;
       }
+      label, input, select {
+        height: 24px;
+        margin: 2px 0;
+        padding: 0 2px 0 4px;
+        width: 140px;
+      }
       label {
         float: left;
         display: block;
-        width: 150px;
         margin-right: 20px;
-        line-height: 1.2em;
         font-size: 13px;
+      }
+      input, select {
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        box-sizing: border-box;
+        font-size: 11px;
+      }
+      input[type="color"] {
+        width: 50px;
+        background: none;
+      }
+      input[disabled] {
+        color: #BDBDBD;
+      }
+      select {
+        background: transparent;
       }
       .style-label {
         width: 150px;
@@ -24,7 +44,11 @@
     <div id="container">
       <label>color</label><input name="color" type="color"><br>
       <label>background color</label><input name="backgroundColor" type="color">
-      <label>box-sizing</label><input name="boxSizing">
+      <label>box-sizing</label>
+      <select name="box-sizing">
+        <option>border-box</option>
+        <option>content-box</option>
+      </select>
       <label>border</label><input name="border">
       <label>box shadow</label><input name="boxShadow">
       <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
