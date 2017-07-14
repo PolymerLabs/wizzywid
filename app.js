@@ -182,6 +182,7 @@ function dragElement(event, el) {
       if (window._dropTarget) {
         var oldParent = el.parentElement;
         el.parentElement.removeChild(el);
+        window._dropTarget.textContent = '';
         window._dropTarget.appendChild(el);
         window._dropTarget.classList.remove('over');
         actionHistory.update('reparent', el, {newParent: window._dropTarget, oldParent: oldParent});
@@ -234,8 +235,6 @@ function resizeElement(event, el) {
       break;
   }
   updateActiveElement(el);
-//  var size = el.getBoundingClientRect();
-//  stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
 }
 
 function dragShouldSize(event, rect) {

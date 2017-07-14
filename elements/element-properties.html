@@ -32,8 +32,7 @@
     <input name="classList">
     <label>attributes</label>
     <input name="attributes" disabled>
-    <div id="bonus">
-    </div>
+    <div id="bonus"></div>
 
   </template>
   <script>
@@ -83,6 +82,16 @@
           } else if (prop === 'className') {
             // Lol what's a blacklist.
             el.value = target[prop].replace('active', '').replace('dragging', '');
+          } else if (prop === 'textContent') {
+            // If this element has children, then disable textContent since
+            // changing it will only lead to surprise tears.
+            if (target.children.length !== 0) {
+              el.value = '';
+              el.disabled = true;
+            } else {
+              el.value = target[prop];
+              el.disabled = false;
+            }
           } else {
             el.value = target[prop];
           }
@@ -99,7 +108,7 @@
             'attributeChanged', 'is', 'listeners', 'observers', 'properties',
             // Native elements ones we don't care about
             'validity', 'useMap', 'innerText', 'outerText', 'style', 'accessKey',
-            'draggable', 'lang', 'spellcheck', 'tabIndex', 'translate', 'align', 'dir', 
+            'draggable', 'lang', 'spellcheck', 'tabIndex', 'translate', 'align', 'dir',
             // Spefic elements stuff
             'receivedFocusFromKeyboard', 'pointerDown'
             ];
