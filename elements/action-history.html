@@ -75,6 +75,11 @@
               }
               item.node.click();
               break;
+          case 'resize':
+              item.node.style.width = detail.oldWidth;
+              item.node.style.height = detail.oldHeight;
+              item.node.click();
+              break;
           case 'reparent':
               detail.newParent.removeChild(item.node);
               detail.oldParent.appendChild(item.node);
@@ -137,6 +142,11 @@
               if (detail.oldPosition) {
                 item.node.style.position = detail.newPosition;
               }
+              item.node.click();
+              break;
+          case 'resize':
+              item.node.style.width = detail.newWidth;
+              item.node.style.height = detail.newHeight;
               item.node.click();
               break;
           case 'reparent':

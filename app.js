@@ -263,6 +263,9 @@ function resizeElement(event, el) {
       break;
     case 'end':
       window._resizing = false;
+      actionHistory.update('resize', el,
+          {newWidth: el.style.width, newHeight: el.style.height,
+           oldWidth: window._initialWidth + 'px', oldHeight: window._initialHeight + 'px'});
       el.classList.remove('resizing');
       break;
   }
