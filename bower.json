@@ -42,7 +42,7 @@
     "paper-progress": "PolymerElements/paper-progress#*",
     "paper-spinner": "PolymerElements/paper-spinner#*",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
-    "paper-tab": "PolymerElements/paper-tabs#*",
+    "paper-tabs": "PolymerElements/paper-tabs#*",
     "paper-toolbar": "PolymerElements/paper-toolbar#*"
   },
   "subelements": {
@@ -58,7 +58,7 @@
       "social-icons",
       "update-icons"
     ],
-    "paper-input": ["paper-input", "paper-textarea"],
-    "paper-tabs": ["paper-tabs", "paper-tab"]
+    "paper-input": ["paper-textarea"],
+    "paper-tabs": ["paper-tab"]
   }
 }
