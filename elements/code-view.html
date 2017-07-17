@@ -28,7 +28,7 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this._initialProperties = {};
+        this._propertyDefaultsForTag = {};
 
         this._aceEditor = ace.edit('__editor');
         this._aceEditor.setReadOnly(true);
@@ -44,24 +44,24 @@
       }
 
       save(tag, el, props) {
-        if (this._initialProperties[tag])
+        if (this._propertyDefaultsForTag[tag])
           return;
 
-        this._initialProperties[tag] = {};
+        this._propertyDefaultsForTag[tag] = {};
 
         var keys = ['id', 'slot', 'classList'].concat(props);
         for (var i = 0; i < keys.length; i++) {
           var prop = keys[i];
           if (prop === 'classList') {
-            this._initialProperties[tag][prop] = el[prop].value;
+            this._propertyDefaultsForTag[tag][prop] = el[prop].value;
           } else {
-            this._initialProperties[tag][prop] = el[prop];
+            this._propertyDefaultsForTag[tag][prop] = el[prop];
           }
         }
       }
 
       dump(parent) {
-        // Imports
+        // Imports. Yes i'm using element globals because I'm lazy. Fight me.
         this._imports = '';
         this._template = '';
         this._style = '';
@@ -107,46 +107,66 @@ ${this._template.trimRight()}
           if (tag.indexOf('-') !== -1 && this._imports.indexOf(`${tag}.html`) === -1) {
             this._imports += this.dumpImports(tag, '') + '\n';
           }
-          this._style += this.dumpStyle(nodes[i], '      ');
+          this._style += this.dumpStyle(tag, nodes[i], '      ');
 
           if (nodes[i].children.length !== 0) {
-            this._template += this.dumpElementStartTag(nodes[i], indent) + '\n';
+            this._template += this.dumpElementStartTag(tag, nodes[i], indent) + '\n';
             this.dumpChildren(nodes[i], indent + '  ') + '\n';
-            this._template += this.dumpElementEndTag(nodes[i], indent) + '\n';
+            this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
           } else {
-            this._template += this.dumpElement(nodes[i], indent) + '\n';
+            this._template += this.dumpElement(tag, nodes[i], indent) + '\n';
           }
         }
       }
 
-      dumpElement(node, indent) {
-        var tag = node.tagName.toLowerCase();
-        var id = node.id ? ` id="${node.id}"` : '';
+      dumpElement(tag, node, indent) {
+        var attributes = this.dumpAttributes(tag, node);
         var text = node.textContent || '';
+        var startTag = this.dumpElementStartTag(tag, node, indent);
         return tag === 'input' ?
-            `${indent}<${tag}${id}>` :
-            `${indent}<${tag}${id}>${text}</${tag}>`
+            startTag :
+            startTag + `${text}</${tag}>`
       }
 
-      dumpElementStartTag(node, indent) {
-        var tag = node.tagName.toLowerCase();
-        var id = node.id ? ` id="${node.id}"` : '';
-        return `${indent}<${tag}${id}>`;
+      dumpElementStartTag(tag, node, indent) {
+        var attributes = this.dumpAttributes(tag, node);
+        return attributes.length === 0 ?
+            `${indent}<${tag}>` :
+            `${indent}<${tag} ${attributes}>`;
       }
 
-      dumpElementEndTag(node, indent) {
-        var tag = node.tagName.toLowerCase();
+      dumpElementEndTag(tag, node, indent) {
         return `${indent}</${tag}>`;
       }
 
-      dumpStyle(node, indent) {
-        var tag = node.tagName.toLowerCase();
+      dumpStyle(tag, node, indent) {
         var css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
         var id = node.id ? '#' + node.id : '';
         return `${indent}${tag}${id} {
 ${indent}  ${css}
 ${indent}}
 `
+      }
+
+      dumpAttributes(tag, node) {
+        var defaults = Object.keys(this._propertyDefaultsForTag[tag]);
+        var attributes = ' ';
+        for (var i = 0; i < defaults.length; i++) {
+          var name = defaults[i];
+          var value = node[name];
+
+          // classList is special. Also 'active' is an intenal value, so skip that.
+          if (name === 'classList') {
+            value = value.value; // classList is an array, surprise!
+            value = value.replace('active', '').trim();
+            if (value.length !== 0) {
+              attributes += `class="${value}" `
+            }
+          } else if (this._propertyDefaultsForTag[tag][name] != value) {
+            attributes += `${name}="${value}" `
+          }
+        }
+        return attributes.trim();
       }
 
       dumpImports(tag, indent) {
