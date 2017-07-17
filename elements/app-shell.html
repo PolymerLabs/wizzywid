@@ -38,6 +38,13 @@
         margin: 8px;
         cursor: pointer;
       }
+
+      designer-tab.single {
+        background-color: #efefef;
+        color: #5d5d5d;
+        width: 100%;
+      }
+
       designer-tab button {
         margin: 0 8px;
       }
@@ -73,7 +80,7 @@
       .drawer {
         width: 350px;
         height: 100%;
-        overflow: auto;
+        overflow: hidden;
         background: white;
         color: #5d5d5d;
       }
@@ -105,11 +112,16 @@
       }
 
       iron-pages {
-        overflow: auto;
+        height: 300px;
+        overflow: visible;
       }
 
-      iron-pages.styles {
-        padding: 14px;
+      elements-view {
+        height: calc(100% - 400px) !important;
+      }
+
+      iron-pages > div {
+        height: 100%;
       }
 
       button.button-code iron-icon {
@@ -121,7 +133,7 @@
       }
     </style>
 
-    <app-header fixed scroll-target="scrollingRegion">
+    <app-header fixed>
       <app-toolbar>
         <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
         <div class="separator"></div>
@@ -164,22 +176,12 @@
     </app-header>
     <div class="container" id="scrollingRegion">
       <div class="drawer small">
-        <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
-          <designer-tab name="tree">
-            <button>tree</button>
-          </designer-tab>
-          <designer-tab name="palette">
-            <button>Palette</button>
-          </designer-tab>
-        </designer-tabs>
-        <iron-pages selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
-          <div name="tree">
-            <slot name="tree"></slot>
-          </div>
-          <div name="palette">
-            <elements-view></elements-view>
-          </div>
-        </iron-pages>
+        <designer-tab class="single">
+          <button>tree</button>
+        </designer-tab>
+        <div name="tree">
+          <slot name="tree"></slot>
+        </div>
       </div>
 
       <div class="main" id="mainContainer">
@@ -212,6 +214,10 @@
             <slot name="flex"></slot>
           </div>
         </iron-pages>
+        <designer-tab class="single">
+          <button>Palette</button>
+        </designer-tab>
+        <elements-view></elements-view>
       </div>
     </div>
 
@@ -320,7 +326,7 @@
         if (showMainView) {
           return;
         }
-        
+
         var newEvent = new Event('update-code', {
           bubbles: true,
           cancelable: false,

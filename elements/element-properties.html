@@ -1,42 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="element-stuff.html">
+<link rel="import" href="element-props-shared-styles.html">
 
 <dom-module id="element-properties">
   <template>
-    <style>
-      :host{
-        display: block;
-        box-sizing: border-box;
-      }
-      label, input, select {
-        height: 24px;
-        margin: 2px 0;
-        padding: 0 2px 0 4px;
-        width: 140px;
-      }
-      label {
-        float: left;
-        display: block;
-        margin-right: 20px;
-        font-size: 13px;
-      }
-      input, select {
-        border: 1px solid #d4d4d4;
-        border-radius: 3px;
-        box-sizing: border-box;
-        font-size: 11px;
-      }
-      input[disabled] {
-        color: #BDBDBD;
-      }
-      select {
-        background: transparent;
-      }
-      #bonus {
-        margin-top: 4px;
-        padding-top: 8px;
-      }
-    </style>
+    <style include="element-props-shared-styles"></style>
     <label>textContent</label>
     <input name="textContent">
     <label>id</label>
@@ -48,7 +16,6 @@
     <label>attributes</label>
     <input name="attributes" disabled>
     <div id="bonus"></div>
-
   </template>
   <script>
     class ElementProperties extends ElementStuff(Polymer.Element) {
