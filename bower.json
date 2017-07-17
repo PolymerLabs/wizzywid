@@ -42,8 +42,7 @@
     "paper-progress": "PolymerElements/paper-progress#*",
     "paper-spinner": "PolymerElements/paper-spinner#*",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
-    "paper-tabs": "PolymerElements/paper-tabs#*",
-    "paper-toolbar": "PolymerElements/paper-toolbar#*"
+    "paper-tabs": "PolymerElements/paper-tabs#*"
   },
   "subelements": {
     "iron-icons": [
@@ -59,6 +58,7 @@
       "update-icons"
     ],
     "paper-input": ["paper-textarea"],
-    "paper-tabs": ["paper-tab"]
+    "paper-tabs": ["paper-tab"],
+    "app-layout": ["app-header", "app-drawer", "app-header-layout", "app-drawer-layout", "app-toolbar"]
   }
 }
