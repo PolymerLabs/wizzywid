@@ -315,14 +315,18 @@
         }
       }
 
-      viewCode() {
+      viewCode(event) {
+        var showMainView = this.toggleMainView(event.currentTarget);
+        if (showMainView) {
+          return;
+        }
+        
         var newEvent = new Event('update-code', {
           bubbles: true,
           cancelable: false,
           composed: true
         });
         this.dispatchEvent(newEvent);
-        this.toggleMainView(event.currentTarget);
       }
 
       toggleMainView(button) {
@@ -336,6 +340,7 @@
 
         this.$.mainContainer.hidden = !showMain;
         this.$.codeContainer.hidden = showMain;
+        return showMain;
       }
 
       updateUndoButton(length) {

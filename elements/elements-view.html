@@ -57,12 +57,21 @@
       ready() {
         super.ready();
         this.addEventListener('click', this.addElement.bind(this));
-        this._nativeElementsWhitelist = ['div', 'input', 'button'];
+        this._nativeElementsWhitelist = ['div', 'input', 'button', 'form'];
       }
 
       elementsReady(event) {
+        // First, some elements have sub-elements in the same package.
+        var subElements = event.detail.response.subelements;
+        var subElementNames = [];
+        for (var parent in subElements) {
+          for (var i = 0; i < subElements[parent].length; i++) {
+            subElementNames.push(`${parent}/${subElements[parent][i]}`)
+          }
+        }
+
         var list = event.detail.response.devDependencies;
-        this.elementNames = Object.keys(list);
+        this.elementNames = Object.keys(list).concat(subElementNames).sort();
       }
 
       addElement(event) {
@@ -72,24 +81,33 @@
           return;
         }
 
+        // maybe it's a package/subpackage kind of thing.
+        var matches = kind.match(/(.*)\/(.*)/);
+        var packageName = kind;
+        if (matches && matches.length === 3) {
+          packageName = matches[1];
+          kind = matches[2];
+        }
+
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
-          var url = `bower_components/${kind}/${kind}.html`;
+          var url = `bower_components/${packageName}/${kind}.html`;
           Polymer.Base.importHref(url, function(e) {
-            this.finishCreatingElement(kind);
+            this.finishCreatingElement(kind, packageName);
           }.bind(this));
         } else {
-            this.finishCreatingElement(kind);
+            this.finishCreatingElement(kind, '');
         }
       }
 
-      finishCreatingElement(kind) {
+      finishCreatingElement(kind, packageName) {
         var newEvent = new Event('new-element', {
           bubbles: true,
           cancelable: false,
           composed: true
         });
         newEvent.detail = {
-          type: kind
+          type: kind,
+          package: packageName
         };
         this.dispatchEvent(newEvent);
       }

@@ -43,11 +43,12 @@
         this._aceEditor.clearSelection();
       }
 
-      save(tag, el, props) {
+      save(tag, packageName, el, props) {
         if (this._propertyDefaultsForTag[tag])
           return;
 
         this._propertyDefaultsForTag[tag] = {};
+        this._propertyDefaultsForTag[tag]['__package_name__'] = packageName;
 
         var keys = ['id', 'slot', 'classList'].concat(props);
         for (var i = 0; i < keys.length; i++) {
@@ -172,7 +173,8 @@ ${indent}}
       }
 
       dumpImports(tag, indent) {
-        return `${indent}<link rel="import" href="../${tag}/${tag}.html">`;
+        var packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
+        return `${indent}<link rel="import" href="../${packageName}/${tag}.html">`;
       }
     }
     customElements.define(CodeView.is, CodeView);

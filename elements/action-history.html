@@ -29,6 +29,7 @@
         var topItem = this.undoHistory[this.undoHistory.length - 1];
 
         if (topItem && item.action === topItem.action &&
+            topItem.node === item.node &&
             JSON.stringify(item.detail) === JSON.stringify(topItem.detail)) {
           console.log('choosing not to add a dupe');
           return;

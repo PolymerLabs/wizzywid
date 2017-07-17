@@ -22,21 +22,10 @@
   "devDependencies": {
     "app-layout": "PolymerElements/app-layout#^2.0.0",
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
-    "communication-icons.html": "PolymerElements/iron-icons#^2.0.0",
-    "device-icons.html": "PolymerElements/iron-icons#^2.0.0",
-    "editor-icons": "PolymerElements/iron-icons#^2.0.0",
-    "hardware-icons": "PolymerElements/iron-icons#^2.0.0",
-    "image-icons": "PolymerElements/iron-icons#^2.0.0",
-    "maps-icons": "PolymerElements/iron-icons#^2.0.0",
-    "notification-icons": "PolymerElements/iron-icons#^2.0.0",
-    "places-icons": "PolymerElements/iron-icons#^2.0.0",
-    "social-icons": "PolymerElements/iron-icons#^2.0.0",
-    "update-icons": "PolymerElements/iron-icons#^2.0.0",
     "iron-icon": "PolymerElements/iron-icon#^2.0.0",
     "paper-checkbox": "PolymerElements/paper-checkbox#*",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#*",
     "paper-input": "PolymerElements/paper-input#*",
-    "paper-textarea": "PolymerElements/paper-input#*",
     "paper-listbox": "PolymerElements/paper-listbox#*",
     "paper-radio-button": "PolymerElements/paper-radio-button#*",
     "paper-radio-group": "PolymerElements/paper-radio-group#*",
@@ -54,7 +43,22 @@
     "paper-spinner": "PolymerElements/paper-spinner#*",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
     "paper-tab": "PolymerElements/paper-tabs#*",
-    "paper-tabs": "PolymerElements/paper-tabs#*",
     "paper-toolbar": "PolymerElements/paper-toolbar#*"
+  },
+  "subelements": {
+    "iron-icons": [
+      "communication-icons",
+      "device-icons",
+      "editor-icons",
+      "hardware-icons",
+      "image-icons",
+      "maps-icons",
+      "notification-icons",
+      "places-icons",
+      "social-icons",
+      "update-icons"
+    ],
+    "paper-input": ["paper-input", "paper-textarea"],
+    "paper-tabs": ["paper-tabs", "paper-tab"]
   }
 }
