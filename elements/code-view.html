@@ -110,25 +110,23 @@ ${this._template.trimRight()}
           }
           this._style += this.dumpStyle(tag, nodes[i], '      ');
 
+          this._template += this.dumpElementStartTag(tag, nodes[i], indent) + '\n';
+          this._template += this.dumpElementText(tag, nodes[i], indent);
           if (nodes[i].children.length !== 0) {
-            this._template += this.dumpElementStartTag(tag, nodes[i], indent) + '\n';
             this.dumpChildren(nodes[i], indent + '  ') + '\n';
-            this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
-          } else {
-            this._template += this.dumpElement(tag, nodes[i], indent) + '\n';
           }
+          this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
         }
       }
 
-      dumpElement(tag, node, indent) {
-        var attributes = this.dumpAttributes(tag, node);
-        var text = node.textContent || '';
-        var startTag = this.dumpElementStartTag(tag, node, indent);
-        return tag === 'input' ?
-            startTag :
-            startTag + `${text}</${tag}>`
+      dumpElementText(tag, node, indent) {
+        var text = node.textContent.trim();
+        if (text && node.children.length === 0) {
+          return `${indent}  ${text}` + '\n'
+        } else {
+          return '';
+        }
       }
-
       dumpElementStartTag(tag, node, indent) {
         var attributes = this.dumpAttributes(tag, node);
         return attributes.length === 0 ?
@@ -137,11 +135,14 @@ ${this._template.trimRight()}
       }
 
       dumpElementEndTag(tag, node, indent) {
-        return `${indent}</${tag}>`;
+        return tag === 'input' ? '' : `${indent}</${tag}>`;
       }
 
       dumpStyle(tag, node, indent) {
         var css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
+        if (css === '') {
+          return '';
+        }
         var id = node.id ? '#' + node.id : '';
         return `${indent}${tag}${id} {
 ${indent}  ${css}
@@ -150,6 +151,9 @@ ${indent}}
       }
 
       dumpAttributes(tag, node) {
+        if (!this._propertyDefaultsForTag[tag]) {
+          return '';
+        }
         var defaults = Object.keys(this._propertyDefaultsForTag[tag]);
         var attributes = ' ';
         for (var i = 0; i < defaults.length; i++) {
@@ -175,6 +179,9 @@ ${indent}}
       }
 
       dumpImports(tag, indent) {
+        if (!this._propertyDefaultsForTag[tag]) {
+          return '';
+        }
         var packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
         return `${indent}<link rel="import" href="../${packageName}/${tag}.html">`;
       }

@@ -8,6 +8,7 @@
 <link rel="import" href="designer-tabs.html">
 <link rel="import" href="designer-tab.html">
 <link rel="import" href="elements-palette.html">
+<link rel="import" href="samples-palette.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
@@ -113,10 +114,11 @@
 
       iron-pages {
         height: 250px;
-        overflow: visible;
+        overflow:hidden;
+        padding-bottom: 20px;
       }
 
-      elements-palette {
+      iron-pages.elements {
         height: calc(100% - 250px - 40px - 40px - 20px) !important;
       }
 
@@ -214,10 +216,19 @@
             <slot name="flex"></slot>
           </div>
         </iron-pages>
-        <designer-tab class="single">
-          <button>Palette</button>
-        </designer-tab>
-        <elements-palette></elements-palette>
+        <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
+          <designer-tab name="elements">
+            <button>Palette</button>
+          </designer-tab>
+          <designer-tab name="samples">
+            <button>Samples</button>
+          </designer-tab>
+        </designer-tabs>
+        <iron-pages class="elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
+          <elements-palette name="elements"></elements-palette>
+          <samples-palette name="samples"></samples-palette>
+        </iron-pages>
+
       </div>
     </div>
 
@@ -245,7 +256,7 @@
       ready() {
         super.ready();
         this.stylePage = 'properties';
-        this.viewPage = 'tree';
+        this.viewPage = 'elements';
       }
 
       updateActiveElement(el) {

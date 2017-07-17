@@ -8,6 +8,7 @@ window.addEventListener('WebComponentsReady', function() {
 
   // New/Delete/Edit an element.
   document.addEventListener('new-element', addNewElement);
+  document.addEventListener('new-sample', addNewSample);
   document.addEventListener('delete-element', deleteElement);
   document.addEventListener('element-updated', elementWasUpdated);
   document.addEventListener('fit-element', fitElement);
@@ -46,7 +47,7 @@ function addNewElement(event) {
   el.style.left = el.style.top = '20px';
 
   // Give it a unique ID.
-  var newId = makeUniqueId(el, tag.replace('-', '_'));
+  var newId = makeUniqueId(el, tag);
   el.id = newId;
   viewContainer.appendChild(el);
 
@@ -61,6 +62,32 @@ function addNewElement(event) {
   } else if (tag === 'button' || slots.length != 0) {
     el.textContent = tag;
   }
+
+  // You need the item to render first.
+  requestAnimationFrame(function() {
+    el.click();
+  });
+  actionHistory.update('new', el);
+}
+
+function addNewSample(event) {
+  var template = event.detail.template;
+  var tag = event.detail.tag;
+
+  // Clone the template and add it to the document.
+  var frag = document.importNode(template.content, true);
+  viewContainer.appendChild(frag);
+  var el = viewContainer.children[viewContainer.children.length-1];
+
+  el.style.position = 'absolute';
+  el.style.left = el.style.top = '20px';
+
+  // TODO: unless we see some brand new divs or whatever this has, the code diff
+  // will be incorrect.
+  
+  // Give it a unique ID.
+  var newId = makeUniqueId(el, tag);
+  el.id = newId;
 
   // You need the item to render first.
   requestAnimationFrame(function() {
@@ -108,6 +135,7 @@ function fitElement(event) {
 }
 
 function makeUniqueId(node, id, suffix) {
+  id = id.replace('-', '_')
   var uId = id + (suffix || '');
   return viewContainer.querySelector('#' + uId) ?
     this.makeUniqueId(node, id, suffix ? ++suffix : 1) :

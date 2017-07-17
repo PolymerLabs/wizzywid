@@ -1,0 +1,84 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="app-icons.html">
+
+<dom-module id="samples-palette">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+        overflow: auto;
+        padding-bottom:14px;
+      }
+
+      button {
+        background: transparent;
+        border: none;
+        font-size: 13px;
+        display: block;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        padding: 8px 14px;
+      }
+      button:hover {
+        background: rgba(72,154,254,.2);
+      }
+
+      div {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 4px 14px;
+      }
+    </style>
+
+    <!-- <button>app-layout-sample</button> -->
+    <button>paper-card-sample</button>
+  </template>
+  <script>
+    class SamplesView extends Polymer.Element {
+      static get is() { return 'samples-palette'; }
+      static get properties() {
+        return {
+          elementNames: {
+            type: Array
+          }
+        }
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('click', this.addElement.bind(this));
+      }
+
+      addElement(event) {
+        var target = event.path[0];
+        var kind = target.textContent;
+        if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
+          return;
+        }
+
+        var url = `samples/${kind}.html`;
+        Polymer.Base.importHref(url, function(e) {
+          var doc = e.target.import;
+          var template = doc.querySelector('template');
+
+          var newEvent = new Event('new-sample', {
+            bubbles: true,
+            cancelable: false,
+            composed: true
+          });
+          newEvent.detail = {
+            template: template,
+            tag: kind
+          };
+          this.dispatchEvent(newEvent);
+        }.bind(this));
+      }
+    }
+    customElements.define(SamplesView.is, SamplesView);
+  </script>
+</dom-module>
