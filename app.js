@@ -37,6 +37,11 @@ window.addEventListener('WebComponentsReady', function() {
 function addNewElement(event) {
   var tag = event.detail.type.toLowerCase();
   var el = document.createElement(tag);
+
+  // If we haven't before, save this initial state of a <tag> element,
+  // so that we can diff it to produce the actual state of the world
+  codeView.save(tag, el, propertiesContainer.getProtoProperties(el));
+
   el.style.position = 'absolute';
   el.style.left = el.style.top = '20px';
 

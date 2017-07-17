@@ -28,6 +28,8 @@
 
       connectedCallback() {
         super.connectedCallback();
+        this._initialProperties = {};
+
         this._aceEditor = ace.edit('__editor');
         this._aceEditor.setReadOnly(true);
         this._aceEditor.setTheme("ace/theme/monokai");
@@ -39,6 +41,23 @@
       update(code) {
         this._aceEditor.setValue(code);
         this._aceEditor.clearSelection();
+      }
+
+      save(tag, el, props) {
+        if (this._initialProperties[tag])
+          return;
+
+        this._initialProperties[tag] = {};
+
+        var keys = ['id', 'slot', 'classList'].concat(Object.keys(props));
+        for (var i = 0; i < keys.length; i++) {
+          var prop = keys[i];
+          if (prop === 'classList') {
+            this._initialProperties[tag][prop] = el[prop].value;
+          } else {
+            this._initialProperties[tag][prop] = el[prop];
+          }
+        }
       }
 
       dump(parent) {

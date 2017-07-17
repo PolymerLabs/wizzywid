@@ -70,14 +70,7 @@
 
         // Start walking up the prototype chain to get all the props it has.
         this.$.bonus.innerHTML = '';
-
-        var proto = target.__proto__;
-        var protoProps = {};
-        while (proto.constructor.name !== 'Element') {
-          Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
-          proto = proto.__proto__;
-        }
-        this.doProtoProperties(target, protoProps);
+        this.doProtoProperties(target, this.getProtoProperties(target));
       }
 
       doBasicProperties(target) {
@@ -155,6 +148,16 @@
           input.value = target[name] || '';
           this.$.bonus.appendChild(input);
         }
+      }
+
+      getProtoProperties(target) {
+        var proto = target.__proto__;
+        var protoProps = {};
+        while (proto.constructor.name !== 'Element') {
+          Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
+          proto = proto.__proto__;
+        }
+        return protoProps;
       }
     }
     customElements.define(ElementProperties.is, ElementProperties);
