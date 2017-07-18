@@ -10,6 +10,8 @@
 <link rel="import" href="elements-palette.html">
 <link rel="import" href="samples-palette.html">
 
+<link rel="import" href="action-history.html">
+
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
   <template>
@@ -135,6 +137,8 @@
       }
     </style>
 
+    <action-history id="actionHistory"></action-history>
+    
     <app-header fixed>
       <app-toolbar>
         <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
@@ -144,11 +148,11 @@
           <div>Code</div>
         </button>
         <div class="separator"></div>
-        <button on-click="fireEvent" id="undoBtn" disabled data-event="undo">
+        <button on-click="undo" id="undoBtn" disabled>
           <iron-icon icon="designer:undo"></iron-icon>
           <div>Undo</div>
         </button>
-        <button on-click="fireEvent" id="redoBtn" disabled data-event="redo">
+        <button on-click="redo" id="redoBtn" disabled>
           <iron-icon icon="designer:redo"></iron-icon>
           <div>Redo</div>
         </button>
@@ -364,6 +368,12 @@
       }
       updateRedoButton(length) {
         this.$.redoBtn.disabled = (length === 0);
+      }
+      undo() {
+        this.$.actionHistory.undo();
+      }
+      redo() {
+        this.$.actionHistory.redo();
       }
     }
     customElements.define(AppShell.is, AppShell);
