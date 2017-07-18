@@ -82,18 +82,36 @@ function addNewSample(event) {
   el.style.position = 'absolute';
   el.style.left = el.style.top = '20px';
 
-  // TODO: unless we see some brand new divs or whatever this has, the code diff
-  // will be incorrect.
-  
   // Give it a unique ID.
   var newId = makeUniqueId(el, tag);
   el.id = newId;
+  actionHistory.update('new', el);
+  maybeDoDefaultProperties(el.tagName.toLowerCase(), el);
 
   // You need the item to render first.
   requestAnimationFrame(function() {
     el.click();
+
+    // This custom weird template may have elements we've never created,
+    // so we don't know what their diffs are for the code view.
+    var children = el.querySelectorAll('*');
+    for (var i = 0; i < children.length; i++) {
+      maybeDoDefaultProperties(children[i].tagName.toLowerCase(), children[i]);
+    }
   });
-  actionHistory.update('new', el);
+}
+
+function maybeDoDefaultProperties(tag, node) {
+  // TODO: omg all of this is gross.
+  var gross = shell.root.querySelector('elements-palette');
+  if (!codeView.has(tag)) {
+    console.log(tag);
+    // Need to create a fake element to get its defaults.
+    gross.maybeDoHTMLImport(tag, function() {
+      var child = document.createElement(tag);
+      codeView.save(tag, tag, child, propertiesContainer.getProtoProperties(child));
+    }, tag);
+  }
 }
 
 function deleteElement(event) {

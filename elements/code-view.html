@@ -43,9 +43,15 @@
         this._aceEditor.clearSelection();
       }
 
+      has(tag) {
+        return !!this._propertyDefaultsForTag[tag];
+      }
+
       save(tag, packageName, el, props) {
-        if (this._propertyDefaultsForTag[tag])
+        if (this._propertyDefaultsForTag[tag]) {
+          console.log('👌 already seen this tag', tag);
           return;
+        }
 
         this._propertyDefaultsForTag[tag] = {};
         this._propertyDefaultsForTag[tag]['__package_name__'] = packageName;
@@ -152,6 +158,7 @@ ${indent}}
 
       dumpAttributes(tag, node) {
         if (!this._propertyDefaultsForTag[tag]) {
+          console.log('🔥 oops what is this tag', tag);
           return '';
         }
         var defaults = Object.keys(this._propertyDefaultsForTag[tag]);
@@ -180,6 +187,7 @@ ${indent}}
 
       dumpImports(tag, indent) {
         if (!this._propertyDefaultsForTag[tag]) {
+          console.log('🔥 oops what is this tag', tag);
           return '';
         }
         var packageName = this._propertyDefaultsForTag[tag]['__package_name__'];

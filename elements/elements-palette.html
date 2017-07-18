@@ -93,14 +93,17 @@
           packageName = matches[1];
           kind = matches[2];
         }
+        this.maybeDoHTMLImport(kind, this.finishCreatingElement, packageName);
+      }
 
+      maybeDoHTMLImport(kind, callback, packageName) {
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
           var url = `bower_components/${packageName}/${kind}.html`;
           Polymer.Base.importHref(url, function(e) {
-            this.finishCreatingElement(kind, packageName);
+            callback.call(this, kind, packageName);
           }.bind(this));
         } else {
-            this.finishCreatingElement(kind, '');
+          callback.call(this, kind, '');
         }
       }
 
