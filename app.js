@@ -105,7 +105,6 @@ function maybeDoDefaultProperties(tag, node) {
   // TODO: omg all of this is gross.
   var gross = shell.root.querySelector('elements-palette');
   if (!codeView.has(tag)) {
-    console.log(tag);
     // Need to create a fake element to get its defaults.
     gross.maybeDoHTMLImport(tag, function() {
       var child = document.createElement(tag);
