@@ -77,11 +77,14 @@ function addNewSample(event) {
   // Clone the template and add it to the document.
   var frag = document.importNode(template.content, true);
   viewContainer.appendChild(frag);
+
+  // TODO: this is wrong.
   var el = viewContainer.children[viewContainer.children.length-1];
 
-  el.style.position = 'absolute';
-  el.style.left = el.style.top = '20px';
-
+  if (tag !== 'app-layout-sample') {
+    el.style.position = 'absolute';
+    el.style.left = el.style.top = '20px';
+  }
   // Give it a unique ID.
   var newId = makeUniqueId(el, tag);
   el.id = newId;
@@ -105,11 +108,16 @@ function maybeDoDefaultProperties(tag, node) {
   // TODO: omg all of this is gross.
   var gross = shell.root.querySelector('elements-palette');
   if (!codeView.has(tag)) {
-    // Need to create a fake element to get its defaults.
-    gross.maybeDoHTMLImport(tag, function() {
+    if (tag.indexOf('-') !== -1) {
+      // Need to create a fake element to get its defaults.
+      gross.maybeDoHTMLImport(tag, function() {
+        var child = document.createElement(tag);
+        codeView.save(tag, tag, child, propertiesContainer.getProtoProperties(child));
+      }, tag);
+    } else {
       var child = document.createElement(tag);
       codeView.save(tag, tag, child, propertiesContainer.getProtoProperties(child));
-    }, tag);
+    }
   }
 }
 

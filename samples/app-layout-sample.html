@@ -1,73 +1,64 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/app-layout/demo/sample-content.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
 
 <template>
-  <style>
-    #sample1 {
-      display: block;
-      background: white;
-      font-size: 16px;
-    }
-    #sample1 app-header {
-      background-color: #00897B;
-      color: #fff;
-    }
-    #sample1 paper-icon-button {
-      --paper-icon-button-ink-color: white;
-    }
-    #sample1 app-drawer-layout:not([narrow]) [drawer-toggle] {
-      display: none;
-    }
-    #sample1 .sample1_box {
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-      padding: 16px;
-      margin: 24px;
-      border-radius: 5px;
-      background-color: #fff;
-      color: #757575;
-    }
-    #sample1 .sample1_box .sample1_avatar {
-      display: inline-block;
-      height: 64px;
-      width: 64px;
-      border-radius: 50%;
-      background: #ddd;
-      line-height: 64px;
-      font-size: 30px;
-      color: #555;
-      text-align: center;
-    }
-    #sample1 .sample1_box h2 {
-      font-size: 22px;
-      margin: 16px 0;
-      color: #212121;
-    }
-  </style>
-
-  <app-drawer-layout id="sample1">
-    <app-drawer slot="drawer">
-      <app-toolbar>Getting Started</app-toolbar>
-    </app-drawer>
-    <app-header-layout>
-      <app-header slot="header" reveals effects="waterfall">
-        <app-toolbar>
-          <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-          <div main-title>Title</div>
-        </app-toolbar>
-      </app-header>
-
-      <div class="sample1_box">
-        <div class="sample1_avatar">B</div>
-        <h2> I am a title</h2>
-        <p>I am a subtitle</p>
-        <p>Hi!</p>
-      </div>
-    </app-header-layout>
-  </app-drawer-layout>
+<style>
+  .sample_app_layout__box {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    margin: 24px;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #757575;
+  }
+  .sample_app_layout__box .sample1_avatar {
+    display: inline-block;
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+    background: #ddd;
+    line-height: 64px;
+    font-size: 30px;
+    color: #555;
+    text-align: center;
+  }
+  .sample_app_layout__box h2 {
+    font-size: 22px;
+    margin: 16px 0;
+    color: #212121;
+  }
+</style>
+  <app-header style="background-color: #4285f4;color:white" condenses reveals effects="waterfall">
+    <app-toolbar>
+      <paper-icon-button icon="menu" onclick="_sampleAppLayoutDrawer.toggle()"></paper-icon-button>
+    </app-toolbar>
+    <app-toolbar>
+      <div spacer main-title>My App</div>
+    </app-toolbar>
+  </app-header>
+  <app-drawer id="_sampleAppLayoutDrawer" align="start">
+    <app-toolbar>
+      <div>My App</div>
+    </app-toolbar>
+    <paper-listbox>
+      <paper-item>action one</paper-item>
+      <paper-item>action two</paper-item>
+      <paper-item>action three</paper-item>
+    </paper-listbox>
+  </app-drawer>
+  <div class="sample_app_layout__box">
+    <div class="sample1_avatar">B</div>
+    <h2> I am a title</h2>
+    <p>I am a subtitle</p>
+  </div>
+  <div class="sample_app_layout__box">
+    <div class="sample1_avatar">B</div>
+    <h2> I am a title</h2>
+    <p>I am a subtitle</p>
+  </div>
 </template>
