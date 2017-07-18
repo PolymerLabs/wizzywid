@@ -225,7 +225,7 @@
           </designer-tab>
         </designer-tabs>
         <iron-pages class="elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
-          <elements-palette name="elements"></elements-palette>
+          <elements-palette name="elements" id="elementsPalette"></elements-palette>
           <samples-palette name="samples"></samples-palette>
         </iron-pages>
       </div>
@@ -258,6 +258,7 @@
         this.viewPage = 'elements';
 
         this.addEventListener('new-element', this.createElement.bind(this));
+        this.addEventListener('new-sample', this.createSample.bind(this));
         this.addEventListener('element-updated', function(event) {
           var detail = event.detail;
           var oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value);
@@ -272,15 +273,43 @@
        */
       createElement(event) {
         var tag = event.detail.type.toLowerCase();
-
         var el = document.createElement(tag);
-        viewContainer.appendChild(el);
+        window.viewContainer.appendChild(el);
 
         // If we haven't before, save this initial state of a <tag> element,
         // so that we can diff it to produce the actual state of the world
         codeView.save(tag, event.detail.package, el, getProtoProperties(el));
         this.$.actionHistory.add('new', el);
-        this._initNewElement(el, tag);
+
+        this._finishNewElement(el, tag);
+        // You need the item to render first.
+        requestAnimationFrame(function() {
+          el.click();
+        });
+      }
+
+      /*
+       * Adds a new sample code to the view.
+       * TODO: there's no tabula rasa for children in this sample.
+       */
+      createSample(event) {
+        var template = event.detail.template;
+        var templateTag = event.detail.tag;
+
+        // Clone the template and add it to the document.
+        var children = template.content.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = document.importNode(children[i], true);
+          window.viewContainer.appendChild(el);
+          this.$.actionHistory.add('new', el);
+          //codeView.save(tag, tag, el, getProtoProperties(el));
+        }
+
+        // Position the sample better.
+        if (templateTag !== 'app-layout-sample') {
+          el.style.position = 'absolute';
+          el.style.left = el.style.top = '20px';
+        }
       }
 
       /**
@@ -464,7 +493,7 @@
       /**
        * Initializes a new element that has just been added to the canvas.
        */
-      _initNewElement(el, tag) {
+      _finishNewElement(el, tag) {
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
         el.id = this._makeUniqueId(el, tag);
@@ -480,11 +509,6 @@
         } else if (tag === 'button' || slots.length != 0) {
           el.textContent = tag;
         }
-
-        // You need the item to render first.
-        requestAnimationFrame(function() {
-          el.click();
-        });
       }
 
       _makeUniqueId(node, id, suffix) {

@@ -6,8 +6,6 @@ window.addEventListener('WebComponentsReady', function() {
     updateActiveElement(event.target);
   });
 
-  document.addEventListener('new-sample', addNewSample);
-
   document.addEventListener('move-up', moveElementUp);
   document.addEventListener('move-back', function(event) {
     moveElementBack(event.detail.target, true);
@@ -23,56 +21,7 @@ window.addEventListener('WebComponentsReady', function() {
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
 
-function addNewSample(event) {
-  var template = event.detail.template;
-  var tag = event.detail.tag;
 
-  // Clone the template and add it to the document.
-  var frag = document.importNode(template.content, true);
-  viewContainer.appendChild(frag);
-
-  // TODO: this is wrong.
-  var el = viewContainer.children[viewContainer.children.length-1];
-
-  if (tag !== 'app-layout-sample') {
-    el.style.position = 'absolute';
-    el.style.left = el.style.top = '20px';
-  }
-  // Give it a unique ID.
-  var newId = makeUniqueId(el, tag);
-  el.id = newId;
-  shell.$.actionHistory.add('new', el);
-  maybeDoDefaultProperties(el.tagName.toLowerCase(), el);
-
-  // You need the item to render first.
-  requestAnimationFrame(function() {
-    el.click();
-
-    // This custom weird template may have elements we've never created,
-    // so we don't know what their diffs are for the code view.
-    var children = el.querySelectorAll('*');
-    for (var i = 0; i < children.length; i++) {
-      maybeDoDefaultProperties(children[i].tagName.toLowerCase(), children[i]);
-    }
-  });
-}
-
-function maybeDoDefaultProperties(tag, node) {
-  // TODO: omg all of this is gross.
-  var gross = shell.root.querySelector('elements-palette');
-  if (!codeView.has(tag)) {
-    if (tag.indexOf('-') !== -1) {
-      // Need to create a fake element to get its defaults.
-      gross.maybeDoHTMLImport(tag, function() {
-        var child = document.createElement(tag);
-        codeView.save(tag, tag, child, getProtoProperties(child));
-      }, tag);
-    } else {
-      var child = document.createElement(tag);
-      codeView.save(tag, tag, child, getProtoProperties(child));
-    }
-  }
-}
 
 
 function updateActiveElement(el) {
