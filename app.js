@@ -67,7 +67,7 @@ function addNewElement(event) {
   requestAnimationFrame(function() {
     el.click();
   });
-  actionHistory.update('new', el);
+  actionHistory.add('new', el);
 }
 
 function addNewSample(event) {
@@ -88,7 +88,7 @@ function addNewSample(event) {
   // Give it a unique ID.
   var newId = makeUniqueId(el, tag);
   el.id = newId;
-  actionHistory.update('new', el);
+  actionHistory.add('new', el);
   maybeDoDefaultProperties(el.tagName.toLowerCase(), el);
 
   // You need the item to render first.
@@ -130,14 +130,14 @@ function deleteElement(event) {
 
   // Deleting the whole app should remove the children I guess.
   if (el.id === 'viewContainer') {
-    actionHistory.update('delete', el, {innerHtml: el.innerHTML});
+    actionHistory.add('delete', el, {innerHtml: el.innerHTML});
     el.innerHTML = '';
     updateActiveElement(el);
   } else {
     var parent = el.parentElement
     parent.removeChild(el);
     updateActiveElement(parent);
-    actionHistory.update('delete', el, {parent: parent});
+    actionHistory.add('delete', el, {parent: parent});
   }
 }
 
@@ -146,7 +146,7 @@ function fitElement(event) {
   if (!el || el.id === 'viewContainer') {
     return;
   }
-  actionHistory.update('fit', shell.activeElement,
+  actionHistory.add('fit', shell.activeElement,
     {oldPosition: el.style.position,
     newPosition: 'absolute',
     oldLeft: el.style.left, oldTop: el.style.top,
@@ -171,7 +171,7 @@ function elementWasUpdated(event) {
   var detail = event.detail;
   var oldValue = shell.updateActiveElementValues(detail.type, detail.name, detail.value);
   treeView.recomputeTree(viewContainer, shell.activeElement);
-  actionHistory.update('update', shell.activeElement,
+  actionHistory.add('update', shell.activeElement,
       {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
 }
 
@@ -270,12 +270,12 @@ function dragElement(event, el) {
         }
         window._dropTarget.appendChild(el);
         window._dropTarget.classList.remove('over');
-        actionHistory.update('reparent', el, {newParent: window._dropTarget, oldParent: oldParent});
+        actionHistory.add('reparent', el, {newParent: window._dropTarget, oldParent: oldParent});
         window._dropTarget = null;
       } else if (el.parentElement && (el.parentElement !== viewContainer)) {
         // If there's no drop target and the el used to be in a different
         // parent, move it to the main view.
-        actionHistory.update('reparent', el, {newParent: viewContainer, oldParent: el.parentElement});
+        actionHistory.add('reparent', el, {newParent: viewContainer, oldParent: el.parentElement});
         el.parentElement.removeChild(el);
         viewContainer.appendChild(el);
       }
@@ -293,7 +293,7 @@ function dragElement(event, el) {
         el.style.top = local.top - parent.top + 'px';
       }
 
-      actionHistory.update('move', el,
+      actionHistory.add('move', el,
           {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop,
           oldPosition:oldPosition, newPosition: el.style.position});
       el.classList.remove('dragging');
@@ -316,7 +316,7 @@ function resizeElement(event, el) {
       break;
     case 'end':
       window._resizing = false;
-      actionHistory.update('resize', el,
+      actionHistory.add('resize', el,
           {newWidth: el.style.width, newHeight: el.style.height,
            oldWidth: window._initialWidth + 'px', oldHeight: window._initialHeight + 'px'});
       el.classList.remove('resizing');
@@ -337,7 +337,7 @@ function moveElementUp(event) {
   if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
     return;
   }
-  actionHistory.update('move-up', el, {oldParent: parent, newParent: parent.parentElement});
+  actionHistory.add('move-up', el, {oldParent: parent, newParent: parent.parentElement});
   parent.removeChild(el);
   parent.parentElement.appendChild(el);
   displayElement();
@@ -356,7 +356,7 @@ function moveElementBack(el, updateHistory) {
     parent.appendChild(el);
   }
   if (updateHistory) {
-    actionHistory.update('move-back', el);
+    actionHistory.add('move-back', el);
   }
   displayElement();
 }
@@ -380,7 +380,7 @@ function moveElementForward(el, updateHistory) {
     parent.insertBefore(el, parent.firstChild);
   }
   if (updateHistory) {
-    actionHistory.update('move-forward', el);
+    actionHistory.add('move-forward', el);
   }
   displayElement();
 }

@@ -17,7 +17,7 @@
         this.redoHistory = [];
       }
 
-      update(action, node, detail) {
+      add(action, node, detail) {
         // Don't try to add two identical items since that looks weird.
         // TODO: figure out why you get double actions sometimes.
         var item = {
