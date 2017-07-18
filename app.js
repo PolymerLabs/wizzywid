@@ -6,12 +6,8 @@ window.addEventListener('WebComponentsReady', function() {
     updateActiveElement(event.target);
   });
 
-  // New/Delete/Edit an element.
-  document.addEventListener('new-element', addNewElement);
   document.addEventListener('new-sample', addNewSample);
-  document.addEventListener('delete-element', deleteElement);
   document.addEventListener('element-updated', elementWasUpdated);
-  document.addEventListener('fit-element', fitElement);
 
   document.addEventListener('move-up', moveElementUp);
   document.addEventListener('move-back', function(event) {
@@ -27,41 +23,6 @@ window.addEventListener('WebComponentsReady', function() {
 
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
-
-function addNewElement(event) {
-  var tag = event.detail.type.toLowerCase();
-  var el = document.createElement(tag);
-
-  // If we haven't before, save this initial state of a <tag> element,
-  // so that we can diff it to produce the actual state of the world
-  codeView.save(tag, event.detail.package, el, getProtoProperties(el));
-
-  el.style.position = 'absolute';
-  el.style.left = el.style.top = '20px';
-
-  // Give it a unique ID.
-  var newId = makeUniqueId(el, tag);
-  el.id = newId;
-  viewContainer.appendChild(el);
-
-  var slots = el.root ? el.root.querySelectorAll('slot') : [];
-  // TODO: fix this and make it less this and more something else.
-  if (tag === 'div') {
-    el.style.height = el.style.width = '200px';
-    el.style.backgroundColor = '#CDDC39';
-    el.textContent = 'div';
-  } else if (tag === 'input') {
-    el.placeholder = 'input';
-  } else if (tag === 'button' || slots.length != 0) {
-    el.textContent = tag;
-  }
-
-  // You need the item to render first.
-  requestAnimationFrame(function() {
-    el.click();
-  });
-  shell.$.actionHistory.add('new', el);
-}
 
 function addNewSample(event) {
   var template = event.detail.template;
@@ -112,44 +73,6 @@ function maybeDoDefaultProperties(tag, node) {
       codeView.save(tag, tag, child, getProtoProperties(child));
     }
   }
-}
-
-function deleteElement(event) {
-  var el = event.detail.target;
-
-  if (!el) {
-    return;
-  }
-
-  // Deleting the whole app should remove the children I guess.
-  if (el.id === 'viewContainer') {
-    shell.$.actionHistory.add('delete', el, {innerHtml: el.innerHTML});
-    el.innerHTML = '';
-    updateActiveElement(el);
-  } else {
-    var parent = el.parentElement
-    parent.removeChild(el);
-    updateActiveElement(parent);
-    shell.$.actionHistory.add('delete', el, {parent: parent});
-  }
-}
-
-function fitElement(event) {
-  var el = event.detail.target;
-  if (!el || el.id === 'viewContainer') {
-    return;
-  }
-  shell.$.actionHistory.add('fit', shell.activeElement,
-    {oldPosition: el.style.position,
-    newPosition: 'absolute',
-    oldLeft: el.style.left, oldTop: el.style.top,
-    newLeft: '0', newTop: '0',
-    oldWidth: el.style.width, oldHeight: el.style.height,
-    newWidth: '100%', newHeight: '100%'});
-
-  el.style.position = 'absolute';
-  el.style.left = el.style.top = '0px';
-  el.style.height = el.style.width = '100%';
 }
 
 function makeUniqueId(node, id, suffix) {

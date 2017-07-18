@@ -58,7 +58,7 @@
 
       ready() {
         super.ready();
-        this.addEventListener('click', this.addElement.bind(this));
+        this.addEventListener('click', this.click.bind(this));
         this._nativeElementsWhitelist = ['div', 'input', 'button', 'form'];
       }
 
@@ -75,11 +75,10 @@
           }
         }
 
-
         this.elementNames = Object.keys(list).concat(subElementNames).sort();
       }
 
-      addElement(event) {
+      click(event) {
         var target = event.path[0];
         var kind = target.textContent;
         if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
@@ -93,9 +92,10 @@
           packageName = matches[1];
           kind = matches[2];
         }
+
         this.maybeDoHTMLImport(kind, this.finishCreatingElement, packageName);
       }
-
+      
       maybeDoHTMLImport(kind, callback, packageName) {
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
           var url = `bower_components/${packageName}/${kind}.html`;

@@ -161,11 +161,11 @@
           <div>Redo</div>
         </button>
         <div class="separator"></div>
-        <button on-click="fireEvent" data-event="delete-element">
+        <button on-click="deleteElement">
           <iron-icon icon="designer:delete"></iron-icon>
           <div>Delete</div>
         </button>
-        <button on-click="fireEvent" data-event="fit-element">
+        <button on-click="fitElement">
           <iron-icon icon="designer:fit"></iron-icon>
           <div>Fit to parent</div>
         </button>
@@ -256,6 +256,45 @@
         super.ready();
         this.stylePage = 'properties';
         this.viewPage = 'elements';
+
+        this.addEventListener('new-element', this.createElement.bind(this));
+      }
+
+      /*
+       * Adds a new element to the view.
+       */
+      createElement(event) {
+        var tag = event.detail.type.toLowerCase();
+
+        var el = document.createElement(tag);
+        viewContainer.appendChild(el);
+
+        // If we haven't before, save this initial state of a <tag> element,
+        // so that we can diff it to produce the actual state of the world
+        codeView.save(tag, event.detail.package, el, getProtoProperties(el));
+        this._initNewElement(el, tag);
+      }
+
+      /**
+       * Deletes the active element.
+       */
+      deleteElement() {
+        if (!this.activeElement) {
+          return;
+        }
+
+        var el = this.activeElement;
+        // Deleting the top level app should remove its children.
+        if (el.id === 'viewContainer') {
+          this.$.actionHistory.add('delete', el, {innerHTML: el.innerHTML});
+          el.innerHTML = '';
+        } else {
+          var parent = el.parentElement;
+          parent.removeChild(el);
+          this.updateActiveElement(parent);
+          this.$.actionHistory.add('delete', el, {parent: parent});
+        }
+        this.displayElement();
       }
 
       displayElement() {
@@ -276,6 +315,27 @@
         this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
 
+      /**
+       * Fit an element to its target
+       */
+      fitElement() {
+        var el = this.activeElement;
+        if (!el || el.id === 'viewContainer') {
+          return;
+        }
+        this.$.actionHistory.add('fit', el,
+          {oldPosition: el.style.position,
+          newPosition: 'absolute',
+          oldLeft: el.style.left, oldTop: el.style.top,
+          newLeft: '0', newTop: '0',
+          oldWidth: el.style.width, oldHeight: el.style.height,
+          newWidth: '100%', newHeight: '100%'});
+          
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '0px';
+        el.style.height = el.style.width = '100%';
+      }
+
       updateActiveElement(el) {
         if (this.activeElement) {
           this.activeElement.classList.remove('active');
@@ -284,7 +344,6 @@
         this.activeElement = el;
         this.computeActiveElementName();
       }
-
 
       updateActiveElementValues(type, name, value) {
         var previousValue;
@@ -336,7 +395,6 @@
         };
         this.dispatchEvent(newEvent);
       }
-
 
       // TODO: ugh, this can probably be better.
       computeActiveElementName() {
@@ -391,6 +449,37 @@
       redo() {
         this.$.actionHistory.redo();
       }
+
+
+
+
+      /**
+       * Initializes a new element that has just been added to the canvas.
+       */
+      _initNewElement(el, tag) {
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '20px';
+        el.id = makeUniqueId(el, tag);
+
+        var slots = el.root ? el.root.querySelectorAll('slot') : [];
+        // TODO: fix this and make it less this and more something else.
+        if (tag === 'div') {
+          el.style.height = el.style.width = '200px';
+          el.style.backgroundColor = '#CDDC39';
+          el.textContent = 'div';
+        } else if (tag === 'input') {
+          el.placeholder = 'input';
+        } else if (tag === 'button' || slots.length != 0) {
+          el.textContent = tag;
+        }
+
+        // You need the item to render first.
+        requestAnimationFrame(function() {
+          el.click();
+        });
+        this.$.actionHistory.add('new', el);
+      }
+
     }
     customElements.define(AppShell.is, AppShell);
   </script>
