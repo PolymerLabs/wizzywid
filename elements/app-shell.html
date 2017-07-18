@@ -258,6 +258,13 @@
         this.viewPage = 'elements';
 
         this.addEventListener('new-element', this.createElement.bind(this));
+        this.addEventListener('element-updated', function(event) {
+          var detail = event.detail;
+          var oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value);
+          // Update the history.
+          this.$.actionHistory.add('update', this.activeElement,
+            {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
+        }.bind(this));
       }
 
       /*
@@ -272,6 +279,7 @@
         // If we haven't before, save this initial state of a <tag> element,
         // so that we can diff it to produce the actual state of the world
         codeView.save(tag, event.detail.package, el, getProtoProperties(el));
+        this.$.actionHistory.add('new', el);
         this._initNewElement(el, tag);
       }
 
@@ -291,7 +299,7 @@
         } else {
           var parent = el.parentElement;
           parent.removeChild(el);
-          this.updateActiveElement(parent);
+          this.setActiveElement(parent);
           this.$.actionHistory.add('delete', el, {parent: parent});
         }
         this.displayElement();
@@ -330,13 +338,13 @@
           newLeft: '0', newTop: '0',
           oldWidth: el.style.width, oldHeight: el.style.height,
           newWidth: '100%', newHeight: '100%'});
-          
+
         el.style.position = 'absolute';
         el.style.left = el.style.top = '0px';
         el.style.height = el.style.width = '100%';
       }
 
-      updateActiveElement(el) {
+      setActiveElement(el) {
         if (this.activeElement) {
           this.activeElement.classList.remove('active');
         }
@@ -459,7 +467,7 @@
       _initNewElement(el, tag) {
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
-        el.id = makeUniqueId(el, tag);
+        el.id = this._makeUniqueId(el, tag);
 
         var slots = el.root ? el.root.querySelectorAll('slot') : [];
         // TODO: fix this and make it less this and more something else.
@@ -477,9 +485,14 @@
         requestAnimationFrame(function() {
           el.click();
         });
-        this.$.actionHistory.add('new', el);
       }
 
+      _makeUniqueId(node, id, suffix) {
+        id = id.replace('-', '_');
+        var uId = id + (suffix || '');
+        return viewContainer.querySelector('#' + uId) ?
+          this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
+      }
     }
     customElements.define(AppShell.is, AppShell);
   </script>

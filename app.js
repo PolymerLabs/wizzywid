@@ -7,7 +7,6 @@ window.addEventListener('WebComponentsReady', function() {
   });
 
   document.addEventListener('new-sample', addNewSample);
-  document.addEventListener('element-updated', elementWasUpdated);
 
   document.addEventListener('move-up', moveElementUp);
   document.addEventListener('move-back', function(event) {
@@ -75,25 +74,10 @@ function maybeDoDefaultProperties(tag, node) {
   }
 }
 
-function makeUniqueId(node, id, suffix) {
-  id = id.replace('-', '_')
-  var uId = id + (suffix || '');
-  return viewContainer.querySelector('#' + uId) ?
-    this.makeUniqueId(node, id, suffix ? ++suffix : 1) :
-      uId;
-}
-
-function elementWasUpdated(event) {
-  var detail = event.detail;
-  var oldValue = shell.updateActiveElementValues(detail.type, detail.name, detail.value);
-
-  shell.$.actionHistory.add('update', shell.activeElement,
-      {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
-}
 
 function updateActiveElement(el) {
   if (el !== shell.activeElement) {
-    shell.updateActiveElement(el);
+    shell.setActiveElement(el);
   }
   shell.displayElement();
 }
