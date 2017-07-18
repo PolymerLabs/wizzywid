@@ -163,7 +163,7 @@ function makeUniqueId(node, id, suffix) {
 function elementWasUpdated(event) {
   var detail = event.detail;
   var oldValue = shell.updateActiveElementValues(detail.type, detail.name, detail.value);
-  treeView.recomputeTree(viewContainer, shell.activeElement);
+
   shell.$.actionHistory.add('update', shell.activeElement,
       {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
 }
@@ -184,7 +184,7 @@ function displayElement() {
   flexContainer.display(window.getComputedStyle(el));
 
   // Highlight it in the tree.
-  treeView.recomputeTree(viewContainer, shell.activeElement);
+  shell.$.treeView.recomputeTree(viewContainer, shell.activeElement);
 }
 
 function trackElement(event) {

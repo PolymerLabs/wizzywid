@@ -11,6 +11,7 @@
 <link rel="import" href="samples-palette.html">
 
 <link rel="import" href="action-history.html">
+<link rel="import" href="tree-view.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
@@ -138,7 +139,7 @@
     </style>
 
     <action-history id="actionHistory"></action-history>
-    
+
     <app-header fixed>
       <app-toolbar>
         <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
@@ -185,9 +186,7 @@
         <designer-tab class="single">
           <button>tree</button>
         </designer-tab>
-        <div name="tree">
-          <slot name="tree"></slot>
-        </div>
+        <tree-view name="tree" id="treeView"></tree-view>
       </div>
 
       <div class="main" id="mainContainer">
@@ -305,6 +304,8 @@
             this.computeActiveElementName();
           }
         }
+
+        this.$.treeView.recomputeTree(window.viewContainer, this.activeElement);
         return previousValue;
       }
 
