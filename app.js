@@ -1,5 +1,4 @@
 window.addEventListener('WebComponentsReady', function() {
-  updateActiveElement(viewContainer.target);
 
   // Focus an element.
   viewContainer.addEventListener('click', function() {
@@ -12,9 +11,6 @@ window.addEventListener('WebComponentsReady', function() {
 
   Polymer.Gestures.addListener(viewContainer, 'track', trackElement);
 });
-
-
-
 
 function updateActiveElement(el) {
   if (el !== shell.activeElement) {

@@ -257,6 +257,9 @@
         this.stylePage = 'properties';
         this.viewPage = 'elements';
 
+        this.activeElement = window.viewContainer;
+        this.refreshView();
+
         this.addEventListener('new-element', this.createElement.bind(this));
         this.addEventListener('new-sample', this.createSample.bind(this));
         this.addEventListener('element-updated', function(event) {
@@ -490,7 +493,7 @@
         parent.parentElement.appendChild(el);
         this.refreshView();
       }
-      
+
       // TODO: ugh, this can probably be better.
       computeActiveElementName() {
         if (this.activeElement === null || this.activeElement.id == 'viewContainer') {
