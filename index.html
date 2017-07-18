@@ -11,9 +11,6 @@
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="bower_components/polymer/lib/mixins/gesture-event-listeners.html">
     <link rel="import" href="elements/app-shell.html">
-    <link rel="import" href="elements/element-styles.html">
-    <link rel="import" href="elements/element-flex.html">
-    <link rel="import" href="elements/element-properties.html">
     <link rel="import" href="elements/code-view.html">
     <custom-style>
     <style>
@@ -83,10 +80,6 @@
   </head>
   <body>
     <app-shell id="shell">
-      <element-properties slot="properties" id="propertiesContainer"></element-properties>
-      <element-styles slot="styles" id="stylesContainer"></element-styles>
-      <element-flex slot="flex" id="flexContainer"></element-flex>
-
       <div class="main" slot="main" id="viewContainer"></div>
       <code-view id="codeView" slot="code"></code-view>
     </app-shell>

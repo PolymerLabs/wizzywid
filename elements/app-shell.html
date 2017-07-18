@@ -12,6 +12,9 @@
 
 <link rel="import" href="action-history.html">
 <link rel="import" href="tree-view.html">
+<link rel="import" href="element-styles.html">
+<link rel="import" href="element-flex.html">
+<link rel="import" href="element-properties.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
@@ -209,15 +212,9 @@
           </designer-tab>
         </designer-tabs>
         <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
-          <div name="properties">
-            <slot name="properties"></slot>
-          </div>
-          <div name="styles">
-            <slot name="styles"></slot>
-          </div>
-          <div name="flex">
-            <slot name="flex"></slot>
-          </div>
+          <element-properties name="properties" id="propertiesContainer"></element-properties>
+          <element-styles name="styles" id="stylesContainer"></element-styles>
+          <element-flex name="flex" id="flexContainer"></element-flex>
         </iron-pages>
         <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
           <designer-tab name="elements">
@@ -259,6 +256,24 @@
         super.ready();
         this.stylePage = 'properties';
         this.viewPage = 'elements';
+      }
+
+      displayElement() {
+        var el = this.activeElement ? this.activeElement : window.viewContainer;
+
+        // Display its properties in the side view.
+        var computedStyle = window.getComputedStyle(el);
+        this.$.propertiesContainer.display(el);
+        this.$.stylesContainer.display(computedStyle);
+        this.$.flexContainer.display(computedStyle);
+
+        // Highlight it in the tree.
+        this.$.treeView.recomputeTree(window.viewContainer, el);
+      }
+
+      displayElementWhileTracking() {
+        var size = this.activeElement.getBoundingClientRect();
+        this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
 
       updateActiveElement(el) {

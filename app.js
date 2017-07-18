@@ -34,7 +34,7 @@ function addNewElement(event) {
 
   // If we haven't before, save this initial state of a <tag> element,
   // so that we can diff it to produce the actual state of the world
-  codeView.save(tag, event.detail.package, el, propertiesContainer.getProtoProperties(el));
+  codeView.save(tag, event.detail.package, el, getProtoProperties(el));
 
   el.style.position = 'absolute';
   el.style.left = el.style.top = '20px';
@@ -105,11 +105,11 @@ function maybeDoDefaultProperties(tag, node) {
       // Need to create a fake element to get its defaults.
       gross.maybeDoHTMLImport(tag, function() {
         var child = document.createElement(tag);
-        codeView.save(tag, tag, child, propertiesContainer.getProtoProperties(child));
+        codeView.save(tag, tag, child, getProtoProperties(child));
       }, tag);
     } else {
       var child = document.createElement(tag);
-      codeView.save(tag, tag, child, propertiesContainer.getProtoProperties(child));
+      codeView.save(tag, tag, child, getProtoProperties(child));
     }
   }
 }
@@ -172,19 +172,7 @@ function updateActiveElement(el) {
   if (el !== shell.activeElement) {
     shell.updateActiveElement(el);
   }
-  displayElement();
-}
-
-function displayElement() {
-  var el = shell.activeElement ? shell.activeElement : viewContainer;
-
-  // Display its properties.
-  propertiesContainer.display(el);
-  stylesContainer.display(window.getComputedStyle(el));
-  flexContainer.display(window.getComputedStyle(el));
-
-  // Highlight it in the tree.
-  shell.$.treeView.recomputeTree(viewContainer, shell.activeElement);
+  shell.displayElement();
 }
 
 function trackElement(event) {
@@ -294,8 +282,7 @@ function dragElement(event, el) {
       break;
   }
   updateActiveElement(el);
-  var size = el.getBoundingClientRect();
-  stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
+  shell.displayElementWhileTracking();
 }
 
 function resizeElement(event, el) {
@@ -333,7 +320,7 @@ function moveElementUp(event) {
   shell.$.actionHistory.add('move-up', el, {oldParent: parent, newParent: parent.parentElement});
   parent.removeChild(el);
   parent.parentElement.appendChild(el);
-  displayElement();
+  shell.displayElement();
 }
 
 function moveElementBack(el, updateHistory) {
@@ -351,7 +338,7 @@ function moveElementBack(el, updateHistory) {
   if (updateHistory) {
     shell.$.actionHistory.add('move-back', el);
   }
-  displayElement();
+  shell.displayElement();
 }
 
 function moveElementForward(el, updateHistory) {
@@ -375,5 +362,55 @@ function moveElementForward(el, updateHistory) {
   if (updateHistory) {
     shell.$.actionHistory.add('move-forward', el);
   }
-  displayElement();
+  shell.displayElement();
+}
+
+function getProtoProperties(target) {
+  var proto = target.__proto__;
+  var protoProps = {};
+  while (proto.constructor.name !== 'Element') {
+    Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
+    proto = proto.__proto__;
+  }
+
+  var propNames = Object.keys(protoProps).sort();
+
+  // Skip some very specific Polymer/element properties.
+  var blacklist = [
+      // Polymer specific
+      'isAttached',
+      'constructor', 'created', 'ready', 'attached', 'detached',
+      'attributeChanged', 'is', 'listeners', 'observers', 'properties',
+      // Native elements ones we don't care about
+      'validity', 'useMap', 'innerText', 'outerText', 'style', 'accessKey',
+      'draggable', 'lang', 'spellcheck', 'tabIndex', 'translate', 'align', 'dir',
+      // Spefic elements stuff
+      'receivedFocusFromKeyboard', 'pointerDown', 'valueAsNumber',
+      'selectionDirection', 'selectionStart', 'selectionEnd'
+      ];
+
+  var i = 0;
+  while (i < propNames.length) {
+    var name = propNames[i];
+
+    // Skip everything that starts with a _ which is a Polymer private/protected
+    // and you probably don't care about it.
+    // Also anything in the blacklist. Or that starts with webkit.
+    if (name.charAt(0) === '_' ||
+        name === 'keyEventTarget' ||
+        blacklist.indexOf(name) !== -1 ||
+        name.indexOf('webkit') === 0 ||
+        name.indexOf('on') === 0) {
+      propNames.splice(i, 1);
+      continue;
+    }
+
+    // Skip everything that doesn't have a setter.
+    if (!protoProps[name].set) {
+      propNames.splice(i, 1);
+      continue;
+    }
+    i++;
+  }
+  return propNames;
 }
