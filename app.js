@@ -6,14 +6,6 @@ window.addEventListener('WebComponentsReady', function() {
     updateActiveElement(event.target);
   });
 
-  document.addEventListener('move-up', moveElementUp);
-  document.addEventListener('move-back', function(event) {
-    moveElementBack(event.detail.target, true);
-  });
-  document.addEventListener('move-forward', function(event) {
-    moveElementForward(event.detail.target, true);
-  });
-
   document.addEventListener('update-code', function(event) {
     codeView.dump(viewContainer);
   }, true);
@@ -28,7 +20,7 @@ function updateActiveElement(el) {
   if (el !== shell.activeElement) {
     shell.setActiveElement(el);
   }
-  shell.displayElement();
+  shell.refreshView();
 }
 
 function trackElement(event) {
@@ -138,7 +130,7 @@ function dragElement(event, el) {
       break;
   }
   updateActiveElement(el);
-  shell.displayElementWhileTracking();
+  shell.refreshViewWhileTracking();
 }
 
 function resizeElement(event, el) {
@@ -164,61 +156,6 @@ function resizeElement(event, el) {
 function dragShouldSize(event, rect) {
   return (Math.abs(rect.right - event.detail.x) < 10) &&
     (Math.abs(rect.bottom - event.detail.y) < 10);
-}
-
-function moveElementUp(event) {
-  var el = event.detail.target;
-  var parent = el.parentElement;
-  // If the parent isn't already the viewContainer, move it one up.
-  if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
-    return;
-  }
-  shell.$.actionHistory.add('move-up', el, {oldParent: parent, newParent: parent.parentElement});
-  parent.removeChild(el);
-  parent.parentElement.appendChild(el);
-  shell.displayElement();
-}
-
-function moveElementBack(el, updateHistory) {
-  var el = event.detail.target;
-  var parent = el.parentElement;
-  if (el.id === 'viewContainer') {
-    return;
-  }
-  var previous = el.previousElementSibling;
-  if (previous) {
-    parent.insertBefore(el, previous);
-  } else {
-    parent.appendChild(el);
-  }
-  if (updateHistory) {
-    shell.$.actionHistory.add('move-back', el);
-  }
-  shell.displayElement();
-}
-
-function moveElementForward(el, updateHistory) {
-  var parent = el.parentElement;
-  if (el.id === 'viewContainer') {
-    return;
-  }
-  // Since you can't insertAfter your next sibling, you need to
-  // insert before two siblings over.
-  var next = el.nextElementSibling;
-  if (next) {
-    next = next.nextElementSibling;
-    if (next) {
-      parent.insertBefore(el, next);
-    } else {
-      parent.appendChild(el);
-    }
-  } else {
-    parent.insertBefore(el, parent.firstChild);
-  }
-  if (updateHistory) {
-    shell.$.actionHistory.add('move-forward', el);
-  }
-  shell.displayElement();
 }
 
 function getProtoProperties(target) {

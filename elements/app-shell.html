@@ -170,15 +170,15 @@
           <div>Fit to parent</div>
         </button>
         <div class="separator"></div>
-        <button on-click="fireEvent" data-event="move-up">
+        <button on-click="moveUp">
           <iron-icon icon="designer:up"></iron-icon>
           <div>Move up</div>
         </button>
-        <button on-click="fireEvent" data-event="move-back">
+        <button on-click="moveBack">
           <iron-icon icon="designer:back"></iron-icon>
           <div>Move back</div>
         </button>
-        <button on-click="fireEvent" data-event="move-forward">
+        <button on-click="moveForward">
           <iron-icon icon="designer:forward"></iron-icon>
           <div>Move forward</div>
         </button>
@@ -269,6 +269,18 @@
       }
 
       /*
+       * Updates the new active element in the view.
+       */
+      setActiveElement(el) {
+        if (this.activeElement) {
+          this.activeElement.classList.remove('active');
+        }
+        el.classList.add('active');
+        this.activeElement = el;
+        this.computeActiveElementName();
+      }
+
+      /*
        * Adds a new element to the view.
        */
       createElement(event) {
@@ -331,10 +343,13 @@
           this.setActiveElement(parent);
           this.$.actionHistory.add('delete', el, {parent: parent});
         }
-        this.displayElement();
+        this.refreshView();
       }
 
-      displayElement() {
+      /**
+       * Refreshes all the properties/styles of the active element.
+       */
+      refreshView() {
         var el = this.activeElement ? this.activeElement : window.viewContainer;
 
         // Display its properties in the side view.
@@ -347,7 +362,7 @@
         this.$.treeView.recomputeTree(window.viewContainer, el);
       }
 
-      displayElementWhileTracking() {
+      refreshViewWhileTracking() {
         var size = this.activeElement.getBoundingClientRect();
         this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
@@ -373,15 +388,9 @@
         el.style.height = el.style.width = '100%';
       }
 
-      setActiveElement(el) {
-        if (this.activeElement) {
-          this.activeElement.classList.remove('active');
-        }
-        el.classList.add('active');
-        this.activeElement = el;
-        this.computeActiveElementName();
-      }
-
+      /**
+       * Updates the active element's displayed values.
+       */
       updateActiveElementValues(type, name, value) {
         var previousValue;
 
@@ -420,19 +429,68 @@
         return previousValue;
       }
 
-      fireEvent(event) {
-        var name = event.currentTarget.dataset['event'];
-        var newEvent = new Event(name, {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        newEvent.detail = {
-          target: this.activeElement
-        };
-        this.dispatchEvent(newEvent);
+      /**
+       * Moving elements in the DOM
+       */
+      moveBack(noUpdateHistory) {
+        var el = this.activeElement;
+        if (el.id === 'viewContainer') {
+          return;
+        }
+        var parent = el.parentElement;
+        var previous = el.previousElementSibling;
+        if (previous) {
+          parent.insertBefore(el, previous);
+        } else {
+          parent.appendChild(el);
+        }
+        if (!noUpdateHistory) {
+          this.$.actionHistory.add('move-back', el);
+        }
+        this.refreshView();
       }
 
+      moveForward(noUpdateHistory) {
+        var el = this.activeElement;
+        if (el.id === 'viewContainer') {
+          return;
+        }
+        var parent = el.parentElement;
+
+        // Since you can't insertAfter your next sibling, you need to
+        // insert before two siblings over.
+        var next = el.nextElementSibling;
+        if (next) {
+          next = next.nextElementSibling;
+          if (next) {
+            parent.insertBefore(el, next);
+          } else {
+            parent.appendChild(el);
+          }
+        } else {
+          parent.insertBefore(el, parent.firstChild);
+        }
+        if (!noUpdateHistory) {
+          this.$.actionHistory.add('move-forward', el);
+        }
+        this.refreshView();
+      }
+
+      moveUp(noUpdateHistory) {
+        var el = this.activeElement;
+        var parent = el.parentElement;
+        // If the parent isn't already the viewContainer, move it one up.
+        if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
+          return;
+        }
+        if (!noUpdateHistory) {
+          this.$.actionHistory.add('move-up', el, {oldParent: parent, newParent: parent.parentElement});
+        }
+        parent.removeChild(el);
+        parent.parentElement.appendChild(el);
+        this.refreshView();
+      }
+      
       // TODO: ugh, this can probably be better.
       computeActiveElementName() {
         if (this.activeElement === null || this.activeElement.id == 'viewContainer') {
