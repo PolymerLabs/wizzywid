@@ -125,11 +125,8 @@
             continue;
           }
 
-          // For every child, we append a new <ul>, and do this dance recursively.
-          var childUL = document.createElement('ul');
-          li.appendChild(childUL);
           li.className = 'has-children';
-          nodes = nodes.concat(this.getChildren(child, childUL));
+          nodes = nodes.concat(this.getChildren(child, li));
         }
         return nodes;
       }
