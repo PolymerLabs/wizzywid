@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <dom-module id="tree-view">
   <template strip-whitespace>
@@ -10,7 +9,6 @@
         width: 100%;
       }
       button {
-        background: transparent;
         border: none;
         font-size: 13px;
         display: block;
@@ -18,9 +16,14 @@
         cursor: pointer;
         width: 100%;
         text-align: left;
+        display: inline-block;
+        margin: 0;
+        background: white;
+        position: relative;
+        top: 0.5em;
       }
       button:hover {
-        background: rgba(72,154,254,.2);
+        background: #daebff;
       }
       span {
         margin: 4px;
@@ -29,65 +32,120 @@
         font-style: italic;
         color: #009688;
       }
-      .text {
-        color: #2196F3;
-      }
       .selected {
-        background: rgba(72,154,254,.2);
+        background: #daebff;
         outline: none;
       }
+      #tree ul:first-child {
+        padding-left: 0px;
+      }
+      ul, li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 14px;
+      }
+      li {
+        padding-left: 10px;
+        border: 1px solid silver;
+        border-width: 0 0 1px 1px;
+      }
+      li.has-children { border-bottom: 0px; }
+      li ul {
+        margin-left: -10px;
+        padding-left: 20px;
+      }
     </style>
-    <dom-repeat id="repeater">
-      <template>
-        <button
-            on-click="findElement"
-            data-index$="[[index]]"
-            style="padding-left:calc(14*[[item.level]]px">
-            <span class="tag">[[item.tag]]</span>
-            <span class="id">[[item.id]]</span>
-        </button>
-      </template>
-    </dom-repeat>
+    <div id="tree"></div>
   </template>
   <script>
     class TreeView extends Polymer.Element {
       static get is() { return 'tree-view'; }
 
-      recomputeTree(parent, active) {
-        var nodes = this.getChildren(parent, 0);
-        this.$.repeater.items = nodes;
-        Polymer.flush();
-        this.highlight(active);
-        return nodes;
+      ready() {
+        super.ready();
+        this.$.tree.addEventListener('click', this.findElement.bind(this))
       }
 
-      getChildren(parent, level) {
+      recomputeTree(parent, active) {
+        this.$.tree.innerHTML = '';
+        // Since we can't add a pojo to each button, generate a new index for
+        // each button in the this.items array of useful data.
+        this._index = 0;
+        this.items = this.getChildren(parent, this.$.tree);
+        this.highlight(active);
+        this.$.tree
+        return this.items;
+      }
+
+      _makeButton(tag, id, index) {
+        var aButton = document.createElement('button');
+        aButton.dataset.index = index;
+        var aTag = document.createElement('span');
+        aTag.className = 'tag';
+        aTag.textContent = tag;
+        var aId = document.createElement('span');
+        aId.className = 'id';
+        aId.textContent = id;
+        aButton.appendChild(aTag);
+        aButton.appendChild(aId);
+        return aButton;
+      }
+
+      getChildren(parent, div) {
+        // At every new parent, we create a new <ul>
+        var ul = document.createElement('ul');
+        div.appendChild(ul);
+
         var isViewContainer = parent.id === 'viewContainer';
-        var nodes = [
-          { tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
-            id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
-            text: isViewContainer ? '' : '"' + parent.textContent + '"',
-            level: level,
-            ref: parent}
-          ];
+        var data = {
+          tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
+          id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
+          text: isViewContainer ? '' : '"' + parent.textContent + '"',
+          ref: parent,
+          index: this._index
+        };
+
+        // Create this node's content;
+        var li = document.createElement('li');
+        var button = this._makeButton(data.tag, data.id, data.index);
+        li.appendChild(button);
+        ul.appendChild(li);
+
+        this._index++;
+        var nodes = [data];
+
+        // If this node has children...
         for (var i = 0; i < parent.children.length; i++) {
           var child = parent.children[i];
           // Skip <style> nodes;
           if (child.tagName === 'STYLE') {
             continue;
           }
-          nodes = nodes.concat(this.getChildren(child, level + 1));
+
+          // For every child, we append a new <ul>, and do this dance recursively.
+          var childUL = document.createElement('ul');
+          li.appendChild(childUL);
+          li.className = 'has-children';
+          nodes = nodes.concat(this.getChildren(child, childUL));
         }
         return nodes;
       }
 
       findElement(event) {
-        var item = event.currentTarget;
+        // If the target is a <span>, you clicked on the span inside the button
+        // so you need to use currentTarget.
+        var item = event.target;
+        if (item.tagName === 'SPAN') {
+          item = item.parentElement;
+        }
         this.selectTreeElement(item);
 
         // Find the actual element it points to.
         var index = item.dataset.index;
-        var el = this.$.repeater.items[index].ref;
+        var el = this.items[index].ref;
         el.click();
       }
 
@@ -101,14 +159,13 @@
 
       highlight(element) {
         // Find it in the tree.
-        var nodes = this.$.repeater.items;
         var buttons = this.root.querySelectorAll('button');
-        if (buttons.length !== nodes.length) {
+        if (buttons.length !== this.items.length) {
           return;
         }
 
-        for (var i = 0; i < nodes.length; i++) {
-          if (nodes[i].ref === element) {
+        for (var i = 0; i < this.items.length; i++) {
+          if (this.items[i].ref === element) {
             this.selectTreeElement(buttons[i]);
             return;
           }
