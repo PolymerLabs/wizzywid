@@ -56,13 +56,12 @@
       static get is() { return 'canvas-view'; }
       ready() {
         super.ready();
-        this.tabIndex = '1';
         Polymer.Gestures.addListener(this, 'track', this.trackElement.bind(this));
         this.addEventListener('click', function(event) {
           this.updateActiveElement(event.path[0]);
         }.bind(this));
 
-        this.addEventListener('keydown', this.onKeyDown.bind(this), true);
+        window.addEventListener('keydown', this.onKeyDown.bind(this), true);
 
         // TODO: i should fire events for this.
         this._shell = window.shell;
