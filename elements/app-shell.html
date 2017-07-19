@@ -43,31 +43,28 @@
       button {
         background: transparent;
         border: none;
-        margin: 8px;
         cursor: pointer;
-      }
-
-      designer-tab.single {
-        background-color: #efefef;
-        color: #5d5d5d;
-        width: 100%;
       }
 
       designer-tab button {
         margin: 0 8px;
       }
 
-      .inline-button {
-        margin: 4px;
-      }
-
       app-header button {
         color: white;
         text-align: center;
+        margin: 8px;
       }
 
       app-header button[disabled] {
         opacity: 0.3;
+      }
+
+      designer-tab.single {
+        background-color: #efefef;
+        color: #5d5d5d;
+        width: 100%;
+        padding-left: 8px;
       }
 
       .separator {
@@ -143,6 +140,17 @@
       button.button-code.active iron-icon {
         transform: rotate(90deg);
       }
+
+      .actions {
+        display: flex;
+        padding: 10px 0;
+        font-size: 10px;
+        justify-content: space-around;
+      }
+      .actions button {
+        padding: 0;
+      }
+
     </style>
 
     <action-history id="actionHistory"></action-history>
@@ -164,28 +172,6 @@
           <iron-icon icon="designer:redo"></iron-icon>
           <div>Redo</div>
         </button>
-        <div class="separator"></div>
-        <button on-click="deleteElement">
-          <iron-icon icon="designer:delete"></iron-icon>
-          <div>Delete</div>
-        </button>
-        <button on-click="fitElement">
-          <iron-icon icon="designer:fit"></iron-icon>
-          <div>Fit to parent</div>
-        </button>
-        <div class="separator"></div>
-        <button on-click="moveUp" title="or with Shift+UpArrow">
-          <iron-icon icon="designer:up"></iron-icon>
-          <div>Move up</div>
-        </button>
-        <button on-click="moveBack" title="or with Shift+LeftArrow">
-          <iron-icon icon="designer:back"></iron-icon>
-          <div>Move back</div>
-        </button>
-        <button on-click="moveForward" title="or with Shift+RightArrow">
-          <iron-icon icon="designer:forward"></iron-icon>
-          <div>Move forward</div>
-        </button>
       </app-toolbar>
     </app-header>
     <div class="container" id="scrollingRegion">
@@ -204,6 +190,29 @@
       </div>
 
       <div class="drawer">
+        <designer-tab class="single"><span>Actions</span></designer-tab>
+        <div class="actions">
+          <button on-click="deleteElement">
+            <iron-icon icon="designer:delete"></iron-icon>
+            <div>Delete</div>
+          </button>
+          <button on-click="fitElement">
+            <iron-icon icon="designer:fit"></iron-icon>
+            <div>Fit to parent</div>
+          </button>
+          <button on-click="moveUp" title="or with Shift+UpArrow">
+            <iron-icon icon="designer:up"></iron-icon>
+            <div>Move up</div>
+          </button>
+          <button on-click="moveBack" title="or with Shift+LeftArrow">
+            <iron-icon icon="designer:back"></iron-icon>
+            <div>Move back</div>
+          </button>
+          <button on-click="moveForward" title="or with Shift+RightArrow">
+            <iron-icon icon="designer:forward"></iron-icon>
+            <div>Move fwd</div>
+          </button>
+        </div>
         <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
           <designer-tab name="properties">
             <button>properties</button>
@@ -337,6 +346,7 @@
           el.style.position = 'absolute';
           el.style.left = el.style.top = '20px';
         }
+        this.refreshView();
       }
 
       /**

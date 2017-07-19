@@ -129,6 +129,12 @@
 
             // See if it's over anything.
             this._dropTarget = null;
+
+            // console.log('deep', this.deepTargetFind(event.detail.x, event.detail.y, el));
+            // console.log('just', document.elementFromPoint(event.detail.x, event.detail.y));
+            // let els = document.elementsFromPoint(event.detail.x, event.detail.y);
+            // console.log('dan', els);
+
             var targets = this.children;
             var me = el.getBoundingClientRect();
 
@@ -226,6 +232,27 @@
       dragShouldSize(event, rect) {
         return (Math.abs(rect.right - event.detail.x) < 10) &&
           (Math.abs(rect.bottom - event.detail.y) < 10);
+      }
+
+      deepTargetFind(x, y, notThis) {
+        let node = document.elementFromPoint(x, y);
+        let next = node;
+        // this code path is only taken when native ShadowDOM is used
+        // if there is a shadowroot, it may have a node at x/y
+        // if there is not a shadowroot, exit the loop
+        while (next !== notThis && next && next.shadowRoot && !window.ShadyDOM) {
+          // if there is a node at x/y in the shadowroot, look deeper
+          let oldNext = next;
+          next = next.shadowRoot.elementFromPoint(x, y);
+          // on Safari, elementFromPoint may return the shadowRoot host
+          if (oldNext === next) {
+            break;
+          }
+          if (next) {
+            node = next;
+          }
+        }
+        return node;
       }
 
       onKeyDown(event) {
