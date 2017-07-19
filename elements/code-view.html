@@ -175,7 +175,7 @@ ${indent}}
           if (name === '__package_name__') {
             continue;
           } else if (name === 'classList') {
-            // classList is special. Also 'active' is an intenal value, so skip that.
+            // classList is special. Also 'active' is an internal value, so skip that.
             value = value.value; // classList is an array, surprise!
             value = value.replace('active', '').trim();
             if (value.length !== 0) {
