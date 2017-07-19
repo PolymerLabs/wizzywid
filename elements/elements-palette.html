@@ -38,6 +38,7 @@
     <button>input</button>
     <button>div</button>
     <button>button</button>
+    <button>form</button>
     <dom-repeat items="[[elementNames]]">
       <template>
         <button>[[item]]</button>
@@ -95,7 +96,7 @@
 
         this.maybeDoHTMLImport(kind, this.finishCreatingElement, packageName);
       }
-      
+
       maybeDoHTMLImport(kind, callback, packageName) {
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
           var url = `bower_components/${packageName}/${kind}.html`;

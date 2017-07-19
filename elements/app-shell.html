@@ -561,9 +561,6 @@
         this.$.actionHistory.redo();
       }
 
-
-
-
       /**
        * Initializes a new element that has just been added to the canvas.
        */
@@ -580,6 +577,9 @@
           el.textContent = 'div';
         } else if (tag === 'input') {
           el.placeholder = 'input';
+        } else if (tag === 'form') {
+          el.style.height = el.style.width = '200px';
+          el.style.backgroundColor = 'white';
         } else if (tag === 'button' || slots.length != 0) {
           el.textContent = tag;
         }
