@@ -20,7 +20,6 @@
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.0"
   },
   "devDependencies": {
-    "app-layout": "PolymerElements/app-layout#^2.0.0",
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
     "iron-icon": "PolymerElements/iron-icon#^2.0.0",
     "paper-checkbox": "PolymerElements/paper-checkbox#*",
@@ -58,7 +57,6 @@
       "update-icons"
     ],
     "paper-input": ["paper-textarea"],
-    "paper-tabs": ["paper-tab"],
-    "app-layout": ["app-header", "app-drawer", "app-header-layout", "app-drawer-layout", "app-toolbar"]
+    "paper-tabs": ["paper-tab"]
   }
 }
