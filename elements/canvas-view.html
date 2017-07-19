@@ -19,7 +19,7 @@
         cursor: pointer;
       }
 
-      #canvas > *:hover:not(.active) {
+      *:hover:not(.active) {
         outline: solid 3px rgba(33, 150, 243, 0.5) !important;
         outline-offset: 2px;
       }
@@ -56,12 +56,13 @@
       static get is() { return 'canvas-view'; }
       ready() {
         super.ready();
+        this.tabIndex = '1';
         Polymer.Gestures.addListener(this, 'track', this.trackElement.bind(this));
         this.addEventListener('click', function(event) {
           this.updateActiveElement(event.path[0]);
         }.bind(this));
 
-        window.addEventListener('keydown', this.onKeyDown.bind(this), true);
+        this.addEventListener('keydown', this.onKeyDown.bind(this), true);
 
         // TODO: i should fire events for this.
         this._shell = window.shell;
@@ -233,7 +234,7 @@
         if (!el) {
           return;
         }
-        debugger
+        
         var oldLeft = parseInt(el.style.left);
         var oldTop = parseInt(el.style.top);
         var oldPosition = el.style.position;
