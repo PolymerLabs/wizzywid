@@ -469,7 +469,7 @@
         } else {
           parent.appendChild(el);
         }
-        if (!noUpdateHistory) {
+        if (!!noUpdateHistory) {
           this.$.actionHistory.add('move-back', el);
         }
         this.refreshView();
@@ -495,7 +495,7 @@
         } else {
           parent.insertBefore(el, parent.firstChild);
         }
-        if (!noUpdateHistory) {
+        if (!!noUpdateHistory) {
           this.$.actionHistory.add('move-forward', el);
         }
         this.refreshView();
@@ -508,7 +508,7 @@
         if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
           return;
         }
-        if (!noUpdateHistory) {
+        if (!!noUpdateHistory) {
           this.$.actionHistory.add('move-up', el, {oldParent: parent, newParent: parent.parentElement});
         }
         parent.removeChild(el);
