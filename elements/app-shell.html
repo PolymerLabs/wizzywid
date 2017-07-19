@@ -15,6 +15,7 @@
 <link rel="import" href="element-styles.html">
 <link rel="import" href="element-flex.html">
 <link rel="import" href="element-properties.html">
+<link rel="import" href="canvas-view.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
@@ -85,7 +86,8 @@
       }
 
       .drawer {
-        width: 350px;
+        min-width: 300px;
+        width: 300px;
         height: 100%;
         overflow: hidden;
         background: white;
@@ -93,11 +95,13 @@
       }
 
       .drawer.small {
+        min-width: 250px;
         width: 250px;
       }
 
-      .main {
+      .main-view {
         height: 100%;
+        width: 100%;
         overflow: auto;
         display: flex;
         flex-grow: 1;
@@ -192,11 +196,11 @@
         <tree-view name="tree" id="treeView"></tree-view>
       </div>
 
-      <div class="main" id="mainContainer">
-        <slot name="main"></slot>
-      </div>
-      <div class="main" id="codeContainer" hidden>
-        <slot name="code"></slot>
+      <div class="main-view">
+        <canvas-view id="viewContainer" style="width:100%"></canvas-view>
+        <div id="codeContainer" style="width:100%" hidden>
+          <slot name="code"></slot>
+        </div>
       </div>
 
       <div class="drawer">
@@ -257,7 +261,7 @@
         this.stylePage = 'properties';
         this.viewPage = 'elements';
 
-        this.activeElement = window.viewContainer;
+        this.activeElement = this.$.viewContainer;
         this.refreshView();
 
         this.addEventListener('new-element', this.createElement.bind(this));
@@ -268,6 +272,14 @@
           // Update the history.
           this.$.actionHistory.add('update', this.activeElement,
             {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
+        }.bind(this));
+        this.addEventListener('remove-from-canvas', function(event){
+          this.$.viewContainer.remove(event.detail.target);
+          this.$.viewContainer.click();
+        }.bind(this));
+        this.addEventListener('add-to-canvas', function(event){
+          this.$.viewContainer.add(event.detail.target);
+          event.detail.target.click();
         }.bind(this));
       }
 
@@ -289,7 +301,7 @@
       createElement(event) {
         var tag = event.detail.type.toLowerCase();
         var el = document.createElement(tag);
-        window.viewContainer.appendChild(el);
+        this.$.viewContainer.add(el);
 
         // If we haven't before, save this initial state of a <tag> element,
         // so that we can diff it to produce the actual state of the world
@@ -315,7 +327,7 @@
         var children = template.content.children;
         for (var i = 0; i < children.length; i++) {
           var el = document.importNode(children[i], true);
-          window.viewContainer.appendChild(el);
+          this.$.viewContainer.add(el);
           this.$.actionHistory.add('new', el);
           //codeView.save(tag, tag, el, getProtoProperties(el));
         }
@@ -338,8 +350,8 @@
         var el = this.activeElement;
         // Deleting the top level app should remove its children.
         if (el.id === 'viewContainer') {
-          this.$.actionHistory.add('delete', el, {innerHTML: el.innerHTML});
-          el.innerHTML = '';
+          this.$.actionHistory.add('delete', el, {innerHTML: el.getInnerHTML()});
+          el.setInnerHTML('');
         } else {
           var parent = el.parentElement;
           parent.removeChild(el);
@@ -353,7 +365,7 @@
        * Refreshes all the properties/styles of the active element.
        */
       refreshView() {
-        var el = this.activeElement ? this.activeElement : window.viewContainer;
+        var el = this.activeElement ? this.activeElement : this.$.viewContainer;
 
         // Display its properties in the side view.
         var computedStyle = window.getComputedStyle(el);
@@ -362,7 +374,7 @@
         this.$.flexContainer.display(computedStyle);
 
         // Highlight it in the tree.
-        this.$.treeView.recomputeTree(window.viewContainer, el);
+        this.$.treeView.recomputeTree(this.$.viewContainer, el);
       }
 
       refreshViewWhileTracking() {
@@ -428,7 +440,7 @@
           }
         }
 
-        this.$.treeView.recomputeTree(window.viewContainer, this.activeElement);
+        this.$.treeView.recomputeTree(this.$.viewContainer, this.activeElement);
         return previousValue;
       }
 
@@ -518,6 +530,7 @@
           cancelable: false,
           composed: true
         });
+        newEvent.detail = {target: this.$.viewContainer};
         this.dispatchEvent(newEvent);
       }
 
@@ -530,7 +543,7 @@
           button.classList.add('active');
         }
 
-        this.$.mainContainer.hidden = !showMain;
+        this.$.viewContainer.hidden = !showMain;
         this.$.codeContainer.hidden = showMain;
         return showMain;
       }
@@ -575,7 +588,7 @@
       _makeUniqueId(node, id, suffix) {
         id = id.replace('-', '_');
         var uId = id + (suffix || '');
-        return viewContainer.querySelector('#' + uId) ?
+        return this.$.viewContainer.has('#' + uId) ?
           this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
       }
     }

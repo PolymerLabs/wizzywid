@@ -54,13 +54,18 @@
               shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
               break;
           case 'new':
-              viewContainer.removeChild(item.node);
-              viewContainer.click();
+              var newEvent = new Event('remove-from-canvas', {
+                bubbles: true,
+                cancelable: false,
+                composed: true
+              });
+              newEvent.detail = {target: item.node};
+              this.dispatchEvent(newEvent);
               break;
           case 'delete':
               // If the node is the viewContainer, the `type` property contains the old innerHTML
               if (item.node.id === 'viewContainer') {
-                item.node.innerHTML = detail.innerHTML;
+                item.node.setInnerHTML(detail.innerHTML);
               } else {
                 // The `type` property contains the original parent.
                 detail.parent.appendChild(item.node);
@@ -123,14 +128,19 @@
               shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
               break;
           case 'new':
-              viewContainer.appendChild(item.node);
-              item.node.click();
+              var newEvent = new Event('add-to-canvas', {
+                bubbles: true,
+                cancelable: false,
+                composed: true
+              });
+              newEvent.detail = {target: item.node};
+              this.dispatchEvent(newEvent);
               break;
           case 'delete':
               // If the node is the viewContainer, clear its inner HTML.
               if (item.node.id === 'viewContainer') {
-                item.node.innerHTML = '';
-                viewContainer.click();
+                item.node.setInnerHTML('');
+                item.node.click();
               } else {
                 item.node.parentElement.click();
                 item.node.parentElement.removeChild(item.node);

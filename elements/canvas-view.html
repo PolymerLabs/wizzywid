@@ -1,0 +1,229 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+
+<dom-module id="canvas-view">
+  <template>
+    <style>
+      :host {
+        box-sizing: border-box;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        /* 10px grid, using http://www.patternify.com/ */
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGUlEQVQYV2NkIBIwEqmOYVQh3pAiNnj+AwALaAEKfsPrZgAAAABJRU5ErkJggg==);
+        background-position: 0px 0px;
+        margin: 2px;
+        transform: translateZ(0);
+      }
+      #canvas > * {
+        cursor: pointer;
+      }
+
+      #canvas > *:hover:not(.active) {
+        outline: solid 3px rgba(33, 150, 243, 0.5) !important;
+        outline-offset: 2px;
+      }
+      .active {
+        outline: solid 3px #2196F3 !important;
+        outline-offset: 2px;
+      }
+      .dragging {
+        opacity: 0.6;
+        z-index: 1000;
+        cursor: move;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+      .resizing {
+        cursor: se-resize;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+      .over {
+        outline: dashed 3px #2196F3 !important;
+        outline-offset: 2px;
+        opacity: 0.6;
+      }
+    </style>
+    <div id="canvas"></div>
+  </template>
+  <script>
+    class CanvasView extends Polymer.Element {
+      static get is() { return 'canvas-view'; }
+      ready() {
+        super.ready();
+
+        Polymer.Gestures.addListener(this, 'track', this.trackElement.bind(this));
+        this.addEventListener('click', function(event) {
+          this.updateActiveElement(event.path[0]);
+        }.bind(this));
+
+        // TODO: i should fire events for this.
+        this._shell = window.shell;
+      }
+
+      add(el) {
+        this.$.canvas.appendChild(el);
+      }
+      remove(el) {
+        this.$.canvas.removeChild(el);
+      }
+      has(query) {
+        return this.$.canvas.querySelector(query);
+      }
+      setInnerHTML(thing) {
+        this.$.canvas.innerHTML = thing;
+      }
+      getInnerHTML() {
+        return this.$.canvas.innerHTML;
+      }
+      get children() {
+        return this.$.canvas.children;
+      }
+      updateActiveElement(el) {
+        this._shell.setActiveElement(el);
+        this._shell.refreshView();
+      }
+
+      trackElement(event) {
+        var el = event.path[0];
+        if (el === this) {
+          return;
+        }
+        var rekt = el.getBoundingClientRect();
+        var shouldResize = this.dragShouldSize(event, rekt);
+
+        if (shouldResize && !this._resizing) {
+          this._resizing = true;
+          this._initialWidth = rekt.width;
+          this._initialHeight = rekt.height;
+          el.classList.add('resizing');
+          el.classList.add('active');
+        }
+
+        if (this._resizing) {
+          this.resizeElement(event, el);
+        } else {
+          this.dragElement(event, el);
+        }
+      }
+
+      dragElement(event, el) {
+        switch(event.detail.state) {
+          case 'start':
+            el.style.position = 'absolute';
+            el.classList.add('dragging');
+            el.classList.add('active');
+            break;
+          case 'track':
+            // Grid is 10.
+            this._trackx = Math.round(event.detail.dx / 10) * 10;
+            this._tracky = Math.round(event.detail.dy / 10) * 10;
+            el.style.transform = el.style.webkitTransform =
+              'translate(' + this._trackx + 'px, ' + this._tracky + 'px)';
+
+            // See if it's over anything.
+            this._dropTarget = null;
+            var targets = this.children;
+            var me = el.getBoundingClientRect();
+
+            for (var i = 0; i < targets.length; i++) {
+              var t = targets[i];
+              t.classList.remove('over');
+
+              var slots = t.root ? t.root.querySelectorAll('slot') : [];
+              var canDrop = t.tagName === 'DIV' || t.tagName === 'BUTTON' || slots.length !== 0;
+              var b = t.getBoundingClientRect();
+              if (canDrop &&
+                  me.left > b.left && me.left < b.left + b.width &&
+                  me.top > b.top && me.top < b.top + b.height) {
+                t.classList.add('over');
+                this._dropTarget = t;
+              }
+            }
+            break;
+          case 'end':
+            // Save the position before we might reparent the item.
+            var local = el.getBoundingClientRect();
+            var reparented = false;
+
+            // Does this need to be added to a new parent?
+            if (this._dropTarget) {
+              reparented = true;
+
+              var oldParent = el.parentElement;
+              oldParent.removeChild(el);
+
+              // If there was a textContent nuke it, or else you'll
+              // never be able to again.
+              if (this._dropTarget.children.length === 0) {
+                this._dropTarget.textContent = '';
+              }
+              this._dropTarget.appendChild(el);
+              this._dropTarget.classList.remove('over');
+              this._shell.$.actionHistory.add('reparent', el, {newParent: this._dropTarget, oldParent: oldParent});
+              this._dropTarget = null;
+            } else if (el.parentElement && (el.parentElement !== this.$.canvas)) {
+              // If there's no drop target and the el used to be in a different
+              // parent, move it to the main view.
+              this._shell.$.actionHistory.add('reparent', el, {newParent: this.$.canvas, oldParent: el.parentElement});
+              el.parentElement.removeChild(el);
+              this.add(el);
+            }
+            var parent = el.parentElement.getBoundingClientRect();
+
+            var oldLeft = el.style.left;
+            var oldTop = el.style.top;
+            var oldPosition = el.style.position;
+            if (reparented) {
+              el.style.position = 'static';
+              el.style.left = el.style.top = '0px';
+            } else {
+              el.style.position = 'absolute';
+              el.style.left = local.left - parent.left + 'px';
+              el.style.top = local.top - parent.top + 'px';
+            }
+
+            this._shell.$.actionHistory.add('move', el,
+                {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop,
+                oldPosition:oldPosition, newPosition: el.style.position});
+            el.classList.remove('dragging');
+            el.style.transform = el.style.webkitTransform = 'none';
+            break;
+        }
+        this.updateActiveElement(el);
+        this._shell.refreshViewWhileTracking();
+      }
+
+      resizeElement(event, el) {
+        switch(event.detail.state) {
+          case 'track':
+            // Grid is 10.
+            var trackX = Math.round(event.detail.dx / 10) * 10;
+            var trackY = Math.round(event.detail.dy / 10) * 10;
+            el.style.width = this._initialWidth + trackX + 'px';
+            el.style.height = this._initialHeight + trackY + 'px';
+            break;
+          case 'end':
+            this._resizing = false;
+            this._shell.$.actionHistory.add('resize', el,
+                {newWidth: el.style.width, newHeight: el.style.height,
+                 oldWidth: this._initialWidth + 'px', oldHeight: this._initialHeight + 'px'});
+            el.classList.remove('resizing');
+            break;
+        }
+        this.updateActiveElement(el);
+      }
+
+      dragShouldSize(event, rect) {
+        return (Math.abs(rect.right - event.detail.x) < 10) &&
+          (Math.abs(rect.bottom - event.detail.y) < 10);
+      }
+    }
+    customElements.define(CanvasView.is, CanvasView);
+  </script>
+</dom-module>
