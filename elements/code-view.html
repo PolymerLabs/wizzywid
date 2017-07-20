@@ -113,7 +113,8 @@ ${this._template.trimRight()}
           var tag = nodes[i].tagName.toLowerCase();
 
           if (tag === 'style') {
-            this._style += nodes[i].textContent;
+            // Need to indent it
+            this._style += nodes[i].textContent.replace(/[\n\r]/g, '\n    ') + '\n';
             continue;
           }
 
