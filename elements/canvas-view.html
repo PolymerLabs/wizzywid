@@ -46,7 +46,6 @@
       .over {
         outline: dashed 3px #2196F3 !important;
         outline-offset: 2px;
-        /*opacity: 0.6;*/
       }
     </style>
     <div id="canvas"></div>
@@ -140,15 +139,12 @@
 
             // See if it's over anything.
             this._dropTarget = null;
-
-            // console.log('deep', this.deepTargetFind(event.detail.x, event.detail.y, el));
-            // console.log('just', document.elementFromPoint(event.detail.x, event.detail.y));
-            // let els = document.elementsFromPoint(event.detail.x, event.detail.y);
-            // console.log('dan', els);
-
-            var targets = this.children;
+            var targets = this.root.querySelectorAll('*');
             for (var i = 0; i < targets.length; i++) {
               var t = targets[i];
+              if (t == el) {
+                return;
+              }
               t.classList.remove('over');
 
               // Only some native elements and things with slots can be
