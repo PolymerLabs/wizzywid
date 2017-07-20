@@ -120,11 +120,11 @@
         if (this._resizing) {
           this.resizeElement(event, el);
         } else {
-          this.dragElement(event, el);
+          this.dragElement(event, el, rekt);
         }
       }
 
-      dragElement(event, el) {
+      dragElement(event, el, rekt) {
         switch(event.detail.state) {
           case 'start':
             el.style.position = 'absolute';
@@ -147,31 +147,33 @@
             // console.log('dan', els);
 
             var targets = this.children;
-            var me = el.getBoundingClientRect();
-
             for (var i = 0; i < targets.length; i++) {
               var t = targets[i];
               t.classList.remove('over');
 
+              // Only some native elements and things with slots can be
+              // drop targets.
               var slots = t.root ? t.root.querySelectorAll('slot') : [];
               var canDrop =
                 t.tagName === 'DIV' || t.tagName === 'BUTTON' ||
                 t.tagName === 'FORM' ||
                 slots.length !== 0;
+
+              if (!canDrop) {
+                continue;
+              }
+
+              // Do we actually intersect this child?
               var b = t.getBoundingClientRect();
-              if (canDrop &&
-                  me.left > b.left && me.left < b.left + b.width &&
-                  me.top > b.top && me.top < b.top + b.height) {
+              if (rekt.left > b.left && rekt.left < b.left + b.width &&
+                  rekt.top > b.top && rekt.top < b.top + b.height) {
                 t.classList.add('over');
                 this._dropTarget = t;
               }
             }
             break;
           case 'end':
-            // Save the position before we might reparent the item.
-            var local = el.getBoundingClientRect();
             var reparented = false;
-
             // Does this need to be added to a new parent?
             if (this._dropTarget) {
               reparented = true;
@@ -205,8 +207,8 @@
               el.style.left = el.style.top = '0px';
             } else {
               el.style.position = 'absolute';
-              el.style.left = local.left - parent.left + 'px';
-              el.style.top = local.top - parent.top + 'px';
+              el.style.left = rekt.left - parent.left + 'px';
+              el.style.top = rekt.top - parent.top + 'px';
             }
 
             this._shell.$.actionHistory.add('move', el,
