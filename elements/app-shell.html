@@ -547,7 +547,7 @@
         var el = this.activeElement;
         var parent = el.parentElement;
         // If the parent isn't already the viewContainer, move it one up.
-        if (el.id === 'viewContainer' || parent.id === 'viewContainer') {
+        if (el.id === 'viewContainer' || (parent && parent.id === 'canvas')) {
           return;
         }
         if (!!noUpdateHistory) {
