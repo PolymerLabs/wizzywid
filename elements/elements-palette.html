@@ -114,7 +114,7 @@
             this.finishCreatingElement(kind, packageName);
           }.bind(this));
         } else {
-          callback.call(this, kind, '');
+          this.finishCreatingElement(kind, '');
         }
       }
 

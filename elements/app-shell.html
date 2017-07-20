@@ -200,10 +200,16 @@
             <iron-icon icon="designer:delete"></iron-icon>
             <div>Delete</div>
           </button>
+          <button on-click="cloneElement">
+            <iron-icon icon="designer:copy"></iron-icon>
+            <div>Clone</div>
+          </button>
           <button on-click="fitElement">
             <iron-icon icon="designer:fit"></iron-icon>
             <div>Fit to parent</div>
           </button>
+        </div>
+        <div class="actions">
           <button on-click="moveUp" title="or with Shift+UpArrow">
             <iron-icon icon="designer:up"></iron-icon>
             <div>Move up</div>
@@ -214,7 +220,7 @@
           </button>
           <button on-click="moveForward" title="or with Shift+RightArrow">
             <iron-icon icon="designer:forward"></iron-icon>
-            <div>Move fwd</div>
+            <div>Move forward</div>
           </button>
         </div>
         <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
@@ -380,6 +386,26 @@
           this.setActiveElement(parent);
           this.$.actionHistory.add('delete', el, {parent: parent});
         }
+        this.refreshView();
+      }
+
+      /**
+       * Creates a sibling copy of the active element.
+       */
+      cloneElement() {
+        if (!this.activeElement || this.activeElement.id == 'viewContainer') {
+          return;
+        }
+
+        var el = this.activeElement;
+        var clone = el.cloneNode(true);
+        el.parentNode.appendChild(clone);
+        var tag = clone.tagName.toLowerCase();
+        clone.id = this._makeUniqueId(clone, tag);
+        this._finishNewElement(clone, tag, true);
+
+        // P.S: Since we did a clone, we already have the initial state of the <tag>.
+        this.$.actionHistory.add('new', clone);
         this.refreshView();
       }
 
@@ -595,11 +621,14 @@
       /**
        * Initializes a new element that has just been added to the canvas.
        */
-      _finishNewElement(el, tag) {
+      _finishNewElement(el, tag, isClone) {
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
         el.id = this._makeUniqueId(el, tag);
 
+        if (isClone) {
+          return;
+        }
         var slots = el.root ? el.root.querySelectorAll('slot') : [];
         // TODO: fix this and make it less this and more something else.
         if (tag === 'div') {
