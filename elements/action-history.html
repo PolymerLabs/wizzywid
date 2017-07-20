@@ -100,16 +100,19 @@
               item.node.click();
               break;
           case 'move-up':
-              item.detail.newParent.removeChild(item.node);
-              item.detail.oldParent.appendChild(item.node);
+              shell.moveDown(item.node, false);
+              item.node.click();
+              break;
+          case 'move-down':
+              shell.moveUp(item.node, false);
               item.node.click();
               break;
           case 'move-back':
-              window.moveElementForward(item.node, false);
+              shell.moveForward(item.node, false);
               item.node.click();
               break;
           case 'move-forward':
-              window.moveElementBack(item.node, false);
+              shell.moveBack(item.node, false);
               item.node.click();
               break;
         }
@@ -173,17 +176,20 @@
               item.node.style.position = detail.newPosition;
               item.node.click();
               break;
-        case 'move-up':
-            item.detail.oldParent.removeChild(item.node);
-            item.detail.newParent.appendChild(item.node);
+          case 'move-up':
+            shell.moveDown(item.node, false);
+            item.node.click();
+            break;
+          case 'move-down':
+            shell.moveUp(item.node, false);
             item.node.click();
             break;
           case 'move-back':
-              window.moveElementForward(item.node, false);
+              shell.moveForward(item.node, false);
               item.node.click();
               break;
           case 'move-forward':
-              window.moveElementBack(item.node, false);
+              shell.moveBack(item.node, false);
               item.node.click();
               break;
         }

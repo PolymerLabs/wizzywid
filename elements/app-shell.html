@@ -214,6 +214,10 @@
             <iron-icon icon="designer:up"></iron-icon>
             <div>Move up</div>
           </button>
+          <button on-click="moveDown" title="or with Shift+DownArrow">
+            <iron-icon icon="designer:down"></iron-icon>
+            <div>Move down</div>
+          </button>
           <button on-click="moveBack" title="or with Shift+LeftArrow">
             <iron-icon icon="designer:back"></iron-icon>
             <div>Move back</div>
@@ -551,6 +555,34 @@
         }
         parent.removeChild(el);
         parent.parentElement.appendChild(el);
+        this.refreshView();
+      }
+
+      moveDown(noUpdateHistory) {
+        var el = this.activeElement;
+        var sibling = el.nextElementSibling;
+        if (el.id === 'viewContainer' || !sibling) {
+          return;
+        }
+
+        // Not everything accepts children, as we've learnt from canvas-view
+        // (where I copied this code from like a lazy bum)
+        var slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
+        var canDrop =
+          sibling.tagName === 'DIV' || sibling.tagName === 'BUTTON' ||
+          sibling.tagName === 'FORM' ||
+          slots.length !== 0;
+
+        if (!canDrop) {
+          return;
+        }
+
+        if (!!noUpdateHistory) {
+          this.$.actionHistory.add('move-down', el, {oldParent: el.parentElement, newParent: sibling});
+        }
+
+        // If you can, add it there.
+        sibling.appendChild(el);
         this.refreshView();
       }
 
