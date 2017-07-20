@@ -1,0 +1,18 @@
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<template>
+  <iron-form style="background:white;padding:20px;">
+    <h2>A sample form</h2>
+    <form method="get" action="https://httpbin.org/get">
+     <paper-input name="name" label="Your name" value="Batman"></paper-input>
+     <paper-input name="food" label="Favourite snack" value="Donuts"></paper-input>
+     <paper-checkbox name="cheese" value="yes" checked>I like cheese</paper-checkbox>
+   </form>
+   <br>
+   <paper-button style="width:100%;margin:0;background:#03a9f4;color: white;"
+      raised onclick="this.parentElement.submit()">Submit</paper-button>
+ </iron-form>
+</template>
