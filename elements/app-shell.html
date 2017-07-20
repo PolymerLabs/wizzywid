@@ -433,6 +433,11 @@
 
         // Highlight it in the tree.
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
+
+        // If we're looking at the code, refresh that too.
+        if (!this.$.codeContainer.hidden) {
+          this.viewCode();
+        }
       }
 
       refreshViewWhileTracking() {
@@ -615,8 +620,7 @@
       }
 
       viewCode(event) {
-        var showMainView = this.toggleMainView(event.currentTarget);
-        if (showMainView) {
+        if (event && this.toggleMainView(event.currentTarget)) {
           return;
         }
 
