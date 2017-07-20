@@ -294,7 +294,12 @@
             }
             break;
           case 40:  // down arrow
-            el.style.top = oldTop + 10 + 'px';
+            if (event.shiftKey) {
+              event.preventDefault();
+              this._shell.moveDown();
+            } else {
+              el.style.top = oldTop + 10 + 'px';
+            }
             break;
           case 37:  // left arrow
             if (event.shiftKey) {
