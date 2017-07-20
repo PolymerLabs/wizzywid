@@ -58,13 +58,7 @@
         super.ready();
         Polymer.Gestures.addListener(this, 'track', this.trackElement.bind(this));
         this.addEventListener('click', function(event) {
-          var el = event.path[0];
-          // You might have clicked on someting inside a shadow root.
-          // In that case, select the shadow root element.
-          if (el.parentNode.toString() === '[object ShadowRoot]') {
-            el = event.path[0].parentNode.host;
-          }
-          this.updateActiveElement(el);
+          this.updateActiveElement(this._getRealEventElement(event));
         }.bind(this));
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), true);
@@ -96,8 +90,19 @@
         this._shell.refreshView();
       }
 
-      trackElement(event) {
+      _getRealEventElement(event) {
         var el = event.path[0];
+        // You might have clicked on someting inside a shadow root.
+        // In that case, select the shadow root element.
+        if (el.parentNode.toString() === '[object ShadowRoot]') {
+          el = event.path[0].parentNode.host;
+        }
+        return el;
+      }
+
+      trackElement(event) {
+        var el = this._getRealEventElement(event);
+
         if (el === this) {
           return;
         }
