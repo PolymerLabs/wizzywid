@@ -111,8 +111,9 @@ ${this._template.trimRight()}
         for (var i = 0; i < nodes.length; i++) {
           // Add to the import if needed.
           var tag = nodes[i].tagName.toLowerCase();
-          // Skip <style> nodes.
+
           if (tag === 'style') {
+            this._style += nodes[i].textContent;
             continue;
           }
 
