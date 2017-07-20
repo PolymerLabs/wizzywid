@@ -122,19 +122,24 @@ ${this._template.trimRight()}
           }
           this._style += this.dumpStyle(tag, nodes[i], '      ');
 
-          this._template += this.dumpElementStartTag(tag, nodes[i], indent) + '\n';
-          this._template += this.dumpElementText(tag, nodes[i], indent);
-          if (nodes[i].children.length !== 0) {
-            this.dumpChildren(nodes[i], indent + '  ') + '\n';
+          // If this element doesn't have children, do it on one line.
+          if (nodes[i].children.length == 0) {
+            this._template += this.dumpElementStartTag(tag, nodes[i], indent);
+            this._template += this.dumpElementText(tag, nodes[i], '');
+            this._template += this.dumpElementEndTag(tag, nodes[i], '') + '\n';
           }
-          this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
+          else {
+            this._template += this.dumpElementStartTag(tag, nodes[i], indent) + '\n';
+            this.dumpChildren(nodes[i], indent + '  ') + '\n';
+            this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
+          }
         }
       }
 
       dumpElementText(tag, node, indent) {
         var text = node.textContent.trim();
         if (text && node.children.length === 0) {
-          return `${indent}  ${text}` + '\n'
+          return `${indent}${text}`
         } else {
           return '';
         }
