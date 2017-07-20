@@ -79,7 +79,7 @@
 
         this.dumpChildren(parent, '    ');
 
-        var boilerplate = `${this._imports.trimRight()}
+        var domModule = `
 <dom-module id="main-app">
   <template>
     <style>
@@ -101,8 +101,35 @@ ${this._template.trimRight()}
     customElements.define(MainApp.is, MainApp);
   &lt;/script>
 </dom-module>`;
-        boilerplate = boilerplate.replace(/&lt;/g, '<');
-        this.update(boilerplate);
+        var appTitle = 'Polyweaver output';
+        var html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+<title>${appTitle}</title>
+<base href="https://polygit.org/polymer+:master/webcomponents+:master/shadycss+webcomponents+:master/paper*+polymerelements+:master/iron*+polymerelements+:master/app*+polymerelements+:master/neon*+polymerelements+:master/components/">
+<script src="webcomponentsjs/webcomponents-lite.js">&lt;/script>
+${this._imports.trimRight()}
+<style>
+  body {
+    margin: 0;
+    font-family: 'Roboto', 'Noto', sans-serif;
+    line-height: 1.5;
+    background-color: white;
+  }
+</style>
+</head>
+<body>
+
+<main-app></main-app>
+
+${domModule}
+</body>
+</html>`;
+
+        this.update(html.replace(/&lt;/g, '<'));
       }
 
       dumpChildren(parent, indent) {
@@ -201,7 +228,9 @@ ${indent}}
           this._doDefaultPropsForUnseenTag(tag);
         }
         var packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
-        return `${indent}<link rel="import" href="../${packageName}/${tag}.html">`;
+        // TODO: this should be ../${packageName}/${tag}.html if you're
+        // not using polygit.
+        return `${indent}<link rel="import" href="${packageName}/${tag}.html">`;
       }
 
       _doDefaultPropsForUnseenTag(tag) {
