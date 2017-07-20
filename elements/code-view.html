@@ -214,7 +214,7 @@ ${indent}}
             if (value.length !== 0) {
               attributes += `class="${value}" `
             }
-          } else if (value == true) {
+          } else if (value === true) {
             attributes += `${name} `;
           } else if (this._propertyDefaultsForTag[tag][name] != value) {
             attributes += `${name}="${value}" `
