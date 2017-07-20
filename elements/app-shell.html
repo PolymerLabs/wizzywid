@@ -338,7 +338,9 @@
           var el = document.importNode(children[i], true);
           this.$.viewContainer.add(el);
           this.$.actionHistory.add('new', el);
-          //codeView.save(tag, tag, el, getProtoProperties(el));
+          var tag = el.tagName.toLowerCase();
+          el.id = this._makeUniqueId(el, el.id || tag);
+          codeView.save(tag, tag, el, getProtoProperties(el));
         }
 
         // Position the sample better.

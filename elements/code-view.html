@@ -163,8 +163,7 @@ ${indent}}
 
       dumpAttributes(tag, node) {
         if (!this._propertyDefaultsForTag[tag]) {
-          console.log('🔥 oops what is this tag', tag);
-          return '';
+          this._doDefaultPropsForUnseenTag(tag);
         }
         var defaults = Object.keys(this._propertyDefaultsForTag[tag]);
         var attributes = ' ';
@@ -192,11 +191,15 @@ ${indent}}
 
       dumpImports(tag, indent) {
         if (!this._propertyDefaultsForTag[tag]) {
-          console.log('🔥 oops what is this tag', tag);
-          return '';
+          this._doDefaultPropsForUnseenTag(tag);
         }
         var packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
         return `${indent}<link rel="import" href="../${packageName}/${tag}.html">`;
+      }
+
+      _doDefaultPropsForUnseenTag(tag) {
+        var el = document.createElement(tag);
+        this.save(tag, tag, el, getProtoProperties(el));
       }
     }
     customElements.define(CodeView.is, CodeView);
