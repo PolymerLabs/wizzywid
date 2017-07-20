@@ -351,7 +351,6 @@
           this.$.actionHistory.add('new', el);
           var tag = el.tagName.toLowerCase();
           el.id = this._makeUniqueId(el, el.id || tag);
-          codeView.save(tag, tag, el, getProtoProperties(el));
         }
 
         // Position the sample better.
