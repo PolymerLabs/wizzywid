@@ -100,10 +100,10 @@
           kind = matches[2];
         }
 
-        this.maybeDoHTMLImport(kind, this.finishCreatingElement, packageName);
+        this.maybeDoHTMLImport(kind, packageName);
       }
 
-      maybeDoHTMLImport(kind, callback, packageName) {
+      maybeDoHTMLImport(kind, packageName) {
         if (packageName === undefined) {
           // Oof, someone didn't know what it was. find it in the list.
           packageName = this.namesToPackages[kind];
@@ -111,7 +111,7 @@
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
           var url = `bower_components/${packageName}/${kind}.html`;
           Polymer.Base.importHref(url, function(e) {
-            callback.call(this, kind, packageName);
+            this.finishCreatingElement(kind, packageName);
           }.bind(this));
         } else {
           callback.call(this, kind, '');
