@@ -67,7 +67,7 @@
         }
       }
 
-      dump(parent) {
+      get(parent) {
         // Imports. Yes i'm using element globals because I'm lazy. Fight me.
         this._imports = '';
         this._template = '';
@@ -128,8 +128,11 @@ ${this._imports.trimRight()}
 ${domModule}
 </body>
 </html>`;
+        return html.replace(/&lt;/g, '<');
+      }
 
-        this.update(html.replace(/&lt;/g, '<'));
+      dump(parent) {
+        this.update(this.get(parent));
       }
 
       dumpChildren(parent, indent) {
