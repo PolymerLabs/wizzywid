@@ -57,18 +57,18 @@
       }
 
       addElement(event) {
-        var target = event.path[0];
-        var kind = target.textContent;
+        let target = event.path[0];
+        let kind = target.textContent;
         if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
           return;
         }
 
-        var url = `samples/${kind}.html`;
+        let url = `samples/${kind}.html`;
         Polymer.Base.importHref(url, function(e) {
-          var doc = e.target.import;
-          var template = doc.querySelector('template');
+          let doc = e.target.import;
+          let template = doc.querySelector('template');
 
-          var newEvent = new Event('new-sample', {
+          let newEvent = new Event('new-sample', {
             bubbles: true,
             cancelable: false,
             composed: true

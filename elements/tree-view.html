@@ -81,12 +81,12 @@
       }
 
       _makeButton(tag, id, index) {
-        var aButton = document.createElement('button');
+        let aButton = document.createElement('button');
         aButton.dataset.index = index;
-        var aTag = document.createElement('span');
+        let aTag = document.createElement('span');
         aTag.className = 'tag';
         aTag.textContent = tag;
-        var aId = document.createElement('span');
+        let aId = document.createElement('span');
         aId.className = 'id';
         aId.textContent = id;
         aButton.appendChild(aTag);
@@ -96,11 +96,11 @@
 
       getChildren(parent, div) {
         // At every new parent, we create a new <ul>
-        var ul = document.createElement('ul');
+        let ul = document.createElement('ul');
         div.appendChild(ul);
 
-        var isViewContainer = parent.id === 'viewContainer';
-        var data = {
+        let isViewContainer = parent.id === 'viewContainer';
+        let data = {
           tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
           id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
           text: isViewContainer ? '' : '"' + parent.textContent + '"',
@@ -109,17 +109,17 @@
         };
 
         // Create this node's content;
-        var li = document.createElement('li');
-        var button = this._makeButton(data.tag, data.id, data.index);
+        let li = document.createElement('li');
+        let button = this._makeButton(data.tag, data.id, data.index);
         li.appendChild(button);
         ul.appendChild(li);
 
         this._index++;
-        var nodes = [data];
+        let nodes = [data];
 
         // If this node has children...
-        for (var i = 0; i < parent.children.length; i++) {
-          var child = parent.children[i];
+        for (let i = 0; i < parent.children.length; i++) {
+          let child = parent.children[i];
           // Skip <style> nodes;
           if (child.tagName === 'STYLE') {
             continue;
@@ -134,15 +134,15 @@
       findElement(event) {
         // If the target is a <span>, you clicked on the span inside the button
         // so you need to use currentTarget.
-        var item = event.target;
+        let item = event.target;
         if (item.tagName === 'SPAN') {
           item = item.parentElement;
         }
         this.selectTreeElement(item);
 
         // Find the actual element it points to.
-        var index = item.dataset.index;
-        var el = this.items[index].ref;
+        let index = item.dataset.index;
+        let el = this.items[index].ref;
         el.click();
       }
 
@@ -156,12 +156,12 @@
 
       highlight(element) {
         // Find it in the tree.
-        var buttons = this.root.querySelectorAll('button');
+        let buttons = this.root.querySelectorAll('button');
         if (buttons.length !== this.items.length) {
           return;
         }
 
-        for (var i = 0; i < this.items.length; i++) {
+        for (let i = 0; i < this.items.length; i++) {
           if (this.items[i].ref === element) {
             this.selectTreeElement(buttons[i]);
             return;

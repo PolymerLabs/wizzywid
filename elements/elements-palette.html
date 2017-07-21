@@ -66,18 +66,18 @@
 
       elementsReady(event) {
         // First, some elements have sub-elements in the same package.
-        var subElements = event.detail.response.subelements;
-        var list = event.detail.response.devDependencies;
+        let subElements = event.detail.response.subelements;
+        let list = event.detail.response.devDependencies;
 
-        for (var p in list) {
+        for (let p in list) {
           this.namesToPackages[p] = p;
         }
 
-        var subElementNames = [];
-        for (var parent in subElements) {
+        let subElementNames = [];
+        for (let parent in subElements) {
           // Remove it from the bower list of dev dependencies since it's added
           //delete list[parent];
-          for (var i = 0; i < subElements[parent].length; i++) {
+          for (let i = 0; i < subElements[parent].length; i++) {
             subElementNames.push(`${parent}/${subElements[parent][i]}`);
             this.namesToPackages[subElements[parent][i]] = parent;
           }
@@ -86,15 +86,15 @@
       }
 
       click(event) {
-        var target = event.path[0];
-        var kind = target.textContent;
+        let target = event.path[0];
+        let kind = target.textContent;
         if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
           return;
         }
 
         // maybe it's a package/subpackage kind of thing.
-        var matches = kind.match(/(.*)\/(.*)/);
-        var packageName = kind;
+        let matches = kind.match(/(.*)\/(.*)/);
+        let packageName = kind;
         if (matches && matches.length === 3) {
           packageName = matches[1];
           kind = matches[2];
@@ -109,7 +109,7 @@
           packageName = this.namesToPackages[kind];
         }
         if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
-          var url = `bower_components/${packageName}/${kind}.html`;
+          let url = `bower_components/${packageName}/${kind}.html`;
           Polymer.Base.importHref(url, function(e) {
             this.finishCreatingElement(kind, packageName);
           }.bind(this));
@@ -119,7 +119,7 @@
       }
 
       finishCreatingElement(kind, packageName) {
-        var newEvent = new Event('new-element', {
+        let newEvent = new Event('new-element', {
           bubbles: true,
           cancelable: false,
           composed: true

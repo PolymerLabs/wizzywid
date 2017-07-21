@@ -13,14 +13,14 @@
 
         _recomputeStuff() {
           this._stuff = [];
-          var els = this.root.querySelectorAll('[name]');
-          for (var i = 0 ; i < els.length; i++) {
+          let els = this.root.querySelectorAll('[name]');
+          for (let i = 0 ; i < els.length; i++) {
             this._stuff.push(els[i].name);
           }
         }
 
         _do(event) {
-          var target = event.path[0];
+          let target = event.path[0];
 
           // Is it a custom thing?
           if (target.classList.contains('style-label')) {
@@ -30,7 +30,7 @@
             return;
           }
 
-          var newEvent = new Event('element-updated', {
+          let newEvent = new Event('element-updated', {
             bubbles: true,
             cancelable: false,
             composed: true

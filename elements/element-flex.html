@@ -83,9 +83,9 @@
       }
 
       display(elementStyles) {
-        for (var i = 0; i < this._stuff.length; i++) {
-          var name = this._stuff[i];
-          var el = this.root.querySelector(`[name=${name}]`);
+        for (let i = 0; i < this._stuff.length; i++) {
+          let name = this._stuff[i];
+          let el = this.root.querySelector(`[name=${name}]`);
           el.value = elementStyles[name];
         }
       }

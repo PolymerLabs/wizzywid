@@ -5,17 +5,17 @@ window.addEventListener('WebComponentsReady', function() {
 });
 
 function getProtoProperties(target) {
-  var proto = target.__proto__;
-  var protoProps = {};
+  let proto = target.__proto__;
+  let protoProps = {};
   while (proto.constructor.name !== 'Element') {
     Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
     proto = proto.__proto__;
   }
 
-  var propNames = Object.keys(protoProps).sort();
+  let propNames = Object.keys(protoProps).sort();
 
   // Skip some very specific Polymer/element properties.
-  var blacklist = [
+  let blacklist = [
       // Polymer specific
       'isAttached',
       'constructor', 'created', 'ready', 'attached', 'detached',
@@ -28,9 +28,9 @@ function getProtoProperties(target) {
       'selectionDirection', 'selectionStart', 'selectionEnd'
       ];
 
-  var i = 0;
+  let i = 0;
   while (i < propNames.length) {
-    var name = propNames[i];
+    let name = propNames[i];
 
     // Skip everything that starts with a _ which is a Polymer private/protected
     // and you probably don't care about it.

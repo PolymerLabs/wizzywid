@@ -40,11 +40,11 @@
         }
       }
       display(elementStyles) {
-        for (var i = 0; i < this._stuff.length; i++) {
-          var name = this._stuff[i];
+        for (let i = 0; i < this._stuff.length; i++) {
+          let name = this._stuff[i];
           if (!elementStyles[name])
             continue;
-          var el = this.root.querySelector(`[name=${name}]`);
+          let el = this.root.querySelector(`[name=${name}]`);
           if (name === 'backgroundColor' || name === 'color') {
             el.value = this._rgb2hex(elementStyles[name]);
           } else {
@@ -53,9 +53,9 @@
         }
       }
       addStyle(event) {
-        var label = document.createElement('input');
+        let label = document.createElement('input');
         label.className = 'style-label';
-        var input = document.createElement('input');
+        let input = document.createElement('input');
         input.className = 'style-value';
         this.$.bonus.appendChild(label);
         this.$.bonus.appendChild(input);

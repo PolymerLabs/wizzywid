@@ -20,13 +20,13 @@
       add(action, node, detail) {
         // Don't try to add two identical items since that looks weird.
         // TODO: figure out why you get double actions sometimes.
-        var item = {
+        let item = {
           action: action,
           node: node,
           detail: detail
         };
 
-        var topItem = this.undoHistory[this.undoHistory.length - 1];
+        let topItem = this.undoHistory[this.undoHistory.length - 1];
 
         if (topItem && item.action === topItem.action &&
             topItem.node === item.node &&
@@ -43,8 +43,8 @@
 
       undo() {
         // Take the top action off the undo stack and move it to the redo stack.
-        var item = this.undoHistory.pop();
-        var detail = item.detail;
+        let item = this.undoHistory.pop();
+        let detail = item.detail;
         this.redoHistory.push(item);
         this.updateButtons();
 
@@ -54,7 +54,7 @@
               shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
               break;
           case 'new':
-              var newEvent = new Event('remove-from-canvas', {
+              let newEvent = new Event('remove-from-canvas', {
                 bubbles: true,
                 cancelable: false,
                 composed: true
@@ -118,8 +118,8 @@
 
       redo() {
         // Take the top action off the redo stack and move it to the undo stack.
-        var item = this.redoHistory.pop();
-        var detail = item.detail;
+        let item = this.redoHistory.pop();
+        let detail = item.detail;
         this.undoHistory.push(item);
         this.updateButtons();
 
@@ -129,7 +129,7 @@
               shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
               break;
           case 'new':
-              var newEvent = new Event('add-to-canvas', {
+              let newEvent = new Event('add-to-canvas', {
                 bubbles: true,
                 cancelable: false,
                 composed: true

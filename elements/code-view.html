@@ -56,9 +56,9 @@
         this._propertyDefaultsForTag[tag] = {};
         this._propertyDefaultsForTag[tag]['__package_name__'] = packageName;
 
-        var keys = ['id', 'slot', 'classList'].concat(props);
-        for (var i = 0; i < keys.length; i++) {
-          var prop = keys[i];
+        let keys = ['id', 'slot', 'classList'].concat(props);
+        for (let i = 0; i < keys.length; i++) {
+          let prop = keys[i];
           if (prop === 'classList') {
             this._propertyDefaultsForTag[tag][prop] = el[prop].value;
           } else {
@@ -74,12 +74,12 @@
         this._style = '';
 
         // Host styles.
-        var hostCss = parent.style.cssText.replace(/;/g, `;\n       `).trim();
-        var bonusHost = `        ${hostCss}`;
+        let hostCss = parent.style.cssText.replace(/;/g, `;\n       `).trim();
+        let bonusHost = `        ${hostCss}`;
 
         this.dumpChildren(parent, '    ');
 
-        var domModule = `
+        let domModule = `
 <dom-module id="main-app">
   <template>
     <style>
@@ -101,8 +101,8 @@ ${this._template.trimRight()}
     customElements.define(MainApp.is, MainApp);
   &lt;/script>
 </dom-module>`;
-        var appTitle = 'Polyweaver output';
-        var html = `<!DOCTYPE html>
+        let appTitle = 'Polyweaver output';
+        let html = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -137,11 +137,11 @@ ${domModule}
       }
 
       dumpChildren(parent, indent) {
-        var nodes = parent.children;
+        let nodes = parent.children;
 
-        for (var i = 0; i < nodes.length; i++) {
+        for (let i = 0; i < nodes.length; i++) {
           // Add to the import if needed.
-          var tag = nodes[i].tagName.toLowerCase();
+          let tag = nodes[i].tagName.toLowerCase();
 
           if (tag === 'style') {
             // Need to indent it
@@ -169,7 +169,7 @@ ${domModule}
       }
 
       dumpElementText(tag, node, indent) {
-        var text = node.textContent.trim();
+        let text = node.textContent.trim();
         if (text && node.children.length === 0) {
           return `${indent}${text}`
         } else {
@@ -177,7 +177,7 @@ ${domModule}
         }
       }
       dumpElementStartTag(tag, node, indent) {
-        var attributes = this.dumpAttributes(tag, node);
+        let attributes = this.dumpAttributes(tag, node);
         return attributes.length === 0 ?
             `${indent}<${tag}>` :
             `${indent}<${tag} ${attributes}>`;
@@ -188,11 +188,11 @@ ${domModule}
       }
 
       dumpStyle(tag, node, indent) {
-        var css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
+        let css = node.style.cssText.replace(/;/g, `;\n${indent} `).trim();
         if (css === '') {
           return '';
         }
-        var id = node.id ? '#' + node.id : '';
+        let id = node.id ? '#' + node.id : '';
         return `${indent}${tag}${id} {
 ${indent}  ${css}
 ${indent}}
@@ -203,11 +203,11 @@ ${indent}}
         if (!this._propertyDefaultsForTag[tag]) {
           this._doDefaultPropsForUnseenTag(tag);
         }
-        var defaults = Object.keys(this._propertyDefaultsForTag[tag]);
-        var attributes = ' ';
-        for (var i = 0; i < defaults.length; i++) {
-          var name = defaults[i];
-          var value = node[name];
+        let defaults = Object.keys(this._propertyDefaultsForTag[tag]);
+        let attributes = ' ';
+        for (let i = 0; i < defaults.length; i++) {
+          let name = defaults[i];
+          let value = node[name];
 
           if (name === '__package_name__') {
             continue;
@@ -231,14 +231,14 @@ ${indent}}
         if (!this._propertyDefaultsForTag[tag]) {
           this._doDefaultPropsForUnseenTag(tag);
         }
-        var packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
+        let packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
         // TODO: this should be ../${packageName}/${tag}.html if you're
         // not using polygit.
         return `${indent}<link rel="import" href="${packageName}/${tag}.html">`;
       }
 
       _doDefaultPropsForUnseenTag(tag) {
-        var el = document.createElement(tag);
+        let el = document.createElement(tag);
         this.save(tag, tag, el, getProtoProperties(el));
       }
     }

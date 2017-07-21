@@ -90,7 +90,7 @@
       }
 
       _getRealEventElement(event) {
-        var el = event.path[0];
+        let el = event.path[0];
         // You might have clicked on someting inside a shadow root.
         // In that case, select the shadow root element.
         if (el.parentNode.toString() === '[object ShadowRoot]') {
@@ -100,13 +100,13 @@
       }
 
       trackElement(event) {
-        var el = this._getRealEventElement(event);
+        let el = this._getRealEventElement(event);
 
         if (el === this) {
           return;
         }
-        var rekt = el.getBoundingClientRect();
-        var shouldResize = this.dragShouldSize(event, rekt);
+        let rekt = el.getBoundingClientRect();
+        let shouldResize = this.dragShouldSize(event, rekt);
 
         if (shouldResize && !this._resizing) {
           this._resizing = true;
@@ -139,9 +139,9 @@
 
             // See if it's over anything.
             this._dropTarget = null;
-            var targets = this.root.querySelectorAll('*');
-            for (var i = 0; i < targets.length; i++) {
-              var t = targets[i];
+            let targets = this.root.querySelectorAll('*');
+            for (let i = 0; i < targets.length; i++) {
+              let t = targets[i];
               if (t == el) {
                 return;
               }
@@ -149,8 +149,8 @@
 
               // Only some native elements and things with slots can be
               // drop targets.
-              var slots = t.root ? t.root.querySelectorAll('slot') : [];
-              var canDrop =
+              let slots = t.root ? t.root.querySelectorAll('slot') : [];
+              let canDrop =
                 t.tagName === 'DIV' || t.tagName === 'BUTTON' ||
                 t.tagName === 'FORM' ||
                 slots.length !== 0;
@@ -160,7 +160,7 @@
               }
 
               // Do we actually intersect this child?
-              var b = t.getBoundingClientRect();
+              let b = t.getBoundingClientRect();
               if (rekt.left > b.left && rekt.left < b.left + b.width &&
                   rekt.top > b.top && rekt.top < b.top + b.height) {
                 t.classList.add('over');
@@ -169,12 +169,12 @@
             }
             break;
           case 'end':
-            var reparented = false;
+            let reparented = false;
             // Does this need to be added to a new parent?
             if (this._dropTarget) {
               reparented = true;
 
-              var oldParent = el.parentElement;
+              let oldParent = el.parentElement;
               oldParent.removeChild(el);
 
               // If there was a textContent nuke it, or else you'll
@@ -193,11 +193,11 @@
               el.parentElement.removeChild(el);
               this.add(el);
             }
-            var parent = el.parentElement.getBoundingClientRect();
+            let parent = el.parentElement.getBoundingClientRect();
 
-            var oldLeft = el.style.left;
-            var oldTop = el.style.top;
-            var oldPosition = el.style.position;
+            let oldLeft = el.style.left;
+            let oldTop = el.style.top;
+            let oldPosition = el.style.position;
             if (reparented) {
               el.style.position = 'static';
               el.style.left = el.style.top = '0px';
@@ -222,8 +222,8 @@
         switch(event.detail.state) {
           case 'track':
             // Grid is 10.
-            var trackX = Math.round(event.detail.dx / 10) * 10;
-            var trackY = Math.round(event.detail.dy / 10) * 10;
+            let trackX = Math.round(event.detail.dx / 10) * 10;
+            let trackY = Math.round(event.detail.dy / 10) * 10;
             el.style.width = this._initialWidth + trackX + 'px';
             el.style.height = this._initialHeight + trackY + 'px';
             break;
@@ -265,7 +265,7 @@
       }
 
       onKeyDown(event) {
-        var el = this._shell.activeElement;
+        let el = this._shell.activeElement;
         if (!el) {
           return;
         }
@@ -274,15 +274,15 @@
         // We only care about keys that come after you've clicked on an element,
         // or keys after you've selected something from the tree view.
         // TODO: can this be less bad since it's p horrid?
-        var isOk = (event.path[0].tagName === 'BUTTON' && event.path[2].tagName == 'TREE-VIEW') ||
+        let isOk = (event.path[0].tagName === 'BUTTON' && event.path[2].tagName == 'TREE-VIEW') ||
           (event.path[0].tagName == 'BODY') || event.path[0].classList.contains('active');
 
         if (!isOk) {
           return;
         }
-        var oldLeft = parseInt(el.style.left);
-        var oldTop = parseInt(el.style.top);
-        var oldPosition = el.style.position;
+        let oldLeft = parseInt(el.style.left);
+        let oldTop = parseInt(el.style.top);
+        let oldPosition = el.style.position;
 
         switch(event.keyCode) {
           case 38:  // up arrow

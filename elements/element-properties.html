@@ -37,19 +37,19 @@
 
         // Start walking up the prototype chain to get all the props it has.
         this.$.bonus.innerHTML = '';
-        var propNames = window.getProtoProperties(target);
+        let propNames = window.getProtoProperties(target);
         this.doProtoProperties(target, propNames);
       }
 
       doBasicProperties(target) {
-        for (var i = 0; i < this._stuff.length; i++) {
-          var prop = this._stuff[i];
-          var el = this.root.querySelector(`[name=${prop}]`);
+        for (let i = 0; i < this._stuff.length; i++) {
+          let prop = this._stuff[i];
+          let el = this.root.querySelector(`[name=${prop}]`);
           // Ugh
           if (prop === 'attributes') {
-            var v = '';
-            for(var a = 0; a < target.attributes.length; a++) {
-              var name = target.attributes[a].name;
+            let v = '';
+            for(let a = 0; a < target.attributes.length; a++) {
+              let name = target.attributes[a].name;
               if (name != 'class' && name != 'style' && name != 'id') {
                 v += name + '=' + target.attributes[a].value + ' ';
               }
@@ -75,12 +75,12 @@
       }
 
       doProtoProperties(target, propNames) {
-        for (var i = 0; i < propNames.length; i++) {
-          var name = propNames[i];
-          var label = document.createElement('label');
+        for (let i = 0; i < propNames.length; i++) {
+          let name = propNames[i];
+          let label = document.createElement('label');
           label.textContent = name;
           this.$.bonus.appendChild(label);
-          var input = document.createElement('input');
+          let input = document.createElement('input');
           input.name = name;
           input.value = target[name] || '';
           this.$.bonus.appendChild(input);

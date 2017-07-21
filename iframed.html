@@ -115,7 +115,7 @@
     </noscript>
     <script src="third-party/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="app.js">
-    var doc = iframe.contentWindow.document;
+    let doc = iframe.contentWindow.document;
     iframe.contentWindow.document.open();
     iframe.contentWindow.document.write('foo');
     iframe.contentWindow.document.close();

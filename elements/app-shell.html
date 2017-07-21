@@ -297,8 +297,8 @@
         this.addEventListener('new-element', this.createElement.bind(this));
         this.addEventListener('new-sample', this.createSample.bind(this));
         this.addEventListener('element-updated', function(event) {
-          var detail = event.detail;
-          var oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value);
+          let detail = event.detail;
+          let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value);
           // Update the history.
           this.$.actionHistory.add('update', this.activeElement,
             {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
@@ -329,8 +329,8 @@
        * Adds a new element to the view.
        */
       createElement(event) {
-        var tag = event.detail.type.toLowerCase();
-        var el = document.createElement(tag);
+        let tag = event.detail.type.toLowerCase();
+        let el = document.createElement(tag);
         this.$.viewContainer.add(el);
 
         // If we haven't before, save this initial state of a <tag> element,
@@ -350,16 +350,16 @@
        * TODO: there's no tabula rasa for children in this sample.
        */
       createSample(event) {
-        var template = event.detail.template;
-        var templateTag = event.detail.tag;
+        let template = event.detail.template;
+        let templateTag = event.detail.tag;
 
         // Clone the template and add it to the document.
-        var children = template.content.children;
-        for (var i = 0; i < children.length; i++) {
-          var el = document.importNode(children[i], true);
+        let children = template.content.children;
+        for (let i = 0; i < children.length; i++) {
+          let el = document.importNode(children[i], true);
           this.$.viewContainer.add(el);
           this.$.actionHistory.add('new', el);
-          var tag = el.tagName.toLowerCase();
+          let tag = el.tagName.toLowerCase();
           el.id = this._makeUniqueId(el, el.id || tag);
         }
 
@@ -379,13 +379,13 @@
           return;
         }
 
-        var el = this.activeElement;
+        let el = this.activeElement;
         // Deleting the top level app should remove its children.
         if (el.id === 'viewContainer') {
           this.$.actionHistory.add('delete', el, {innerHTML: el.getInnerHTML()});
           el.setInnerHTML('');
         } else {
-          var parent = el.parentElement;
+          let parent = el.parentElement;
           parent.removeChild(el);
           this.setActiveElement(parent);
           this.$.actionHistory.add('delete', el, {parent: parent});
@@ -401,16 +401,16 @@
           return;
         }
 
-        var el = this.activeElement;
-        var clone = el.cloneNode(true);
+        let el = this.activeElement;
+        let clone = el.cloneNode(true);
         el.parentNode.appendChild(clone);
-        var tag = clone.tagName.toLowerCase();
+        let tag = clone.tagName.toLowerCase();
         clone.id = this._makeUniqueId(clone, tag);
         this._finishNewElement(clone, tag, true);
 
         // Go through the children and reset their IDs too.
-        var children = clone.querySelectorAll('*');
-        for (var i = 0; i < children.length; i++) {
+        let children = clone.querySelectorAll('*');
+        for (let i = 0; i < children.length; i++) {
           children[i].id = this._makeUniqueId(children[i], children[i].tagName.toLowerCase());
         }
 
@@ -423,10 +423,10 @@
        * Refreshes all the properties/styles of the active element.
        */
       refreshView() {
-        var el = this.activeElement ? this.activeElement : this.$.viewContainer;
+        let el = this.activeElement ? this.activeElement : this.$.viewContainer;
 
         // Display its properties in the side view.
-        var computedStyle = window.getComputedStyle(el);
+        let computedStyle = window.getComputedStyle(el);
         this.$.propertiesContainer.display(el);
         this.$.stylesContainer.display(computedStyle);
         this.$.flexContainer.display(computedStyle);
@@ -441,7 +441,7 @@
       }
 
       refreshViewWhileTracking() {
-        var size = this.activeElement.getBoundingClientRect();
+        let size = this.activeElement.getBoundingClientRect();
         this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
 
@@ -449,7 +449,7 @@
        * Fit an element to its target
        */
       fitElement() {
-        var el = this.activeElement;
+        let el = this.activeElement;
         if (!el || el.id === 'viewContainer') {
           return;
         }
@@ -470,13 +470,13 @@
        * Updates the active element's displayed values.
        */
       updateActiveElementValues(type, name, value) {
-        var previousValue;
+        let previousValue;
 
         if (type === 'style') {
           // If we switch to flexbox, automatically reposition the children
           if (name === 'display' && value === 'flex') {
-            var children = this.activeElement.children;
-            for (var i = 0; i < children.length; i++) {
+            let children = this.activeElement.children;
+            for (let i = 0; i < children.length; i++) {
               children[i].style.position = 'relative';
               children[i].style.top = children[i].style.left = 'auto';
             }
@@ -511,12 +511,12 @@
        * Moving elements in the DOM
        */
       moveBack(noUpdateHistory) {
-        var el = this.activeElement;
+        let el = this.activeElement;
         if (el.id === 'viewContainer') {
           return;
         }
-        var parent = el.parentElement;
-        var previous = el.previousElementSibling;
+        let parent = el.parentElement;
+        let previous = el.previousElementSibling;
         if (previous) {
           parent.insertBefore(el, previous);
         } else {
@@ -529,15 +529,15 @@
       }
 
       moveForward(noUpdateHistory) {
-        var el = this.activeElement;
+        let el = this.activeElement;
         if (el.id === 'viewContainer') {
           return;
         }
-        var parent = el.parentElement;
+        let parent = el.parentElement;
 
         // Since you can't insertAfter your next sibling, you need to
         // insert before two siblings over.
-        var next = el.nextElementSibling;
+        let next = el.nextElementSibling;
         if (next) {
           next = next.nextElementSibling;
           if (next) {
@@ -555,8 +555,8 @@
       }
 
       moveUp(noUpdateHistory) {
-        var el = this.activeElement;
-        var parent = el.parentElement;
+        let el = this.activeElement;
+        let parent = el.parentElement;
         // If the parent isn't already the viewContainer, move it one up.
         if (el.id === 'viewContainer' || (parent && parent.id === 'canvas')) {
           return;
@@ -570,16 +570,16 @@
       }
 
       moveDown(noUpdateHistory) {
-        var el = this.activeElement;
-        var sibling = el.nextElementSibling;
+        let el = this.activeElement;
+        let sibling = el.nextElementSibling;
         if (el.id === 'viewContainer' || !sibling) {
           return;
         }
 
         // Not everything accepts children, as we've learnt from canvas-view
         // (where I copied this code from like a lazy bum)
-        var slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
-        var canDrop =
+        let slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
+        let canDrop =
           sibling.tagName === 'DIV' || sibling.tagName === 'BUTTON' ||
           sibling.tagName === 'FORM' ||
           slots.length !== 0;
@@ -602,7 +602,7 @@
         if (this.activeElement === null || this.activeElement.id == 'viewContainer') {
           this.activeElementName = 'main-app';
         } else {
-          var name = this.activeElement.tagName.toLowerCase();
+          let name = this.activeElement.tagName.toLowerCase();
           if (this.activeElement.id) {
             name += '#' + this.activeElement.id;
           }
@@ -611,8 +611,8 @@
       }
 
       jsFiddleIt() {
-        var code = window.codeView.get(this.$.viewContainer);
-        var form = this.$.jsFiddleForm;
+        let code = window.codeView.get(this.$.viewContainer);
+        let form = this.$.jsFiddleForm;
         form.html.value = code;
         form.title.value = 'Your sample app';
         //form.title.description = 'Autogenerated with Polyweaver';
@@ -624,7 +624,7 @@
           return;
         }
 
-        var newEvent = new Event('update-code', {
+        let newEvent = new Event('update-code', {
           bubbles: true,
           cancelable: false,
           composed: true
@@ -634,7 +634,7 @@
       }
 
       toggleMainView(button) {
-        var showMain = button.classList.contains('active');
+        let showMain = button.classList.contains('active');
 
         if (showMain) {
           button.classList.remove('active');
@@ -671,7 +671,7 @@
         if (isClone) {
           return;
         }
-        var slots = el.root ? el.root.querySelectorAll('slot') : [];
+        let slots = el.root ? el.root.querySelectorAll('slot') : [];
         // TODO: fix this and make it less this and more something else.
         if (tag === 'div') {
           el.style.height = el.style.width = '200px';
@@ -689,7 +689,7 @@
 
       _makeUniqueId(node, id, suffix) {
         id = id.replace('-', '_');
-        var uId = id + (suffix || '');
+        let uId = id + (suffix || '');
         return this.$.viewContainer.has('#' + uId) ?
           this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
       }
