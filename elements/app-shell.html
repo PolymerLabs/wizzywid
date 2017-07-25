@@ -158,6 +158,15 @@
         width: 100%;
         height: 100%;
       }
+      .heavy {
+        font-weight: 900;
+        letter-spacing: 2px;
+      }
+      .lite {
+        font-weight: 100;
+        opacity: 0.5;
+        letter-spacing: normal;
+      }
 
     </style>
 
@@ -165,7 +174,7 @@
 
     <app-header fixed>
       <app-toolbar>
-        <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
+        <span class="heavy">wizzywid <span class="lite">// what you see is what you deserve</span></span>
         <span class="actions">
           <button on-click="undo" id="undoBtn" disabled title="Undo">
             <iron-icon icon="designer:undo"></iron-icon>
