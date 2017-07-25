@@ -92,17 +92,18 @@
 
       _getRealEventElement(event) {
         let el = event.path[0];
+        var shadowParent = el.getRootNode().host;
         // You might have clicked on someting inside a shadow root.
         // In that case, select the shadow root element.
-        if (el.parentNode.toString() === '[object ShadowRoot]') {
-          el = event.path[0].parentNode.host;
+        if (shadowParent === this) {
+          return el;
+        } else {
+          return shadowParent;
         }
-        return el;
       }
 
       trackElement(event) {
         let el = this._getRealEventElement(event);
-
         if (el === this) {
           return;
         }
