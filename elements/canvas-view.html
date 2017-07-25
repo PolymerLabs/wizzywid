@@ -56,7 +56,7 @@
       static get is() { return 'canvas-view'; }
       ready() {
         super.ready();
-        Polymer.Gestures.addListener(this, 'track', this.trackElement.bind(this));
+        Polymer.Gestures.addListener(this.$.canvas, 'track', this.trackElement.bind(this));
         this.addEventListener('click', function(event) {
           this.updateActiveElement(this._getRealEventElement(event));
         }.bind(this));
@@ -144,9 +144,6 @@
             let targets = this.root.querySelectorAll('*');
             for (let i = 0; i < targets.length; i++) {
               let t = targets[i];
-              if (t == el) {
-                return;
-              }
               t.classList.remove('over');
 
               // Only some native elements and things with slots can be

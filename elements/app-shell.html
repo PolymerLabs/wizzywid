@@ -197,10 +197,10 @@
             <button>Designer</button>
           </designer-tab>
           <designer-tab name="preview">
-            <button>Preview</button>
+            <button on-click="viewDemo">Preview</button>
           </designer-tab>
           <designer-tab name="code">
-            <button>Code</button>
+            <button on-click="viewCode">Code</button>
           </designer-tab>
         </designer-tabs>
         <iron-pages role="main" selected="[[mainPage]]" attr-for-selected="name" selected-attribute="visible">
@@ -464,8 +464,8 @@
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
 
         // Refresh the other tabs.
-        this.viewCode();
-        this.viewDemo();
+        // this.viewCode();
+        // this.viewDemo();
       }
 
       refreshViewWhileTracking() {
