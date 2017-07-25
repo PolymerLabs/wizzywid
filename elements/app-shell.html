@@ -36,10 +36,6 @@
         z-index: 100;
       }
 
-      app-header .app-title {
-        margin-right: 8px;
-      }
-
       button {
         background: transparent;
         border: none;
@@ -58,6 +54,11 @@
 
       app-header button[disabled] {
         opacity: 0.3;
+      }
+
+      app-toolbar {
+        display: flex;
+        justify-content: space-between;
       }
 
       designer-tab.single {
@@ -102,6 +103,7 @@
         overflow: auto;
         display: flex;
         flex-grow: 1;
+        flex-direction: column;
         border-left: 1px solid #e5e5e5;
         border-right: 1px solid #e5e5e5;
       }
@@ -119,10 +121,20 @@
         display: none !important;
       }
 
+      designer-tabs {
+        width: 100%;
+      }
+
       iron-pages {
         height: 250px;
         overflow:hidden;
         padding-bottom: 20px;
+      }
+
+      .main-view iron-pages {
+        height: 100%;
+        padding-bottom: 0;
+        overflow: auto;
       }
 
       iron-pages.elements {
@@ -131,14 +143,6 @@
 
       iron-pages > div {
         height: 100%;
-      }
-
-      button.button-code iron-icon {
-        transform: rotate(0deg);
-      }
-
-      button.button-code.active iron-icon {
-        transform: rotate(90deg);
       }
 
       .actions {
@@ -150,6 +154,9 @@
       .actions button {
         padding: 0;
       }
+      iframe {
+        width: 100%;
+      }
 
     </style>
 
@@ -158,27 +165,24 @@
     <app-header fixed>
       <app-toolbar>
         <span class="app-title" title="it's like Dreamweaver but for Polymer apps">PolyWeaver</span>
-        <div class="separator"></div>
-        <button on-click="viewCode" class="button-code">
-          <iron-icon icon="designer:code"></iron-icon>
-          <div>Code</div>
-        </button>
-        <button on-click="jsFiddleIt">
-          <iron-icon icon="designer:view"></iron-icon>
-          <div>jsFiddle</div>
-        </button>
-        <div class="separator"></div>
-        <button on-click="undo" id="undoBtn" disabled>
-          <iron-icon icon="designer:undo"></iron-icon>
-          <div>Undo</div>
-        </button>
-        <button on-click="redo" id="redoBtn" disabled>
-          <iron-icon icon="designer:redo"></iron-icon>
-          <div>Redo</div>
-        </button>
+        <span class="actions">
+          <button on-click="undo" id="undoBtn" disabled title="Undo">
+            <iron-icon icon="designer:undo"></iron-icon>
+            <div>Undo</div>
+          </button>
+          <button on-click="redo" id="redoBtn" disabled title="Redo">
+            <iron-icon icon="designer:redo"></iron-icon>
+            <div>Redo</div>
+          </button>
+          <div class="separator"></div>
+          <button on-click="jsFiddleIt" title="Create a JSFiddle">
+            <iron-icon icon="designer:cloud"></iron-icon>
+            <div>JSFiddle</div>
+          </button>
+        </span>
       </app-toolbar>
     </app-header>
-    <div class="container" id="scrollingRegion">
+    <div class="container">
       <div class="drawer small">
         <designer-tab class="single">
           <button>tree</button>
@@ -187,10 +191,26 @@
       </div>
 
       <div class="main-view">
-        <canvas-view id="viewContainer" style="width:100%"></canvas-view>
-        <div id="codeContainer" style="width:100%" hidden>
-          <slot name="code"></slot>
-        </div>
+        <designer-tabs attr-for-selected="name" selected="{{mainPage}}">
+          <designer-tab name="designer">
+            <button>Designer</button>
+          </designer-tab>
+          <designer-tab name="code">
+            <button on-click="viewCode">Code</button>
+          </designer-tab>
+          <designer-tab name="preview">
+            <button on-click="viewDemo">Preview</button>
+          </designer-tab>
+        </designer-tabs>
+        <iron-pages role="main" selected="[[mainPage]]" attr-for-selected="name" selected-attribute="visible">
+          <div name="designer">
+            <canvas-view  id="viewContainer" style="height:100%"></canvas-view>
+          </div>
+          <div name="code" id="codeContainer" style="width:100%">
+            <slot name="code"></slot>
+          </div>
+          <iframe id="demoContainer" frameBorder="0" name="demo"></iframe>
+        </iron-pages>
       </div>
 
       <div class="drawer">
@@ -282,6 +302,9 @@
           },
           viewPage: {
             type:String
+          },
+          mainPage: {
+            type: String
           }
         }
       }
@@ -290,6 +313,7 @@
         super.ready();
         this.stylePage = 'properties';
         this.viewPage = 'elements';
+        this.mainPage = 'designer';
 
         this.activeElement = this.$.viewContainer;
         this.refreshView();
@@ -434,10 +458,9 @@
         // Highlight it in the tree.
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
 
-        // If we're looking at the code, refresh that too.
-        if (!this.$.codeContainer.hidden) {
-          this.viewCode();
-        }
+        // Refresh the other tabs.
+        //this.viewCode();
+        //this.viewDemo();
       }
 
       refreshViewWhileTracking() {
@@ -619,11 +642,7 @@
         form.submit();
       }
 
-      viewCode(event) {
-        if (event && this.toggleMainView(event.currentTarget)) {
-          return;
-        }
-
+      viewCode() {
         let newEvent = new Event('update-code', {
           bubbles: true,
           cancelable: false,
@@ -633,18 +652,11 @@
         this.dispatchEvent(newEvent);
       }
 
-      toggleMainView(button) {
-        let showMain = button.classList.contains('active');
-
-        if (showMain) {
-          button.classList.remove('active');
-        } else {
-          button.classList.add('active');
-        }
-
-        this.$.viewContainer.hidden = !showMain;
-        this.$.codeContainer.hidden = showMain;
-        return showMain;
+      viewDemo() {
+        let iframe = this.$.demoContainer;
+        let doc = iframe.contentWindow.document;
+        var code = window.codeView.get(this.$.viewContainer);
+        doc.write(code);
       }
 
       updateUndoButton(length) {
