@@ -156,6 +156,7 @@
       }
       iframe {
         width: 100%;
+        height: 100%;
       }
 
     </style>
@@ -195,21 +196,21 @@
           <designer-tab name="designer">
             <button>Designer</button>
           </designer-tab>
-          <designer-tab name="code">
-            <button on-click="viewCode">Code</button>
-          </designer-tab>
           <designer-tab name="preview">
-            <button on-click="viewDemo">Preview</button>
+            <button>Preview</button>
+          </designer-tab>
+          <designer-tab name="code">
+            <button>Code</button>
           </designer-tab>
         </designer-tabs>
         <iron-pages role="main" selected="[[mainPage]]" attr-for-selected="name" selected-attribute="visible">
           <div name="designer">
             <canvas-view  id="viewContainer" style="height:100%"></canvas-view>
           </div>
-          <div name="code" id="codeContainer" style="width:100%">
+          <div name="code"style="width:100%">
             <slot name="code"></slot>
           </div>
-          <iframe id="demoContainer" frameBorder="0" name="demo"></iframe>
+          <div name="preview" id="demoContainer"></div>
         </iron-pages>
       </div>
 
@@ -309,11 +310,15 @@
         }
       }
 
-      ready() {
-        super.ready();
+      constructor() {
+        super();
         this.stylePage = 'properties';
         this.viewPage = 'elements';
         this.mainPage = 'designer';
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
 
         this.activeElement = this.$.viewContainer;
         this.refreshView();
@@ -459,8 +464,8 @@
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
 
         // Refresh the other tabs.
-        //this.viewCode();
-        //this.viewDemo();
+        this.viewCode();
+        this.viewDemo();
       }
 
       refreshViewWhileTracking() {
@@ -653,10 +658,17 @@
       }
 
       viewDemo() {
-        let iframe = this.$.demoContainer;
+        if (!window.codeView.get)
+          return;
+        let iframe = document.createElement('iframe');
+        iframe.frameBorder = '0';
+        this.$.demoContainer.innerHTML = '';
+        this.$.demoContainer.appendChild(iframe);
         let doc = iframe.contentWindow.document;
         var code = window.codeView.get(this.$.viewContainer);
+        doc.open();
         doc.write(code);
+        doc.close();
       }
 
       updateUndoButton(length) {
