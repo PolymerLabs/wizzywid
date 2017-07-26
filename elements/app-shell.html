@@ -66,7 +66,6 @@
         color: white;
         background: #232733;
         width: 100%;
-        padding-left: 8px;
       }
 
       .separator {
@@ -355,7 +354,7 @@
         this.activeElement = el;
 
         // Disable a bunch of UI for the top level element.
-        let disableUI = el === this.$.viewContainer;
+        let disableUI = this._mainAppSelected();
         this.$.cloneBtn.disabled = disableUI;
         this.$.fitBtn.disabled = disableUI;
         this.$.moveUpBtn.disabled = disableUI;
@@ -420,7 +419,7 @@
 
         let el = this.activeElement;
         // Deleting the top level app should remove its children.
-        if (el.id === 'viewContainer') {
+        if (this._mainAppSelected()) {
           this.$.actionHistory.add('delete', el, {innerHTML: el.getInnerHTML()});
           el.setInnerHTML('');
         } else {
@@ -436,7 +435,7 @@
        * Creates a sibling copy of the active element.
        */
       cloneElement() {
-        if (!this.activeElement || this.activeElement.id == 'viewContainer') {
+        if (this._mainAppSelected()) {
           return;
         }
 
@@ -487,10 +486,10 @@
        * Fit an element to its target
        */
       fitElement() {
-        let el = this.activeElement;
-        if (!el || el.id === 'viewContainer') {
+        if (this._mainAppSelected()) {
           return;
         }
+        let el = this.activeElement;
         this.$.actionHistory.add('fit', el,
           {oldPosition: el.style.position,
           newPosition: 'absolute',
@@ -544,10 +543,10 @@
        * Moving elements in the DOM
        */
       moveBack(noUpdateHistory) {
-        let el = this.activeElement;
-        if (el.id === 'viewContainer') {
+        if (this._mainAppSelected()) {
           return;
         }
+        let el = this.activeElement;
         let parent = el.parentElement;
         let previous = el.previousElementSibling;
         if (previous) {
@@ -562,10 +561,10 @@
       }
 
       moveForward(noUpdateHistory) {
-        let el = this.activeElement;
-        if (el.id === 'viewContainer') {
+        if (this._mainAppSelected()) {
           return;
         }
+        let el = this.activeElement;
         let parent = el.parentElement;
 
         // Since you can't insertAfter your next sibling, you need to
@@ -591,7 +590,7 @@
         let el = this.activeElement;
         let parent = el.parentElement;
         // If the parent isn't already the viewContainer, move it one up.
-        if (el.id === 'viewContainer' || (parent && parent.id === 'canvas')) {
+        if (this._mainAppSelected() || (parent && parent.id === 'canvas')) {
           return;
         }
         if (!!noUpdateHistory) {
@@ -605,7 +604,7 @@
       moveDown(noUpdateHistory) {
         let el = this.activeElement;
         let sibling = el.nextElementSibling;
-        if (el.id === 'viewContainer' || !sibling) {
+        if (this._mainAppSelected() || !sibling) {
           return;
         }
 
@@ -708,6 +707,13 @@
         let uId = id + (suffix || '');
         return this.$.viewContainer.has('#' + uId) ?
           this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
+      }
+
+      _mainAppSelected(el) {
+        if (!el) {
+          el = this.activeElement;
+        }
+        return (el == this.$.viewContainer);
       }
     }
     customElements.define(AppShell.is, AppShell);
