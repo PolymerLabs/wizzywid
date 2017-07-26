@@ -1,41 +1,48 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-
 <dom-module id="action-history">
-  <template strip-whitespace>
+  <template>
     <style>
       :host {
         display: none;
       }
     </style>
-
   </template>
   <script>
     class ActionHistory extends Polymer.Element {
       static get is() { return 'action-history'; }
-      ready() {
+      constructor() {
+        super();
         this.undoHistory = [];
         this.redoHistory = [];
       }
 
       add(action, node, detail) {
-        // Don't try to add two identical items since that looks weird.
-        // TODO: figure out why you get double actions sometimes.
         let item = {
           action: action,
           node: node,
           detail: detail
         };
 
+        // This may be a dumb action where the old === new (like when you
+        // start dragging but don't get anywhere)
+        if (detail && detail.new && detail.old &&
+            this._itemsMatch(action, detail.new, detail.old)) {
+          return;
+        }
+
         let topItem = this.undoHistory[this.undoHistory.length - 1];
 
-        if (topItem && item.action === topItem.action &&
+        // This may be the same action as the previous one.
+        if (topItem &&
+            item.action === topItem.action &&
             topItem.node === item.node &&
-            JSON.stringify(item.detail) === JSON.stringify(topItem.detail)) {
-          console.log('choosing not to add a dupe');
+            item.detail && topItem.detail &&
+            this._itemsMatch(item.action, item.detail, topItem.detail)) {
           return;
         }
 
         this.undoHistory.push(item);
+
         // A new item in the undo stack means you have nothing to redo.
         this.redoHistory = [];
         this.updateButtons();
@@ -51,7 +58,7 @@
         switch(item.action) {
           case 'update':
               item.node.click();
-              shell.updateActiveElementValues(detail.type, detail.name, detail.oldValue);
+              shell.updateActiveElementValues(detail.type, detail.name, detail.old.value);
               break;
           case 'new':
               let newEvent = new Event('remove-from-canvas', {
@@ -73,36 +80,42 @@
               item.node.click();
               break;
           case 'move':
-              item.node.style.left = detail.oldLeft;
-              item.node.style.top = detail.oldTop;
+              item.node.style.left = detail.old.left;
+              item.node.style.top = detail.old.top;
               // During reparent-and-move we may have switched to position:relative.
-              if (detail.oldPosition) {
-                item.node.style.position = detail.oldPosition;
+              if (detail.old.position) {
+                item.node.style.position = detail.old.position;
               }
               item.node.click();
               break;
           case 'resize':
-              item.node.style.width = detail.oldWidth;
-              item.node.style.height = detail.oldHeight;
+              item.node.style.width = detail.old.width;
+              item.node.style.height = detail.old.height;
               item.node.click();
               break;
           case 'reparent':
-              detail.newParent.removeChild(item.node);
-              detail.oldParent.appendChild(item.node);
+              detail.new.parent.removeChild(item.node);
+              detail.old.parent.appendChild(item.node);
+              item.node.style.left = detail.old.left;
+              item.node.style.top = detail.old.top;
+              // During reparent-and-move we may have switched to position:relative.
+              if (detail.old.position) {
+                item.node.style.position = detail.old.position;
+              }
               item.node.click();
               break;
           case 'fit':
-              item.node.style.left = detail.oldLeft;
-              item.node.style.top = detail.oldTop;
-              item.node.style.width = detail.oldWidth;
-              item.node.style.height = detail.oldHeight;
-              item.node.style.position = detail.oldPosition;
+              item.node.style.left = detail.old.left;
+              item.node.style.top = detail.old.top;
+              item.node.style.width = detail.old.width;
+              item.node.style.height = detail.old.height;
+              item.node.style.position = detail.old.position;
               item.node.click();
               break;
           case 'move-up':
           case 'move-down':
-              item.detail.newParent.removeChild(item.node);
-              item.detail.oldParent.appendChild(item.node);
+              item.detail.new.parent.removeChild(item.node);
+              item.detail.old.parent.appendChild(item.node);
               item.node.click();
               break;
           case 'move-back':
@@ -126,7 +139,7 @@
         switch(item.action) {
           case 'update':
               item.node.click();
-              shell.updateActiveElementValues(detail.type, detail.name, detail.newValue);
+              shell.updateActiveElementValues(detail.type, detail.name, detail.new.value);
               break;
           case 'new':
               let newEvent = new Event('add-to-canvas', {
@@ -148,36 +161,42 @@
               }
               break;
           case 'move':
-              item.node.style.left = detail.newLeft;
-              item.node.style.top = detail.newTop;
+              item.node.style.left = detail.new.left;
+              item.node.style.top = detail.new.top;
               // During reparent-and-move we may have switched to position:relative.
-              if (detail.oldPosition) {
-                item.node.style.position = detail.newPosition;
+              if (detail.old.position) {
+                item.node.style.position = detail.new.position;
               }
               item.node.click();
               break;
           case 'resize':
-              item.node.style.width = detail.newWidth;
-              item.node.style.height = detail.newHeight;
+              item.node.style.width = detail.new.width;
+              item.node.style.height = detail.new.height;
               item.node.click();
               break;
           case 'reparent':
-              detail.oldParent.removeChild(item.node);
-              detail.newParent.appendChild(item.node);
+              detail.old.parent.removeChild(item.node);
+              detail.new.parent.appendChild(item.node);
+              item.node.style.left = detail.new.left;
+              item.node.style.top = detail.new.top;
+              // During reparent-and-move we may have switched to position:relative.
+              if (detail.old.position) {
+                item.node.style.position = detail.new.position;
+              }
               item.node.click();
               break;
           case 'fit':
-              item.node.style.left = detail.newLeft;
-              item.node.style.top = detail.newTop;
-              item.node.style.width = detail.newWidth;
-              item.node.style.height = detail.newHeight;
-              item.node.style.position = detail.newPosition;
+              item.node.style.left = detail.new.left;
+              item.node.style.top = detail.new.top;
+              item.node.style.width = detail.new.width;
+              item.node.style.height = detail.new.height;
+              item.node.style.position = detail.new.position;
               item.node.click();
               break;
           case 'move-up':
           case 'move-down':
-              item.detail.oldParent.removeChild(item.node);
-              item.detail.newParent.appendChild(item.node);
+              item.detail.old.parent.removeChild(item.node);
+              item.detail.new.parent.appendChild(item.node);
               item.node.click();
               break;
           case 'move-back':
@@ -194,6 +213,14 @@
       updateButtons() {
         shell.updateUndoButton(this.undoHistory.length);
         shell.updateRedoButton(this.redoHistory.length);
+      }
+
+      _itemsMatch(action, first, second) {
+        // These have elements in the details, and you can't json those anyway.
+        if (action === 'reparent' || action === 'move-up' || action === 'move-down') {
+          return false;
+        }
+        return JSON.stringify(first) === JSON.stringify(second);
       }
     }
     customElements.define(ActionHistory.is, ActionHistory);

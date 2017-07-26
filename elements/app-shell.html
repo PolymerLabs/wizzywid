@@ -334,7 +334,11 @@
           let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value);
           // Update the history.
           this.$.actionHistory.add('update', this.activeElement,
-            {type: detail.type, name: detail.name, newValue: detail.value, oldValue: oldValue});
+            {
+              type: detail.type, name: detail.name,
+              new: {value: detail.value},
+              old: {value: oldValue}
+            });
         }.bind(this));
         this.addEventListener('remove-from-canvas', function(event){
           this.$.viewContainer.remove(event.detail.target);
@@ -400,16 +404,17 @@
 
         // Clone the template and add it to the document.
         let children = template.content.children;
+        let el;
         for (let i = 0; i < children.length; i++) {
-          let el = document.importNode(children[i], true);
+          el = document.importNode(children[i], true);
           this.$.viewContainer.add(el);
           this.$.actionHistory.add('new', el);
           let tag = el.tagName.toLowerCase();
           el.id = this._makeUniqueId(el, el.id || tag);
         }
 
-        // Position the sample better.
-        if (templateTag !== 'app-layout-sample') {
+        // Position the sample better, if it was a one element thing.
+        if (children.length === 1 && templateTag !== 'app-layout-sample') {
           el.style.position = 'absolute';
           el.style.left = el.style.top = '20px';
         }
@@ -498,12 +503,18 @@
         }
         let el = this.activeElement;
         this.$.actionHistory.add('fit', el,
-          {oldPosition: el.style.position,
-          newPosition: 'absolute',
-          oldLeft: el.style.left, oldTop: el.style.top,
-          newLeft: '0', newTop: '0',
-          oldWidth: el.style.width, oldHeight: el.style.height,
-          newWidth: '100%', newHeight: '100%'});
+          {
+            new: {
+              position: 'absolute',
+              left: '0', top: '0',
+              width: '100%', height: '100%'
+            },
+            old: {
+              position: el.style.position,
+              left: el.style.left, top: el.style.top,
+              width: el.style.width, height: el.style.height,
+            }
+          });
 
         el.style.position = 'absolute';
         el.style.left = el.style.top = '0px';
@@ -601,7 +612,8 @@
           return;
         }
         if (!!noUpdateHistory) {
-          this.$.actionHistory.add('move-up', el, {oldParent: parent, newParent: parent.parentElement});
+          this.$.actionHistory.add('move-up', el,
+          {old: {parent: parent}, new: {parent: parent.parentElement}});
         }
         parent.removeChild(el);
         parent.parentElement.appendChild(el);
@@ -628,7 +640,11 @@
         }
 
         if (!!noUpdateHistory) {
-          this.$.actionHistory.add('move-down', el, {oldParent: el.parentElement, newParent: sibling});
+          this.$.actionHistory.add('move-down', el,
+              {
+                old: {parent: el.parentElement},
+                new: {parent: sibling}
+              });
         }
 
         // If you can, add it there.

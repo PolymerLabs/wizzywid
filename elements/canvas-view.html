@@ -179,11 +179,11 @@
           case 'end':
             this._resizing = false;
             let reparented = false;
+            let oldParent = el.parentElement;
+            let newParent;
             // Does this need to be added to a new parent?
             if (this._dropTarget) {
               reparented = true;
-
-              let oldParent = el.parentElement;
               oldParent.removeChild(el);
 
               // If there was a textContent nuke it, or else you'll
@@ -193,12 +193,13 @@
               }
               this._dropTarget.appendChild(el);
               this._dropTarget.classList.remove('over');
-              this._shell.$.actionHistory.add('reparent', el, {newParent: this._dropTarget, oldParent: oldParent});
+              newParent = this._dropTarget;
               this._dropTarget = null;
             } else if (el.parentElement && (el.parentElement !== this.$.canvas)) {
+              reparented = true;
               // If there's no drop target and the el used to be in a different
               // parent, move it to the main view.
-              this._shell.$.actionHistory.add('reparent', el, {newParent: this.$.canvas, oldParent: el.parentElement});
+              newParent = this.$.canvas;
               el.parentElement.removeChild(el);
               this.add(el);
             }
@@ -210,15 +211,27 @@
             if (reparented) {
               el.style.position = 'static';
               el.style.left = el.style.top = '0px';
+              this._shell.$.actionHistory.add('reparent', el,
+                  {
+                    new: {
+                      parent: newParent,
+                      left: el.style.left, top: el.style.top, position: el.style.position
+                    },
+                    old: {
+                      parent: oldParent,
+                      left: oldLeft, top: oldTop, position:oldPosition
+                    }
+                  });
             } else {
               el.style.position = 'absolute';
               el.style.left = rekt.left - parent.left + 'px';
               el.style.top = rekt.top - parent.top + 'px';
+              this._shell.$.actionHistory.add('move', el,
+                {
+                  new:{left: el.style.left, top: el.style.top, position: el.style.position},
+                  old:{left: oldLeft, top: oldTop, position:oldPosition}
+                });
             }
-
-            this._shell.$.actionHistory.add('move', el,
-                {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop,
-                oldPosition:oldPosition, newPosition: el.style.position});
             el.classList.remove('dragging');
             el.style.transform = el.style.webkitTransform = 'none';
             break;
@@ -239,8 +252,10 @@
           case 'end':
             this._resizing = false;
             this._shell.$.actionHistory.add('resize', el,
-                {newWidth: el.style.width, newHeight: el.style.height,
-                 oldWidth: this._initialWidth + 'px', oldHeight: this._initialHeight + 'px'});
+               {
+                 new:{width: el.style.width, height: el.style.height},
+                 old:{width: this._initialWidth + 'px', height: this._initialHeight + 'px'}
+               });
             el.classList.remove('resizing');
             break;
         }
@@ -327,10 +342,11 @@
             }
             break;
         }
-
         this._shell.$.actionHistory.add('move', el,
-            {newLeft: el.style.left, newTop: el.style.top, oldLeft: oldLeft, oldTop: oldTop,
-            oldPosition:oldPosition, newPosition: el.style.position});
+            {
+              new:{left: el.style.left, top: el.style.top, position: el.style.position},
+              old:{left: oldLeft, top: oldTop, position:oldPosition}
+            });
       }
     }
     customElements.define(CanvasView.is, CanvasView);
