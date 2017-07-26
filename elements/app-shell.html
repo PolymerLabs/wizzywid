@@ -410,7 +410,7 @@
           this.$.viewContainer.add(el);
           this.$.actionHistory.add('new', el);
           let tag = el.tagName.toLowerCase();
-          el.id = this._makeUniqueId(el, el.id || tag);
+          el.id = el.id || this._makeUniqueId(el, tag);
         }
 
         // Position the sample better, if it was a one element thing.
