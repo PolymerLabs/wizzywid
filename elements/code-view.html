@@ -146,6 +146,10 @@ ${domModule}
             // Need to indent it
             this._style += nodes[i].textContent.replace(/[\n\r]/g, '\n    ') + '\n';
             continue;
+          } else if (tag !== 'iron-icons' && tag.indexOf('-icons') !== -1) {
+            // This is not actually an element, it's just an import.
+            this._imports += this.dumpImports(tag, '') + '\n';
+            continue;
           }
 
           if (tag.indexOf('-') !== -1 && this._imports.indexOf(`${tag}.html`) === -1) {
