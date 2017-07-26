@@ -305,9 +305,6 @@
           activeElement: {
             type: Object
           },
-          activeElementName: {
-            type: String
-          },
           stylesPage: {
             type:String
           },
@@ -362,9 +359,9 @@
         if (this.activeElement) {
           this.activeElement.classList.remove('active');
         }
+
         el.classList.add('active');
         this.activeElement = el;
-        this.computeActiveElementName();
       }
 
       /*
@@ -537,11 +534,6 @@
           } else {
             this.activeElement[name] = value;
           }
-
-          // We're displaying the id, so update it in the title bar.
-          if (name === 'id') {
-            this.computeActiveElementName();
-          }
         }
 
         this.$.treeView.recomputeTree(this.$.viewContainer, this.activeElement);
@@ -636,19 +628,6 @@
         // If you can, add it there.
         sibling.appendChild(el);
         this.refreshView();
-      }
-
-      // TODO: ugh, this can probably be better.
-      computeActiveElementName() {
-        if (this.activeElement === null || this.activeElement.id == 'viewContainer') {
-          this.activeElementName = 'main-app';
-        } else {
-          let name = this.activeElement.tagName.toLowerCase();
-          if (this.activeElement.id) {
-            name += '#' + this.activeElement.id;
-          }
-          this.activeElementName = name;
-        }
       }
 
       jsFiddleIt() {
