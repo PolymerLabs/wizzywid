@@ -356,6 +356,9 @@
        * Updates the new active element in the view.
        */
       setActiveElement(el) {
+        if (el == this) {
+          el = this.$.viewContainer;
+        }
         if (this.activeElement) {
           this.activeElement.classList.remove('active');
         }
