@@ -38,6 +38,7 @@
 
       button {
         background: transparent;
+        color: white;
         border: none;
         cursor: pointer;
       }
@@ -62,8 +63,8 @@
       }
 
       designer-tab.single {
-        background-color: #efefef;
-        color: #5d5d5d;
+        color: white;
+        background: #232733;
         width: 100%;
         padding-left: 8px;
       }
@@ -88,8 +89,8 @@
         width: 300px;
         height: 100%;
         overflow: hidden;
-        background: white;
-        color: #5d5d5d;
+        background: #2f3545;
+        color: white;
       }
 
       .drawer.small {
@@ -104,8 +105,6 @@
         display: flex;
         flex-grow: 1;
         flex-direction: column;
-        border-left: 1px solid #e5e5e5;
-        border-right: 1px solid #e5e5e5;
       }
 
       .drawer-title {
@@ -125,10 +124,12 @@
         width: 100%;
       }
 
-      iron-pages {
+      iron-pages.dark {
         height: 250px;
         overflow:hidden;
         padding-bottom: 20px;
+        background: #2f3545;
+        color: white;
       }
 
       .main-view iron-pages {
@@ -268,7 +269,7 @@
             <button>flex</button>
           </designer-tab>
         </designer-tabs>
-        <iron-pages class="styles" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
+        <iron-pages class="dark" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
           <element-properties name="properties" id="propertiesContainer"></element-properties>
           <element-styles name="styles" id="stylesContainer"></element-styles>
           <element-flex name="flex" id="flexContainer"></element-flex>
@@ -281,7 +282,7 @@
             <button>Samples</button>
           </designer-tab>
         </designer-tabs>
-        <iron-pages class="elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
+        <iron-pages class="dark elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
           <elements-palette name="elements" id="elementsPalette"></elements-palette>
           <samples-palette name="samples"></samples-palette>
         </iron-pages>

@@ -6,19 +6,21 @@
       :host {
         display: inline-block;
         position: relative;
-        border-bottom: 2px solid transparent;
+        border-bottom: 3px solid transparent;
         color: #a9a9a9;
       }
       :host(.iron-selected) {
-        color: #5d5d5d;
-        border-bottom: 2px solid #5d5d5d;
+        color: white;
+        background: #383f52;
+        border-bottom: 3px solid #E91E63;
       }
       :host ::slotted(*) {
         display: inline-block;
         background: transparent;
         border: none;
         padding: 9px 5px;
-        font-size: 14px;
+        font-size: 12px;
+        letter-spacing: 1px;
         font-weight: 500;
         text-decoration: none;
         text-transform: uppercase;
