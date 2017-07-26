@@ -53,7 +53,7 @@
         margin: 8px;
       }
 
-      app-header button[disabled] {
+      button[disabled] {
         opacity: 0.3;
       }
 
@@ -225,39 +225,62 @@
       </div>
 
       <div class="drawer">
-        <designer-tab class="single"><span>Actions</span></designer-tab>
-        <div class="actions">
+        <designer-tab class="single actions">
+          <button on-click="deleteElement" title="Delete element">
+            <iron-icon icon="designer:delete"></iron-icon>
+          </button>
+          <button on-click="cloneElement" id="cloneBtn" title="Clone element">
+            <iron-icon icon="designer:copy"></iron-icon>
+          </button>
+          <button on-click="fitElement" id="fitBtn" title="Fit to parent">
+            <iron-icon icon="designer:fit"></iron-icon>
+          </button>
+          <button on-click="moveUp" title="Move to parent. Also Shift+UpArrow" id="moveUpBtn">
+            <iron-icon icon="designer:up"></iron-icon>
+          </button>
+          <button on-click="moveDown" title="Move to first child. Also Shift+DownArrow" id="moveDownBtn">
+            <iron-icon icon="designer:down"></iron-icon>
+          </button>
+          <button on-click="moveBack" title="Move back. Also Shift+LeftArrow" id="moveBackBtn">
+            <iron-icon icon="designer:back"></iron-icon>
+          </button>
+          <button on-click="moveForward" title="Move forward. Also Shift+RightArrow" id="moveForwardBtn">
+            <iron-icon icon="designer:forward"></iron-icon>
+          </button>
+
+        </designer-tab>
+        <!-- <div class="actions">
           <button on-click="deleteElement">
             <iron-icon icon="designer:delete"></iron-icon>
             <div>Delete</div>
           </button>
-          <button on-click="cloneElement">
+          <button on-click="cloneElement" id="cloneBtn">
             <iron-icon icon="designer:copy"></iron-icon>
             <div>Clone</div>
           </button>
-          <button on-click="fitElement">
+          <button on-click="fitElement" id="fitBtn">
             <iron-icon icon="designer:fit"></iron-icon>
             <div>Fit to parent</div>
           </button>
-        </div>
-        <div class="actions">
-          <button on-click="moveUp" title="or with Shift+UpArrow">
+        </div> -->
+        <!-- <div class="actions">
+          <button on-click="moveUp" title="or with Shift+UpArrow" id="moveUpBtn">
             <iron-icon icon="designer:up"></iron-icon>
             <div>Move up</div>
           </button>
-          <button on-click="moveDown" title="or with Shift+DownArrow">
+          <button on-click="moveDown" title="or with Shift+DownArrow" id="moveDownBtn">
             <iron-icon icon="designer:down"></iron-icon>
             <div>Move down</div>
           </button>
-          <button on-click="moveBack" title="or with Shift+LeftArrow">
+          <button on-click="moveBack" title="or with Shift+LeftArrow" id="moveBackBtn">
             <iron-icon icon="designer:back"></iron-icon>
             <div>Move back</div>
           </button>
-          <button on-click="moveForward" title="or with Shift+RightArrow">
+          <button on-click="moveForward" title="or with Shift+RightArrow" id="moveForwardBtn">
             <iron-icon icon="designer:forward"></iron-icon>
             <div>Move forward</div>
           </button>
-        </div>
+        </div> -->
         <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
           <designer-tab name="properties">
             <button>properties</button>
@@ -327,7 +350,7 @@
       connectedCallback() {
         super.connectedCallback();
 
-        this.activeElement = this.$.viewContainer;
+        this.setActiveElement(this.$.viewContainer);
         this.refreshView();
 
         this.addEventListener('new-element', this.createElement.bind(this));
@@ -362,6 +385,15 @@
 
         el.classList.add('active');
         this.activeElement = el;
+
+        // Disable a bunch of UI for the top level element.
+        let disableUI = el === this.$.viewContainer;
+        this.$.cloneBtn.disabled = disableUI;
+        this.$.fitBtn.disabled = disableUI;
+        this.$.moveUpBtn.disabled = disableUI;
+        this.$.moveDownBtn.disabled = disableUI;
+        this.$.moveBackBtn.disabled = disableUI;
+        this.$.moveForwardBtn.disabled = disableUI;
       }
 
       /*
