@@ -231,7 +231,12 @@ ${indent}}
           this._doDefaultPropsForUnseenTag(tag);
         }
         let packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
-        // TODO: this should be ../${packageName}/${tag}.html if you're
+        // If this is app-layout stuff, it needs an extra package name.
+        if (packageName === 'app-header' || packageName === 'app-drawer' || packageName === 'app-toolbar') {
+          packageName = 'app-layout/' + packageName;
+        }
+
+        // PS: this should be ../${packageName}/${tag}.html if you're
         // not using polygit.
         return `${indent}<link rel="import" href="${packageName}/${tag}.html">`;
       }
