@@ -9,6 +9,10 @@
         border-bottom: 3px solid transparent;
         color: #a9a9a9;
       }
+      :host([disabled]) {
+        opacity: 0.3;
+        pointer-events: none;
+      }
       :host(.iron-selected) {
         color: white;
         background: #383f52;
