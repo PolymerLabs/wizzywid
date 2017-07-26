@@ -5,10 +5,11 @@
         display: block;
         height: 100%;
         overflow: auto;
-        margin: 14px 0 14px 14px;
+        margin: 14px 0 14px 8px;
         padding-bottom:14px;
       }
       label, input, select {
+        display: inline-block;
         color: white;
         background: transparent;
         height: 24px;
@@ -16,14 +17,14 @@
         padding: 0 2px 0 4px;
         width: 110px;
       }
-      label {
+      label, .style-label {
         display: inline-block;
         margin-right: 20px;
         font-size: 13px;
       }
       input, select {
         border: 1px solid #596c7a;
-        border-radius: 3px;
+        border-radius: 5px;
         box-sizing: border-box;
         font-size: 11px;
       }
@@ -35,10 +36,6 @@
       }
       select {
         background: transparent;
-      }
-      #bonus {
-        margin-top: 4px;
-        padding-top: 8px;
       }
     </style>
   </template>

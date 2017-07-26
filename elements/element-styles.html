@@ -4,8 +4,23 @@
 
 <dom-module id="element-styles">
   <template>
-    <style include="element-props-shared-styles"></style>
-
+    <style include="element-props-shared-styles">
+      button.add {
+        display: inline-block;
+        background: transparent;
+        border: none;
+        padding: 4px 10px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        font-weight: 500;
+        text-decoration: none;
+        text-transform: uppercase;
+        line-height: 1.5;
+        color: white;
+        background: #232733;
+        margin-top: 4px;
+      }
+    </style>
     <label>color</label><input name="color" type="color"><br>
     <label>background color</label><input name="backgroundColor" type="color">
     <label>box-sizing</label>
@@ -29,7 +44,7 @@
     <label>width</label><input name="width">
     <label>height</label><input name="height">
     <div id="bonus"></div>
-    <button on-click="addStyle">Add style</button>
+    <button class="add" on-click="addStyle">+ Add style</button>
   </template>
   <script>
     class ElementStyles extends ElementStuff(Polymer.Element) {
