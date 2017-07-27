@@ -1,8 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="palette-shared-styles.html">
-<link rel="import" href="app-icons.html">
 
-<dom-module id="samples-palette">
+<dom-module id="palette-samples">
   <template strip-whitespace>
     <style include="palette-shared-styles"></style>
     <button>flex-horizontal-layout</button>
@@ -14,7 +13,7 @@
   </template>
   <script>
     class SamplesView extends Polymer.Element {
-      static get is() { return 'samples-palette'; }
+      static get is() { return 'palette-samples'; }
       static get properties() {
         return {
           elementNames: {

@@ -3,7 +3,7 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="palette-shared-styles.html">
 
-<dom-module id="elements-palette">
+<dom-module id="palette-elements">
   <template strip-whitespace>
     <style include="palette-shared-styles"></style>
     <button>input</button>
@@ -19,7 +19,7 @@
   </template>
   <script>
     class ElementsView extends Polymer.Element {
-      static get is() { return 'elements-palette'; }
+      static get is() { return 'palette-elements'; }
       static get properties() {
         return {
           elementNames: {
