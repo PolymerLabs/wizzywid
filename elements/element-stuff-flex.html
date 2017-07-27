@@ -1,11 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="element-stuff.html">
-<link rel="import" href="element-props-shared-styles.html">
+<link rel="import" href="element-stuff-shared-styles.html">
 
-<dom-module id="element-flex">
+<dom-module id="element-stuff-flex">
   <template>
-    <style include="element-props-shared-styles"></style>
-    
+    <style include="element-stuff-shared-styles"></style>
+
     <label>position</label>
     <select name="position">
       <option>static</option>
@@ -75,11 +75,10 @@
   </template>
   <script>
     class ElementFlex extends ElementStuff(Polymer.Element) {
-      static get is() { return 'element-flex'; }
-      static get properties() {
-        return {
-          stuffType: {type: String, value: 'style'}
-        }
+      static get is() { return 'element-stuff-flex'; }
+      constructor() {
+        super();
+        this.stuffType = 'style';
       }
 
       display(elementStyles) {

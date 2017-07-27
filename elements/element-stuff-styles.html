@@ -1,10 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="element-stuff.html">
-<link rel="import" href="element-props-shared-styles.html">
+<link rel="import" href="element-stuff-shared-styles.html">
 
-<dom-module id="element-styles">
+<dom-module id="element-stuff-styles">
   <template>
-    <style include="element-props-shared-styles">
+    <style include="element-stuff-shared-styles">
       button.add {
         display: inline-block;
         background: transparent;
@@ -48,11 +48,10 @@
   </template>
   <script>
     class ElementStyles extends ElementStuff(Polymer.Element) {
-      static get is() { return 'element-styles'; }
-      static get properties() {
-        return {
-          stuffType: {type: String, value: 'style'}
-        }
+      static get is() { return 'element-stuff-styles'; }
+      constructor() {
+        super();
+        this.stuffType = 'style';
       }
       display(elementStyles) {
         for (let i = 0; i < this._stuff.length; i++) {

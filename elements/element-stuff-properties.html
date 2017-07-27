@@ -1,10 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="element-stuff.html">
-<link rel="import" href="element-props-shared-styles.html">
+<link rel="import" href="element-stuff-shared-styles.html">
 
-<dom-module id="element-properties">
+<dom-module id="element-stuff-properties">
   <template>
-    <style include="element-props-shared-styles"></style>
+    <style include="element-stuff-shared-styles"></style>
     <label>textContent</label>
     <input name="textContent">
     <label>id</label>
@@ -19,18 +19,15 @@
   </template>
   <script>
     class ElementProperties extends ElementStuff(Polymer.Element) {
-      static get is() { return 'element-properties'; }
-      static get properties() {
-        return {
-          stuffType: {type: String, value: 'property'}
-        }
+      static get is() { return 'element-stuff-properties'; }
+      constructor() {
+        super();
+        this.stuffType = 'property';
       }
-
       display(target) {
-        // Native properties.
-        this.doBasicProperties(target);
+        this._displayBasicProperties(target);
 
-        // If this is the top level div, we don't want any other properties shows.
+        // If this is the top level div, we don't want any other properties shown.
         if (target.id === 'viewContainer') {
           return;
         }
@@ -38,10 +35,10 @@
         // Start walking up the prototype chain to get all the props it has.
         this.$.bonus.innerHTML = '';
         let propNames = window.getProtoProperties(target);
-        this.doProtoProperties(target, propNames);
+        this._displayProtoProperties(target, propNames);
       }
 
-      doBasicProperties(target) {
+      _displayBasicProperties(target) {
         for (let i = 0; i < this._stuff.length; i++) {
           let prop = this._stuff[i];
           let el = this.root.querySelector(`[name=${prop}]`);
@@ -74,7 +71,7 @@
         }
       }
 
-      doProtoProperties(target, propNames) {
+      _displayProtoProperties(target, propNames) {
         for (let i = 0; i < propNames.length; i++) {
           let name = propNames[i];
           let label = document.createElement('label');

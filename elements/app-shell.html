@@ -12,9 +12,9 @@
 
 <link rel="import" href="action-history.html">
 <link rel="import" href="tree-view.html">
-<link rel="import" href="element-styles.html">
-<link rel="import" href="element-flex.html">
-<link rel="import" href="element-properties.html">
+<link rel="import" href="element-stuff-styles.html">
+<link rel="import" href="element-stuff-flex.html">
+<link rel="import" href="element-stuff-properties.html">
 <link rel="import" href="canvas-view.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -273,9 +273,9 @@
           </designer-tab>
         </designer-tabs>
         <iron-pages class="dark" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
-          <element-properties name="properties" id="propertiesContainer"></element-properties>
-          <element-styles name="styles" id="stylesContainer"></element-styles>
-          <element-flex name="flex" id="flexContainer"></element-flex>
+          <element-stuff-properties name="properties" id="propertiesContainer"></element-stuff-properties>
+          <element-stuff-styles name="styles" id="stylesContainer"></element-stuff-styles>
+          <element-stuff-flex name="flex" id="flexContainer"></element-stuff-flex>
         </iron-pages>
         <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
           <designer-tab name="elements">
