@@ -1,41 +1,10 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="palette-shared-styles.html">
 <link rel="import" href="app-icons.html">
 
 <dom-module id="samples-palette">
   <template strip-whitespace>
-    <style>
-      :host {
-        display: block;
-        height: 100%;
-        overflow: auto;
-        padding-bottom:14px;
-      }
-
-      button {
-        background: transparent;
-        color: white;
-        border: none;
-        font-size: 13px;
-        display: block;
-        cursor: pointer;
-        width: 100%;
-        text-align: left;
-        padding: 8px 14px;
-      }
-      button:hover {
-        background: var(--light-grey);
-      }
-
-      div {
-        text-transform: uppercase;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 4px 14px;
-      }
-    </style>
-
+    <style include="palette-shared-styles"></style>
     <button>flex-horizontal-layout</button>
     <button>flex-vertical-layout</button>
     <button>app-layout-sample</button>
