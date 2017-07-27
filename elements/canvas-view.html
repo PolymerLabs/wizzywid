@@ -18,15 +18,11 @@
       #canvas > * {
         cursor: pointer;
       }
-
-      /**:hover:not(.active) {
-        outline: solid 3px rgba(33, 150, 243, 0.5) !important;
-        outline-offset: 2px;
-      }*/
       .active {
-        outline: solid 3px #2196F3 !important;
+        outline: solid 3px var(--highlight-blue) !important;
         outline-offset: 2px;
       }
+      /* Show a resize cursor in the corner */
       .active:after {
         position: absolute;
         bottom: 0;
@@ -36,24 +32,22 @@
         width: 10px;
         cursor: se-resize;
       }
+      .dragging, .resizing {
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
       .dragging {
         opacity: 0.6;
         z-index: 1000;
         cursor: move;
-        user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
       }
       .resizing {
         cursor: se-resize;
-        user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
       }
       .over {
-        outline: dashed 3px #2196F3 !important;
+        outline: dashed 3px var(--highlight-blue) !important;
         outline-offset: 2px;
       }
     </style>

@@ -7,16 +7,15 @@
         display: inline-block;
         position: relative;
         border-bottom: 3px solid transparent;
-        color: #a9a9a9;
+        color: white;
       }
       :host([disabled]) {
         opacity: 0.3;
         pointer-events: none;
       }
       :host(.iron-selected) {
-        color: white;
-        background: #383f52;
-        border-bottom: 3px solid #E91E63;
+        background: var(--light-grey);
+        border-bottom: 3px solid var(--highlight-pink);
       }
       :host ::slotted(*) {
         display: inline-block;
