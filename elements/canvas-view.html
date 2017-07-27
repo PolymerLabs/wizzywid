@@ -56,17 +56,15 @@
   <script>
     class CanvasView extends Polymer.Element {
       static get is() { return 'canvas-view'; }
-      ready() {
-        super.ready();
+      connectedCallback() {
+        super.connectedCallback();
+
         Polymer.Gestures.addListener(this.$.canvas, 'track', this.trackElement.bind(this));
         this.addEventListener('click', function(event) {
           this.updateActiveElement(this._getRealEventElement(event));
         }.bind(this));
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), true);
-
-        // TODO: i should fire events for this.
-        this._shell = window.shell;
       }
 
       add(el) {
@@ -88,8 +86,8 @@
         return this.$.canvas.children;
       }
       updateActiveElement(el) {
-        this._shell.setActiveElement(el);
-        this._shell.refreshView();
+        this.shell.setActiveElement(el);
+        this.shell.refreshView();
       }
 
       _getRealEventElement(event) {
@@ -205,7 +203,7 @@
             if (reparented) {
               el.style.position = 'static';
               el.style.left = el.style.top = '0px';
-              this._shell.$.actionHistory.add('reparent', el,
+              this.shell.$.actionHistory.add('reparent', el,
                   {
                     new: {
                       parent: newParent,
@@ -220,7 +218,7 @@
               el.style.position = 'absolute';
               el.style.left = rekt.left - parent.left + 'px';
               el.style.top = rekt.top - parent.top + 'px';
-              this._shell.$.actionHistory.add('move', el,
+              this.shell.$.actionHistory.add('move', el,
                 {
                   new:{left: el.style.left, top: el.style.top, position: el.style.position},
                   old:{left: oldLeft, top: oldTop, position:oldPosition}
@@ -231,7 +229,7 @@
             break;
         }
         this.updateActiveElement(el);
-        this._shell.refreshViewWhileTracking();
+        this.shell.refreshViewWhileTracking();
       }
 
       resizeElement(event, el) {
@@ -245,7 +243,7 @@
             break;
           case 'end':
             this._resizing = false;
-            this._shell.$.actionHistory.add('resize', el,
+            this.shell.$.actionHistory.add('resize', el,
                {
                  new:{width: el.style.width, height: el.style.height},
                  old:{width: this._initialWidth + 'px', height: this._initialHeight + 'px'}
@@ -283,7 +281,7 @@
       }
 
       onKeyDown(event) {
-        let el = this._shell.activeElement;
+        let el = this.shell.activeElement;
         if (!el) {
           return;
         }
@@ -306,7 +304,7 @@
           case 38:  // up arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this._shell.moveUp();
+              this.shell.moveUp();
             } else {
               el.style.top = oldTop - 10 + 'px';
             }
@@ -314,7 +312,7 @@
           case 40:  // down arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this._shell.moveDown();
+              this.shell.moveDown();
             } else {
               el.style.top = oldTop + 10 + 'px';
             }
@@ -322,7 +320,7 @@
           case 37:  // left arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this._shell.moveBack();
+              this.shell.moveBack();
             } else {
               el.style.left = oldLeft - 10 + 'px';
             }
@@ -330,13 +328,13 @@
           case 39:  // right arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this._shell.moveForward();
+              this.shell.moveForward();
             } else {
               el.style.left = oldLeft + 10 + 'px';
             }
             break;
         }
-        this._shell.$.actionHistory.add('move', el,
+        this.shell.$.actionHistory.add('move', el,
             {
               new:{left: el.style.left, top: el.style.top, position: el.style.position},
               old:{left: oldLeft, top: oldTop, position:oldPosition}
