@@ -324,6 +324,9 @@
       connectedCallback() {
         super.connectedCallback();
 
+        // It's much easier if we just let this element talk to us.
+        this.$.actionHistory.shell = this;
+
         this.setActiveElement(this.$.viewContainer);
         this.refreshView();
 

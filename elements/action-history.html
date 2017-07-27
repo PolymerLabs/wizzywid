@@ -8,8 +8,12 @@
     </style>
   </template>
   <script>
+    /*/
+     * Manages a stack of available undo/redo actions
+     */
     class ActionHistory extends Polymer.Element {
       static get is() { return 'action-history'; }
+
       constructor() {
         super();
         this.undoHistory = [];
@@ -17,22 +21,22 @@
       }
 
       add(action, node, detail) {
-        let item = {
+        const item = {
           action: action,
           node: node,
           detail: detail
         };
 
-        // This may be a dumb action where the old === new (like when you
-        // start dragging but don't get anywhere)
+        // Don't save no-ops: this action may have the new state the same as
+        // the old state (like when you start dragging but don't get anywhere)
         if (detail && detail.new && detail.old &&
             this._itemsMatch(action, detail.new, detail.old)) {
           return;
         }
 
-        let topItem = this.undoHistory[this.undoHistory.length - 1];
+        const topItem = this.undoHistory[this.undoHistory.length - 1];
 
-        // This may be the same action as the previous one.
+        // Don't save dupes: this action may be a duplicate of the previous one.
         if (topItem &&
             item.action === topItem.action &&
             topItem.node === item.node &&
@@ -50,83 +54,52 @@
 
       undo() {
         // Take the top action off the undo stack and move it to the redo stack.
-        let item = this.undoHistory.pop();
-        let detail = item.detail;
+        const item = this.undoHistory.pop();
         this.redoHistory.push(item);
         this.updateButtons();
 
+        const detail = item.detail;
+        item.node.click();
         switch(item.action) {
           case 'update':
-              item.node.click();
-              shell.updateActiveElementValues(detail.type, detail.name, detail.old.value);
+              this.shell.updateActiveElementValues(detail.type, detail.name, detail.old.value);
               break;
           case 'new':
-              let newEvent = new Event('remove-from-canvas', {
-                bubbles: true,
-                cancelable: false,
-                composed: true
-              });
-              newEvent.detail = {target: item.node};
-              this.dispatchEvent(newEvent);
+              this._doEvent(item.node, 'remove-from-canvas');
               break;
           case 'delete':
-              // If the node is the viewContainer, the `type` property contains the old innerHTML
               if (item.node.id === 'viewContainer') {
                 item.node.setInnerHTML(detail.innerHTML);
               } else {
-                // The `type` property contains the original parent.
                 detail.parent.appendChild(item.node);
               }
-              item.node.click();
               break;
           case 'move':
-              item.node.style.left = detail.old.left;
-              item.node.style.top = detail.old.top;
-              // During reparent-and-move we may have switched to position:relative.
-              if (detail.old.position) {
-                item.node.style.position = detail.old.position;
-              }
-              item.node.click();
+              this._updatePosition(item.node, detail.old);
               break;
           case 'resize':
-              item.node.style.width = detail.old.width;
-              item.node.style.height = detail.old.height;
-              item.node.click();
+              this._updateSize(item.node, detail.old);
               break;
           case 'reparent':
-              detail.new.parent.removeChild(item.node);
-              detail.old.parent.appendChild(item.node);
-              item.node.style.left = detail.old.left;
-              item.node.style.top = detail.old.top;
-              // During reparent-and-move we may have switched to position:relative.
-              if (detail.old.position) {
-                item.node.style.position = detail.old.position;
-              }
-              item.node.click();
+              this._reparent(item.node, detail.new.parent, detail.old.parent);
+              this._updatePosition(item.node, detail.old);
               break;
           case 'fit':
-              item.node.style.left = detail.old.left;
-              item.node.style.top = detail.old.top;
-              item.node.style.width = detail.old.width;
-              item.node.style.height = detail.old.height;
-              item.node.style.position = detail.old.position;
-              item.node.click();
+              this._updatePosition(item.node, detail.old);
+              this._updateSize(item.node, detail.old);
               break;
           case 'move-up':
           case 'move-down':
-              item.detail.new.parent.removeChild(item.node);
-              item.detail.old.parent.appendChild(item.node);
-              item.node.click();
+              this._reparent(item.node, detail.new.parent, detail.old.parent);
               break;
           case 'move-back':
-              item.node.click();
-              shell.moveForward(false);
+              this.shell.moveForward(false);
               break;
           case 'move-forward':
-              item.node.click();
-              shell.moveBack(false);
+              this.shell.moveBack(false);
               break;
         }
+        item.node.click();
       }
 
       redo() {
@@ -136,91 +109,89 @@
         this.undoHistory.push(item);
         this.updateButtons();
 
+        item.node.click();
         switch(item.action) {
           case 'update':
-              item.node.click();
-              shell.updateActiveElementValues(detail.type, detail.name, detail.new.value);
+              this.shell.updateActiveElementValues(detail.type, detail.name, detail.new.value);
               break;
           case 'new':
-              let newEvent = new Event('add-to-canvas', {
-                bubbles: true,
-                cancelable: false,
-                composed: true
-              });
-              newEvent.detail = {target: item.node};
-              this.dispatchEvent(newEvent);
+              this._doEvent(item.node, 'add-to-canvas');
               break;
           case 'delete':
               // If the node is the viewContainer, clear its inner HTML.
               if (item.node.id === 'viewContainer') {
                 item.node.setInnerHTML('');
-                item.node.click();
               } else {
                 item.node.parentElement.click();
                 item.node.parentElement.removeChild(item.node);
               }
               break;
           case 'move':
-              item.node.style.left = detail.new.left;
-              item.node.style.top = detail.new.top;
-              // During reparent-and-move we may have switched to position:relative.
-              if (detail.old.position) {
-                item.node.style.position = detail.new.position;
-              }
-              item.node.click();
+              this._updatePosition(item.node, detail.new);
               break;
           case 'resize':
-              item.node.style.width = detail.new.width;
-              item.node.style.height = detail.new.height;
-              item.node.click();
+              this._updateSize(item.node, detail.new);
               break;
           case 'reparent':
-              detail.old.parent.removeChild(item.node);
-              detail.new.parent.appendChild(item.node);
-              item.node.style.left = detail.new.left;
-              item.node.style.top = detail.new.top;
-              // During reparent-and-move we may have switched to position:relative.
-              if (detail.old.position) {
-                item.node.style.position = detail.new.position;
-              }
-              item.node.click();
+              this._reparent(item.node, detail.old.parent, detail.new.parent);
+              this._updatePosition(item.node, detail.new);
               break;
           case 'fit':
-              item.node.style.left = detail.new.left;
-              item.node.style.top = detail.new.top;
-              item.node.style.width = detail.new.width;
-              item.node.style.height = detail.new.height;
-              item.node.style.position = detail.new.position;
-              item.node.click();
+              this._updateSize(item.node, detail.new);
+              this._updatePosition(item.node, detail.new);
               break;
           case 'move-up':
           case 'move-down':
-              item.detail.old.parent.removeChild(item.node);
-              item.detail.new.parent.appendChild(item.node);
-              item.node.click();
+              this._reparent(item.node, detail.old.parent, detail.new.parent);
               break;
           case 'move-back':
-              item.node.click();
-              shell.moveForward(false);
+              this.shell.moveForward(false);
               break;
           case 'move-forward':
-              item.node.click();
-              shell.moveBack(false);
+              this.shell.moveBack(false);
               break;
         }
+        item.node.click();
       }
 
       updateButtons() {
-        shell.updateUndoButton(this.undoHistory.length);
-        shell.updateRedoButton(this.redoHistory.length);
+        this.shell.updateUndoButton(this.undoHistory.length);
+        this.shell.updateRedoButton(this.redoHistory.length);
       }
 
       _itemsMatch(action, first, second) {
-        // These have elements in the details, and you can't json those anyway.
+        // These kinds of actions have element refs in the details,
+        // and you can't json those anyway.
         if (action === 'reparent' || action === 'move-up' || action === 'move-down') {
           return false;
         }
         return JSON.stringify(first) === JSON.stringify(second);
+      }
+
+      _doEvent(node, name) {
+        let newEvent = new Event(name, {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        newEvent.detail = {target: node};
+        this.dispatchEvent(newEvent);
+      }
+
+      _updatePosition(node, detail) {
+        node.style.left = detail.left;
+        node.style.top = detail.top;
+        node.style.position = detail.position;
+      }
+
+      _updateSize(node, detail) {
+        node.style.width = detail.width;
+        node.style.height = detail.height;
+      }
+
+      _reparent(node, oldParent, newParent) {
+        oldParent.removeChild(node);
+        newParent.appendChild(node);
       }
     }
     customElements.define(ActionHistory.is, ActionHistory);
