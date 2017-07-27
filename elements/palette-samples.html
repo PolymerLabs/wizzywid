@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="palette-shared-styles.html">
+<link rel="import" href="palette-base.html">
 
 <dom-module id="palette-samples">
   <template strip-whitespace>
@@ -12,43 +13,19 @@
     <button>paper-dropdown-menu-sample</button>
   </template>
   <script>
-    class SamplesView extends Polymer.Element {
+    /*
+     * List of custom templates that can be added to the view.
+     */
+    class SamplesView extends PaletteBase(Polymer.Element) {
       static get is() { return 'palette-samples'; }
-      static get properties() {
-        return {
-          elementNames: {
-            type: Array
-          }
-        }
-      }
 
-      ready() {
-        super.ready();
-        this.addEventListener('click', this.addElement.bind(this));
-      }
-
-      addElement(event) {
-        let target = event.path[0];
-        let kind = target.textContent;
-        if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
-          return;
-        }
-
+      _doClick(target, kind) {
         let url = `samples/${kind}.html`;
+
         Polymer.Base.importHref(url, function(e) {
           let doc = e.target.import;
           let template = doc.querySelector('template');
-
-          let newEvent = new Event('new-sample', {
-            bubbles: true,
-            cancelable: false,
-            composed: true
-          });
-          newEvent.detail = {
-            template: template,
-            tag: kind
-          };
-          this.dispatchEvent(newEvent);
+          this._fireEvent('new-sample', kind, '', template);
         }.bind(this));
       }
     }

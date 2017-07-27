@@ -1,0 +1,35 @@
+<script>
+  (function() {
+    window.PaletteBase = function(base) {
+      return class extends base {
+        ready() {
+          super.ready();
+          this.addEventListener('click', this._click.bind(this));
+        }
+
+        _click(event) {
+          let target = event.path[0];
+          let kind = target.textContent;
+          if (target.tagName !== 'BUTTON') {
+            return;
+          }
+          this._doClick(target, kind);
+        }
+
+        _fireEvent(name, tag, packageName, template) {
+          let newEvent = new Event(name, {
+            bubbles: true,
+            cancelable: false,
+            composed: true
+          });
+          newEvent.detail = {
+            type: tag,
+            template: template,
+            package: packageName
+          };
+          this.dispatchEvent(newEvent);
+        }
+      }
+    }
+  })();
+</script>

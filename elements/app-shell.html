@@ -405,11 +405,10 @@
 
       /*
        * Adds a new sample code to the view.
-       * TODO: there's no tabula rasa for children in this sample.
        */
       createSample(event) {
         let template = event.detail.template;
-        let templateTag = event.detail.tag;
+        let templateTag = event.detail.type;
 
         // Clone the template and add it to the document.
         let children = template.content.children;

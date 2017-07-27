@@ -2,14 +2,16 @@
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="palette-shared-styles.html">
+<link rel="import" href="palette-base.html">
 
 <dom-module id="palette-elements">
   <template strip-whitespace>
     <style include="palette-shared-styles"></style>
-    <button>input</button>
-    <button>div</button>
-    <button>button</button>
-    <button>form</button>
+    <dom-repeat items="[[nativeElements]]">
+      <template>
+        <button>[[item]]</button>
+      </template>
+    </dom-repeat>
     <dom-repeat items="[[elementNames]]">
       <template>
         <button>[[item]]</button>
@@ -18,20 +20,23 @@
     <iron-ajax auto url="bower.json" handle-as="json" on-response="elementsReady"></iron-ajax>
   </template>
   <script>
-    class ElementsView extends Polymer.Element {
+    /*
+     * List of elements that can be added to the view.
+     * This list is generated from the `devDependencies` field of this
+     * app's bower.json
+     */
+    class ElementsView extends PaletteBase(Polymer.Element) {
       static get is() { return 'palette-elements'; }
       static get properties() {
         return {
-          elementNames: {
-            type: Array
-          }
+          elementNames: { type: Array },
+          nativeElements: { type: Array }
         }
       }
 
       ready() {
         super.ready();
-        this.addEventListener('click', this.click.bind(this));
-        this._nativeElementsWhitelist = ['div', 'input', 'button', 'form'];
+        this.nativeElements = ['div', 'input', 'button', 'form'];
         this.namesToPackages = {};
       }
 
@@ -46,8 +51,6 @@
 
         let subElementNames = [];
         for (let parent in subElements) {
-          // Remove it from the bower list of dev dependencies since it's added
-          //delete list[parent];
           for (let i = 0; i < subElements[parent].length; i++) {
             subElementNames.push(`${parent}/${subElements[parent][i]}`);
             this.namesToPackages[subElements[parent][i]] = parent;
@@ -56,13 +59,7 @@
         this.elementNames = Object.keys(list).concat(subElementNames).sort();
       }
 
-      click(event) {
-        let target = event.path[0];
-        let kind = target.textContent;
-        if (target.tagName !== 'BUTTON' || target.classList.contains('nope')) {
-          return;
-        }
-
+      _doClick(target, kind) {
         // maybe it's a package/subpackage kind of thing.
         let matches = kind.match(/(.*)\/(.*)/);
         let packageName = kind;
@@ -70,36 +67,22 @@
           packageName = matches[1];
           kind = matches[2];
         }
-
         this.maybeDoHTMLImport(kind, packageName);
       }
 
       maybeDoHTMLImport(kind, packageName) {
         if (packageName === undefined) {
-          // Oof, someone didn't know what it was. find it in the list.
+          // Oof, someone didn't know what element this was. Find it in the list.
           packageName = this.namesToPackages[kind];
         }
-        if (this._nativeElementsWhitelist.indexOf(kind) === -1) {
+        if (this.nativeElements.indexOf(kind) === -1) {
           let url = `bower_components/${packageName}/${kind}.html`;
           Polymer.Base.importHref(url, function(e) {
-            this.finishCreatingElement(kind, packageName);
+            this._fireEvent('new-element', kind, '', packageName);
           }.bind(this));
         } else {
-          this.finishCreatingElement(kind, '');
+          this._fireEvent('new-element', kind);
         }
-      }
-
-      finishCreatingElement(kind, packageName) {
-        let newEvent = new Event('new-element', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        newEvent.detail = {
-          type: kind,
-          package: packageName
-        };
-        this.dispatchEvent(newEvent);
       }
     }
     customElements.define(ElementsView.is, ElementsView);
