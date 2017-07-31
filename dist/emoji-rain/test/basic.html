@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <title>emoji-rain tests</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../polymer/polymer.html">
+  <link rel="import" href="../../test-fixture/test-fixture.html">
+  <link rel="import" href="../emoji-rain.html">
+</head>
+<body>
+
+  <test-fixture id="basic">
+    <template>
+      <emoji-rain drops="2"></emoji-rain>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('basic', function() {
+      test('generates as many emoji as told', function() {
+        var rain = fixture('basic');
+        expect(rain.dropsForDrawing.length).to.be.eql(2);
+
+        // Both should have a character
+        expect(rain.dropsForDrawing[0].code).to.be.ok;
+        expect(rain.dropsForDrawing[1].code).to.be.ok;
+
+        // Neither should have twemoji images
+        expect(rain.dropsForDrawing[0].img).to.be.not.ok;
+        expect(rain.dropsForDrawing[1].img).to.be.not.ok;
+      });
+
+      test('it can rain', function(done) {
+        var rain = fixture('basic');
+        rain.addEventListener('emoji-rain-start', function() {
+          expect(rain.active).to.be.eql(true);
+          done();
+        });
+        rain.start();
+      });
+      
+      test('it can stop raining', function(done) {
+        var rain = fixture('basic');
+        rain.addEventListener('emoji-rain-start', function() {
+          expect(rain.active).to.be.eql(true);
+          rain.stop();
+        });
+        rain.addEventListener('emoji-rain-stop', function() {
+          expect(rain.active).to.be.eql(false);
+          done();
+        });
+        rain.start();
+      });
+    });
+
+    suite('twemoji', function() {
+      test('does not load twemoji by default', function() {
+        var rain = fixture('basic');
+        expect(rain.useTwemoji).to.be.eql(false);
+        expect(rain.importedTwemoji).to.be.not.ok;
+      });
+
+      test('loads twemoji on demand', function(done) {
+        var rain = fixture('basic');
+        expect(rain.useTwemoji).to.be.eql(false);
+        expect(rain.importedTwemoji).to.be.not.ok;
+
+        rain.addEventListener('emoji-rain-twemoji-ready', function() {
+          setTimeout(function() {
+            expect(rain.useTwemoji).to.be.eql(true);
+            expect(rain.importedTwemoji).to.be.eql(true);
+            expect(rain.active).to.be.eql(false);
+
+            expect(rain.dropsForDrawing.length).to.be.eql(2);
+
+            // Both should have a character
+            expect(rain.dropsForDrawing[0].code).to.be.ok;
+            expect(rain.dropsForDrawing[1].code).to.be.ok;
+
+            // Noth should have twemoji images
+            expect(rain.dropsForDrawing[0].img).to.be.ok;
+            expect(rain.dropsForDrawing[1].img).to.be.ok;
+
+            done();
+          }, 1);
+        });
+        rain.useTwemoji = true;
+      });
+
+      test('raining continues after loading twemoji', function() {
+        var rain = fixture('basic');
+        rain.start();
+        expect(rain.useTwemoji).to.be.eql(false);
+        expect(rain.importedTwemoji).to.be.not.ok;
+
+        rain.addEventListener('emoji-rain-twemoji-ready', function() {
+          setTimeout(function() {
+            expect(rain.useTwemoji).to.be.eql(true);
+            expect(rain.importedTwemoji).to.be.eql(true);
+            expect(rain.active).to.be.eql(true);
+            done();
+          }, 1);
+        });
+        rain.useTwemoji = true;
+      });
+    });
+  </script>
+
+</body>
+</html>
