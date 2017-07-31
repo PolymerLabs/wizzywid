@@ -244,7 +244,8 @@ ${indent}}
 
       _doDefaultPropsForUnseenTag(tag) {
         let el = document.createElement(tag);
-        this.save(tag, tag, el, getProtoProperties(el));
+        // TODO: just no.
+        this.save(tag, window.shell.$.elements.namesToPackages[tag], el, getProtoProperties(el));
       }
     }
     customElements.define(CodeView.is, CodeView);
