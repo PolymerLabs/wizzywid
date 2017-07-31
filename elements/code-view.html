@@ -87,10 +87,13 @@ ${this._style.trimRight()}
 ${this._template.trimRight()}
   </template>
   <script>
-    class MainApp extends Polymer.Element {
-      static get is() { return 'main-app'; }
-    }
-    customElements.define(MainApp.is, MainApp);
+    window.addEventListener('WebComponentsReady', function() {
+      class MainApp extends Polymer.Element {
+        static get is() { return 'main-app'; }
+      }
+
+      customElements.define(MainApp.is, MainApp);
+    });
   &lt;/script>
 </dom-module>`;
         let appTitle = 'wizzywid output';
@@ -102,7 +105,7 @@ ${this._template.trimRight()}
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 <title>${appTitle}</title>
 <base href="https://polygit.org/polymer+:master/webcomponents+:master/shadycss+webcomponents+:master/paper*+polymerelements+:master/iron*+polymerelements+:master/app*+polymerelements+:master/neon*+polymerelements+:master/components/">
-<script src="webcomponentsjs/webcomponents-lite.js">&lt;/script>
+<script src="webcomponentsjs/webcomponents-loader.js">&lt;/script>
 <link rel="import" href="polymer/polymer-element.html">
 ${this._imports.trimRight()}
 <style>
