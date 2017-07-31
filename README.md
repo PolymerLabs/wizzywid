@@ -4,11 +4,10 @@ This is a very simple UI Designer for HTML, Custom Elements, and Polymer.
 
 ## Developing
 
-  * Install and setup dependencies
+  * Install dependencies
 ```
   $ npm install -g bower
-  $ npm install
-  $ npm run build
+  $ bower install
 ```
 
   * Run the app in a local server
