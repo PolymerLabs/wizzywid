@@ -157,13 +157,13 @@ ${domModule}
           this._style += this.dumpStyle(tag, nodes[i], '      ');
 
           // If this element doesn't have children, do it on one line.
+          this._template += this.dumpElementStartTag(tag, nodes[i], indent);
           if (nodes[i].children.length == 0) {
-            this._template += this.dumpElementStartTag(tag, nodes[i], indent);
             this._template += this.dumpElementText(tag, nodes[i], '');
             this._template += this.dumpElementEndTag(tag, nodes[i], '') + '\n';
           }
           else {
-            this._template += this.dumpElementStartTag(tag, nodes[i], indent) + '\n';
+            this._template += '\n'
             this.dumpChildren(nodes[i], indent + '  ') + '\n';
             this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
           }
@@ -237,6 +237,8 @@ ${indent}}
         // If this is app-layout stuff, it needs an extra package name.
         if (packageName === 'app-header' || packageName === 'app-drawer' || packageName === 'app-toolbar') {
           packageName = 'app-layout/' + packageName;
+        } else if (packageName === '') {
+          packageName = tag;
         }
 
         // PS: this should be ../${packageName}/${tag}.html if you're

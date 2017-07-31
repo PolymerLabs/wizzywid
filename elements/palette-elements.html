@@ -78,7 +78,7 @@
         if (this.nativeElements.indexOf(kind) === -1) {
           let url = `bower_components/${packageName}/${kind}.html`;
           Polymer.Base.importHref(url, function(e) {
-            this._fireEvent('new-element', kind, '', packageName);
+            this._fireEvent('new-element', kind, packageName, '');
           }.bind(this));
         } else {
           this._fireEvent('new-element', kind);
