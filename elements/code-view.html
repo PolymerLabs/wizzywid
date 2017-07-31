@@ -46,6 +46,14 @@
         }
 
         this._propertyDefaultsForTag[tag] = {};
+        if (!packageName) {
+          // TODO: woof, this is bad.
+          packageName = window.shell.$.elements.namesToPackages[tag];
+          // If you still didn't find an answer, default to the tag name.
+          if (!packageName) {
+            packageName = tag;
+          }
+        }
         this._propertyDefaultsForTag[tag]['__package_name__'] = packageName;
 
         let keys = ['id', 'slot', 'classList'].concat(props);
@@ -244,8 +252,7 @@ ${indent}}
 
       _doDefaultPropsForUnseenTag(tag) {
         let el = document.createElement(tag);
-        // TODO: just no.
-        this.save(tag, window.shell.$.elements.namesToPackages[tag], el, getProtoProperties(el));
+        this.save(tag, undefined, el, getProtoProperties(el));
       }
     }
     customElements.define(CodeView.is, CodeView);
