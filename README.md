@@ -8,7 +8,6 @@ This is a very simple UI Designer for HTML, Custom Elements, and Polymer.
 ```
   $ npm install -g bower
   $ npm install
-  $ bower install
   $ npm run build
 ```
 
