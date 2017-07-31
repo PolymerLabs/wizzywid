@@ -479,6 +479,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         });
 
+        test('focusing on item with multi-char ignoring modifier keys, quick input', function(done) {
+          var menu = fixture('countries');
+          waitForIronItemsChanged(menu, function() {
+            MockInteractions.focus(menu);
+
+            // Wait for async focus
+            Polymer.Base.async(function() {
+              // Key press 'u'
+              MockInteractions.keyDownOn(menu, 85);
+
+              // Key press 'Alt', should be ignored.
+              MockInteractions.keyDownOn(menu, 10);
+
+              // Key press 'Caps Lock', should be ignored.
+              MockInteractions.keyDownOn(menu, 20);
+
+              // Key press 'Control', should be ignored.
+              MockInteractions.keyDownOn(menu, 17);
+
+              // Key press 'Num Lock', should be ignored.
+              MockInteractions.keyDownOn(menu, 144);
+
+              // Key press 'Scroll Lock', should be ignored.
+              MockInteractions.keyDownOn(menu, 145);
+
+              // Key press 'Shift', should be ignored.
+              MockInteractions.keyDownOn(menu, 16);
+
+              // Key press 'g'
+              MockInteractions.keyDownOn(menu, 71);
+
+              Polymer.Base.async(function() {
+                var focusedItem = Polymer.dom(menu).node.focusedItem;
+                assert.equal(focusedItem, menu.items[1], 'menu.items[1] is focused');
+                done();
+              });
+            });
+          });
+        });
+
+
         test('focusing on item with bogus attr-for-item-title', function(done) {
           var menu = fixture('bogus-attr-for-item-title');
           waitForIronItemsChanged(menu, function() {
