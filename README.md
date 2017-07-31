@@ -2,15 +2,14 @@
 
 This is a very simple UI Designer for HTML, Custom Elements, and Polymer.
 
-## Disclaimers
-I have only tested this in Chrome desktop.
-
 ## Developing
 
-  * Install Bower dependencies
+  * Install and setup dependencies
 ```
   $ npm install -g bower
+  $ npm install
   $ bower install
+  $ npm run build
 ```
 
   * Run the app in a local server
@@ -19,3 +18,6 @@ I have only tested this in Chrome desktop.
 ```
 
   * Navigate Chrome to [localhost:8000]() to see the app.
+
+## Configuring
+Stay tuned...
