@@ -91,7 +91,7 @@
       }
 
       _getRealEventElement(event) {
-        let el = event.path[0];
+        let el = event.composedPath()[0];
 
         // You might have clicked on someting inside a shadow root.
         // In that case, select the top most shadow root element.
@@ -290,8 +290,8 @@
         // We only care about keys that come after you've clicked on an element,
         // or keys after you've selected something from the tree view.
         // TODO: can this be less bad since it's p horrid?
-        let isOk = (event.path[0].tagName === 'BUTTON' && event.path[2].tagName == 'TREE-VIEW') ||
-          (event.path[0].tagName == 'BODY') || event.path[0].classList.contains('active');
+        let isOk = (event.composedPath()[0].tagName === 'BUTTON' && event.composedPath()[2].tagName == 'TREE-VIEW') ||
+          (event.composedPath()[0].tagName == 'BODY') || event.composedPath()[0].classList.contains('active');
 
         if (!isOk) {
           return;

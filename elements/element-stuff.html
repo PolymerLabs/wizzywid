@@ -17,7 +17,7 @@
         }
 
         _do(event) {
-          let target = event.path[0];
+          let target = event.composedPath()[0];
 
           // Is it a custom thing?
           if (target.classList.contains('style-label')) {

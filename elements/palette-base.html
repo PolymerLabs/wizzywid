@@ -8,7 +8,7 @@
         }
 
         _click(event) {
-          let target = event.path[0];
+          let target = event.composedPath()[0];
           let kind = target.textContent;
           if (target.tagName !== 'BUTTON') {
             return;
