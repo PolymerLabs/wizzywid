@@ -1,0 +1,27 @@
+{
+    "name": "gulp-bower-test",
+    "description": "Temperary bower.json file for testing",
+    "main": "index.js",
+    "authors": [
+        "Crevil <https://github.com/Crevil>"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "gulp",
+        "gulp-bower"
+    ],
+    "homepage": "git://github.com/zont/gulp-bower.git",
+    "moduleType": [],
+    "private": true,
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "bootstrap": "~3.3.6",
+        "jquery": "1.8.0"
+    }
+}

@@ -1,0 +1,20 @@
+{
+  "packages": {
+    "paper-input": {
+      "git": "https://github.com/polymerelements/paper-input",
+      "description": "A Material Design text field",
+      "elements": ["paper-input", "paper-textarea"]
+    },
+    "paper-button": {
+      "git": "https://github.com/polymerelements/paper-button"
+    },
+    "paper-tabs": {
+      "git": "https://github.com/polymerelements/paper-tabs",
+      "elements": ["paper-tabs", "paper-tab"]
+    },
+    "emoji-rain": {
+      "git": "https://github.com/notwaldorf/emoji-rain",
+      "description": "A magical emoji rain element"
+    }
+  }
+}
