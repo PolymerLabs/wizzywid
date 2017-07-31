@@ -18,4 +18,5 @@ This is a very simple UI Designer for HTML, Custom Elements, and Polymer.
   * Navigate Chrome to [localhost:8000]() to see the app.
 
 ## Configuring
-Stay tuned...
+Add an element you want to the `devDependencies` section of this
+project's `bower.json` file, then run `bower install`.
