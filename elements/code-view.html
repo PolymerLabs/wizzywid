@@ -244,6 +244,11 @@ ${indent}}
 
           if (value === true || value === "") {
             str += `${name} `;
+          } else if (tag === 'iron-ajax' && name === 'params' && value && value.indexOf('[[') !== -1) {
+            // TODO: remove this enormous hack I added for the demo.
+            // Problem: in order to put a data binding inside of the params attribute
+            // which is an object, I need to use $= Ugh.
+            str += `${name}$="${value}" `
           } else if (this._attributeDefaultsForTag[tag][name] != value) {
             str += `${name}="${value}" `
           }
