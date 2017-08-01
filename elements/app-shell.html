@@ -430,7 +430,8 @@
         }
 
         // Position the sample better, if it was a one element thing.
-        if (children.length === 1 && templateTag !== 'app-layout-sample') {
+        if (children.length === 1 && templateTag !== 'app-layout-sample' &&
+            templateTag !== 'wizzywid-sample') {
           el.style.position = 'absolute';
           el.style.left = el.style.top = '20px';
         }
