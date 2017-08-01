@@ -87,6 +87,13 @@
       _displayPropsOrAttributes(target, propNames, isAttribute) {
         for (let i = 0; i < propNames.length; i++) {
           let name = propNames[i];
+          // Ignore things that start with a _. Polymer converts every property
+          // to an observed attribute, so you might get a lot of private
+          // things in here.
+          if (name.indexOf('_') === 0) {
+            continue;
+          }
+
           let label = document.createElement('label');
           label.textContent = name;
           this.$.bonus.appendChild(label);
