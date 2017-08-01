@@ -7,6 +7,7 @@
 <link rel="import" href="app-icons.html">
 <link rel="import" href="designer-tabs.html">
 <link rel="import" href="designer-tab.html">
+<link rel="import" href="palette-native.html">
 <link rel="import" href="palette-elements.html">
 <link rel="import" href="palette-samples.html">
 
@@ -285,14 +286,18 @@
           <element-stuff-flex name="flex" id="flexContainer"></element-stuff-flex>
         </iron-pages>
         <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
+          <designer-tab name="native">
+            <button>Native</button>
+          </designer-tab>
           <designer-tab name="elements">
-            <button>Palette</button>
+            <button>Custom</button>
           </designer-tab>
           <designer-tab name="samples">
             <button>Samples</button>
           </designer-tab>
         </designer-tabs>
         <iron-pages class="dark elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
+          <palette-native name="native"></palette-native>
           <palette-elements name="elements" id="elements"></palette-elements>
           <palette-samples name="samples"></palette-samples>
         </iron-pages>
@@ -330,7 +335,7 @@
       constructor() {
         super();
         this.stylePage = 'properties';
-        this.viewPage = 'elements';
+        this.viewPage = 'native';
         this.mainPage = 'designer';
       }
 

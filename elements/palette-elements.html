@@ -18,16 +18,11 @@
         width: 90%;
       }
     </style>
-    <input list="browsers" placeholder="Filter Elements" id="filter">
+    <input list="list" placeholder="Filter Custom Elements" id="filter">
 
     <!-- A typeahead search -->
     <datalist id="browsers">
-      <dom-repeat items="[[nativeElements]]">
-        <template>
-          <option value="[[item]]">
-        </template>
-      </dom-repeat>
-      <dom-repeat items="[[elementNames]]">
+      <dom-repeat items="[[elements]]">
         <template>
           <option value="[[item]]">
         </template>
@@ -35,12 +30,7 @@
     </datalist>
 
     <!-- The list of clickable buttons -->
-    <dom-repeat items="[[nativeElements]]">
-      <template>
-        <button>[[item]]</button>
-      </template>
-    </dom-repeat>
-    <dom-repeat items="[[elementNames]]">
+    <dom-repeat items="[[elements]]">
       <template>
         <button>[[item]]</button>
       </template>
@@ -57,25 +47,13 @@
       static get is() { return 'palette-elements'; }
       static get properties() {
         return {
-          elementNames: { type: Array },
-          nativeElements: { type: Array }
+          elements: { type: Array }
         }
       }
 
       ready() {
         super.ready();
-        this.nativeElements = ['a', 'div', 'input', 'button', 'form', 'img', 'h1', 'iframe'];
         this.namesToPackages = {};
-
-        this.$.filter.addEventListener('input', function(event) {
-          var selectedValue = event.target.value;
-          // Only do something if this is a complete element name, not some
-          // partial typing.
-          if (this.elementNames.indexOf(selectedValue) !== -1 ||
-             this.nativeElements.indexOf(selectedValue) !== -1) {
-            this._doClick(null, selectedValue);
-          }
-        }.bind(this));
       }
 
       elementsReady(event) {
@@ -87,14 +65,14 @@
           this.namesToPackages[p] = p;
         }
 
-        let subElementNames = [];
+        let subelements = [];
         for (let parent in subElements) {
           for (let i = 0; i < subElements[parent].length; i++) {
-            subElementNames.push(`${parent}/${subElements[parent][i]}`);
+            subelements.push(`${parent}/${subElements[parent][i]}`);
             this.namesToPackages[subElements[parent][i]] = parent;
           }
         }
-        this.elementNames = Object.keys(list).concat(subElementNames).sort();
+        this.elements = Object.keys(list).concat(subelements).sort();
       }
 
       _doClick(target, kind) {
