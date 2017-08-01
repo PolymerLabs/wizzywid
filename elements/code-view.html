@@ -67,7 +67,7 @@
         }
       }
 
-      get(parent) {
+      get(parent, usePolygit) {
         // Imports. Yes i'm using element globals because I'm lazy. Fight me.
         this._imports = '';
         this._template = '';
@@ -77,7 +77,13 @@
         let hostCss = parent.style.cssText.replace(/;/g, `;\n       `).trim();
         let bonusHost = `        ${hostCss}`;
 
-        this.dumpChildren(parent, '    ');
+        let polygitBase = '';
+        var directoryPrefix = usePolygit ? '' : 'bower_components/';
+        if (usePolygit) {
+          polygitBase = '<base href="https://polygit.org/polymer+:master/webcomponents+:master/shadycss+webcomponents+:master/paper*+polymerelements+:master/iron*+polymerelements+:master/app*+polymerelements+:master/neon*+polymerelements+:master/components/">';
+        }
+
+        this.dumpChildren(parent, '    ', directoryPrefix);
 
         let domModule = `
 <dom-module id="main-app">
@@ -112,9 +118,9 @@ ${this._template.trimRight()}
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 <title>${appTitle}</title>
-<base href="https://polygit.org/polymer+:master/webcomponents+:master/shadycss+webcomponents+:master/paper*+polymerelements+:master/iron*+polymerelements+:master/app*+polymerelements+:master/neon*+polymerelements+:master/components/">
-<script src="webcomponentsjs/webcomponents-loader.js">&lt;/script>
-<link rel="import" href="polymer/polymer-element.html">
+${polygitBase}
+<script src="${directoryPrefix}webcomponentsjs/webcomponents-loader.js">&lt;/script>
+<link rel="import" href="${directoryPrefix}polymer/polymer-element.html">
 ${this._imports.trimRight()}
 <style>
   body {
@@ -138,7 +144,7 @@ ${domModule}
         this.update(this.get(parent));
       }
 
-      dumpChildren(parent, indent) {
+      dumpChildren(parent, indent, directoryPrefix) {
         let nodes = parent.children;
 
         for (let i = 0; i < nodes.length; i++) {
@@ -151,12 +157,12 @@ ${domModule}
             continue;
           } else if (tag !== 'iron-icons' && tag.indexOf('-icons') !== -1) {
             // This is not actually an element, it's just an import.
-            this._imports += this.dumpImports(tag, '') + '\n';
+            this._imports += this.dumpImports(tag, '', directoryPrefix) + '\n';
             continue;
           }
 
           if (tag.indexOf('-') !== -1 && this._imports.indexOf(`${tag}.html`) === -1) {
-            this._imports += this.dumpImports(tag, '') + '\n';
+            this._imports += this.dumpImports(tag, '', directoryPrefix) + '\n';
           }
           this._style += this.dumpStyle(tag, nodes[i], '      ');
 
@@ -168,7 +174,7 @@ ${domModule}
           }
           else {
             this._template += '\n'
-            this.dumpChildren(nodes[i], indent + '  ') + '\n';
+            this.dumpChildren(nodes[i], indent + '  ', directoryPrefix) + '\n';
             this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
           }
         }
@@ -233,7 +239,7 @@ ${indent}}
         return attributes.trim();
       }
 
-      dumpImports(tag, indent) {
+      dumpImports(tag, indent, directoryPrefix) {
         if (!this._propertyDefaultsForTag[tag]) {
           this._doDefaultPropsForUnseenTag(tag);
         }
@@ -245,9 +251,7 @@ ${indent}}
           packageName = tag;
         }
 
-        // PS: this should be ../${packageName}/${tag}.html if you're
-        // not using polygit.
-        return `${indent}<link rel="import" href="${packageName}/${tag}.html">`;
+        return `${indent}<link rel="import" href="${directoryPrefix}${packageName}/${tag}.html">`;
       }
 
       _doDefaultPropsForUnseenTag(tag) {

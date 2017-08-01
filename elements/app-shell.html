@@ -669,7 +669,8 @@
       }
 
       jsFiddleIt() {
-        let code = window.codeView.get(this.$.viewContainer);
+        let code = window.codeView.get(this.$.viewContainer, true);
+
         let form = this.$.jsFiddleForm;
         form.html.value = code;
         form.title.value = 'Your sample app';
