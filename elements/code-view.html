@@ -104,7 +104,7 @@
   <template>
     <style>
       :host {
-        position: absolute;
+        position: relative;
         width: 100%;
         height: 100%;
         box-sizing: border-box;
@@ -226,15 +226,44 @@ ${indent}}
       }
 
       dumpPropsAndAttributes(tag, node) {
+        let str = '';
         if (!this._propertyDefaultsForTag[tag]) {
           this._doDefaultsForUnseenTag(tag);
         }
-        let defaults = Object.keys(this._propertyDefaultsForTag[tag]);
-        let str = '';
 
-        for (let i = 0; i < defaults.length; i++) {
-          let name = defaults[i];
+        // Do attributes first. For custom elements we should skip setting
+        // properties because we don't know how they're converted to
+        // attributes (Polymer camel cases). Also you're actually setting
+        // attributes in the UI, so it doesn't make sense to look at props.
+        let attrs = Object.keys(this._attributeDefaultsForTag[tag]);
+
+        for (let i = 0; i < attrs.length; i++) {
+          let name = attrs[i];
+          let value = node.getAttribute(name);
+
+          if (value === true || value === "") {
+            str += `${name} `;
+          } else if (this._attributeDefaultsForTag[tag][name] != value) {
+            str += `${name}="${value}" `
+          }
+        }
+
+        // If this is a custom element, we can stop. (native elements only
+        // have properties saved)
+        if (tag.indexOf('-') !== -1) {
+          return str;
+        }
+
+        let props = Object.keys(this._propertyDefaultsForTag[tag]);
+
+        for (let i = 0; i < props.length; i++) {
+          let name = props[i];
           let value = node[name];
+
+          // If this property was already an attribute, skip it.
+          if (attrs.indexOf(name) !== -1) {
+            continue;
+          }
 
           if (name === '__package_name__') {
             continue;
@@ -251,21 +280,6 @@ ${indent}}
             str += `${name}="${value}" `
           }
         }
-
-        // Also do the attributes.
-        // TODO: refactor this one day.
-        let attrs = Object.keys(this._attributeDefaultsForTag[tag]);
-        for (let i = 0; i < attrs.length; i++) {
-          let name = attrs[i];
-          let value = node.getAttribute(name);
-
-          if (value === true) {
-            str += `${name} `;
-          } else if (this._attributeDefaultsForTag[tag][name] != value) {
-            str += `${name}="${value}" `
-          }
-        }
-
         return str.trim();
       }
 
