@@ -32,10 +32,23 @@
           return;
         }
 
-        // Start walking up the prototype chain to get all the props it has.
         this.$.bonus.innerHTML = '';
-        let propNames = window.getProtoProperties(target);
-        this._displayProtoProperties(target, propNames);
+        // If this is a native element, then start walking up the prototype
+        // chain to get all the props it has. If it's a custom element,
+        // then assume it's a v1 element and look at its observedAttributes
+
+        if (target.tagName.indexOf('-') === -1) {
+          let propNames = window.getProtoProperties(target);
+          this._displayPropsOrAttributes(target, propNames);
+        } else {
+          // This element's observedAttributes
+          let attrNames = target.constructor.observedAttributes;
+          this._displayPropsOrAttributes(target, attrNames, true);
+
+          // And HTMLElement's properties.
+          let propNames = window.getProtoProperties(target.__proto__);
+          this._displayPropsOrAttributes(target, propNames);
+        }
       }
 
       _displayBasicProperties(target) {
@@ -71,7 +84,7 @@
         }
       }
 
-      _displayProtoProperties(target, propNames) {
+      _displayPropsOrAttributes(target, propNames, isAttribute) {
         for (let i = 0; i < propNames.length; i++) {
           let name = propNames[i];
           let label = document.createElement('label');
@@ -79,7 +92,11 @@
           this.$.bonus.appendChild(label);
           let input = document.createElement('input');
           input.name = name;
-          input.value = target[name] || '';
+          if (isAttribute) {
+            input.value = target.getAttribute(name) || '';
+          } else {
+            input.value = target[name] || '';
+          }
           this.$.bonus.appendChild(input);
         }
       }
