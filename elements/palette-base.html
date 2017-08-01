@@ -6,7 +6,7 @@
           super.ready();
           this.addEventListener('click', this._click.bind(this));
 
-          if (this.$.filter && this.elements) {
+          if (this.$.filter) {
             this.$.filter.addEventListener('input', this._filterInput.bind(this));
           }
         }

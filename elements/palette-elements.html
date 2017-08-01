@@ -21,7 +21,7 @@
     <input list="list" placeholder="Filter Custom Elements" id="filter">
 
     <!-- A typeahead search -->
-    <datalist id="browsers">
+    <datalist id="list">
       <dom-repeat items="[[elements]]">
         <template>
           <option value="[[item]]">
@@ -94,14 +94,10 @@
           // Oof, someone didn't know what element this was. Find it in the list.
           packageName = this.namesToPackages[kind];
         }
-        if (this.nativeElements.indexOf(kind) === -1) {
-          let url = `bower_components/${packageName}/${kind}.html`;
-          Polymer.Base.importHref(url, function(e) {
-            this._fireEvent('new-element', kind, packageName, '');
-          }.bind(this));
-        } else {
-          this._fireEvent('new-element', kind);
-        }
+        let url = `bower_components/${packageName}/${kind}.html`;
+        Polymer.Base.importHref(url, function(e) {
+          this._fireEvent('new-element', kind, packageName, '');
+        }.bind(this));
       }
     }
     customElements.define(ElementsView.is, ElementsView);
