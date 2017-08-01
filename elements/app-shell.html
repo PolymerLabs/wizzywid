@@ -479,6 +479,7 @@
         let tag = clone.tagName.toLowerCase();
         clone.id = this._makeUniqueId(clone, tag);
         this._finishNewElement(clone, tag, true);
+        clone.style.position = el.style.position;
 
         // Go through the children and reset their IDs too.
         let children = clone.querySelectorAll('*');
