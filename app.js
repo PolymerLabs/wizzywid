@@ -53,3 +53,11 @@ function getProtoProperties(target) {
   }
   return propNames;
 }
+
+function getAttributesIfCustomElement(target) {
+  if (target.tagName.indexOf('-') !== '-1') {
+    return target.constructor.observedAttributes;
+  } else {
+    return [];
+  }
+}

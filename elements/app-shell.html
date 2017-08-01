@@ -401,7 +401,7 @@
 
         // If we haven't before, save this initial state of a <tag> element,
         // so that we can diff it to produce the actual state of the world
-        codeView.save(tag, event.detail.package, el, getProtoProperties(el));
+        codeView.save(tag, event.detail.package, el);
         this.$.actionHistory.add('new', el);
 
         this._finishNewElement(el, tag);

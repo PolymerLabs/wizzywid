@@ -22,6 +22,7 @@
       connectedCallback() {
         super.connectedCallback();
         this._propertyDefaultsForTag = {};
+        this._attributeDefaultsForTag = {};
 
         this._aceEditor = ace.edit('__editor');
         this._aceEditor.setReadOnly(true);
@@ -40,12 +41,14 @@
         return !!this._propertyDefaultsForTag[tag];
       }
 
-      save(tag, packageName, el, props) {
+      save(tag, packageName, el) {
         if (this._propertyDefaultsForTag[tag]) {
           return;
         }
 
         this._propertyDefaultsForTag[tag] = {};
+        this._attributeDefaultsForTag[tag] = {};
+
         if (!packageName) {
           // TODO: woof, this is bad.
           packageName = window.shell.$.elements.namesToPackages[tag];
@@ -56,14 +59,25 @@
         }
         this._propertyDefaultsForTag[tag]['__package_name__'] = packageName;
 
-        let keys = ['id', 'slot', 'classList'].concat(props);
-        for (let i = 0; i < keys.length; i++) {
-          let prop = keys[i];
+        var props = getProtoProperties(el);
+        var attributes = getAttributesIfCustomElement(el);
+
+        let propsKeys = ['id', 'slot', 'classList'].concat(props);
+
+        // Property defaults
+        for (let i = 0; i < propsKeys.length; i++) {
+          let prop = propsKeys[i];
           if (prop === 'classList') {
             this._propertyDefaultsForTag[tag][prop] = el[prop].value;
           } else {
             this._propertyDefaultsForTag[tag][prop] = el[prop];
           }
+        }
+
+        // Attribute defaults.
+        for (let i = 0; i < attributes.length; i++) {
+          let attr = attributes[i];
+          this._attributeDefaultsForTag[tag][attr] = el.getAttribute(attr);
         }
       }
 
@@ -189,10 +203,10 @@ ${domModule}
         }
       }
       dumpElementStartTag(tag, node, indent) {
-        let attributes = this.dumpAttributes(tag, node);
-        return attributes.length === 0 ?
+        let str = this.dumpPropsAndAttributes(tag, node);
+        return str.length === 0 ?
             `${indent}<${tag}>` :
-            `${indent}<${tag} ${attributes}>`;
+            `${indent}<${tag} ${str}>`;
       }
 
       dumpElementEndTag(tag, node, indent) {
@@ -211,12 +225,13 @@ ${indent}}
 `
       }
 
-      dumpAttributes(tag, node) {
+      dumpPropsAndAttributes(tag, node) {
         if (!this._propertyDefaultsForTag[tag]) {
-          this._doDefaultPropsForUnseenTag(tag);
+          this._doDefaultsForUnseenTag(tag);
         }
         let defaults = Object.keys(this._propertyDefaultsForTag[tag]);
-        let attributes = ' ';
+        let str = '';
+
         for (let i = 0; i < defaults.length; i++) {
           let name = defaults[i];
           let value = node[name];
@@ -228,20 +243,35 @@ ${indent}}
             value = value.value; // classList is an array, surprise!
             value = value.replace('active', '').trim();
             if (value.length !== 0) {
-              attributes += `class="${value}" `
+              str += `class="${value}" `
             }
           } else if (value === true) {
-            attributes += `${name} `;
+            str += `${name} `;
           } else if (this._propertyDefaultsForTag[tag][name] != value) {
-            attributes += `${name}="${value}" `
+            str += `${name}="${value}" `
           }
         }
-        return attributes.trim();
+
+        // Also do the attributes.
+        // TODO: refactor this one day.
+        let attrs = Object.keys(this._attributeDefaultsForTag[tag]);
+        for (let i = 0; i < attrs.length; i++) {
+          let name = attrs[i];
+          let value = node.getAttribute(name);
+
+          if (value === true) {
+            str += `${name} `;
+          } else if (this._attributeDefaultsForTag[tag][name] != value) {
+            str += `${name}="${value}" `
+          }
+        }
+
+        return str.trim();
       }
 
       dumpImports(tag, indent, directoryPrefix) {
         if (!this._propertyDefaultsForTag[tag]) {
-          this._doDefaultPropsForUnseenTag(tag);
+          this._doDefaultsForUnseenTag(tag);
         }
         let packageName = this._propertyDefaultsForTag[tag]['__package_name__'];
         // If this is app-layout stuff, it needs an extra package name.
@@ -254,9 +284,9 @@ ${indent}}
         return `${indent}<link rel="import" href="${directoryPrefix}${packageName}/${tag}.html">`;
       }
 
-      _doDefaultPropsForUnseenTag(tag) {
+      _doDefaultsForUnseenTag(tag) {
         let el = document.createElement(tag);
-        this.save(tag, undefined, el, getProtoProperties(el));
+        this.save(tag, undefined, el);
       }
     }
     customElements.define(CodeView.is, CodeView);
