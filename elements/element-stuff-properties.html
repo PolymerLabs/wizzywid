@@ -36,18 +36,11 @@
         // If this is a native element, then start walking up the prototype
         // chain to get all the props it has. If it's a custom element,
         // then assume it's a v1 element and look at its observedAttributes
-        if (target.tagName.indexOf('-') === -1) {
-          let propNames = window.getProtoProperties(target);
-          this._displayPropsOrAttributes(target, propNames);
-        } else {
-          // This element's observedAttributes
-          let attrNames = window.getAttributesIfCustomElement(target);
-          this._displayPropsOrAttributes(target, attrNames, true);
+        let attrNames = window.getAttributesIfCustomElement(target);
+        this._displayPropsOrAttributes(target, attrNames, true);
 
-          // And HTMLElement's properties.
-          let propNames = window.getProtoProperties(target.__proto__);
-          this._displayPropsOrAttributes(target, propNames);
-        }
+        let propNames = window.getProtoProperties(target);
+        this._displayPropsOrAttributes(target, propNames);
       }
 
       _displayBasicProperties(target) {
@@ -99,6 +92,7 @@
           let input = document.createElement('input');
           input.name = name;
           if (isAttribute) {
+            input.classList.add('attribute');
             input.value = target.getAttribute(name) || '';
           } else {
             input.value = target[name] || '';

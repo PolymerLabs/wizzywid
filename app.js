@@ -5,7 +5,12 @@ window.addEventListener('WebComponentsReady', function() {
 });
 
 function getProtoProperties(target) {
-  let proto = target.__proto__;
+  // If this is a custom element, skip HTMLElement, since we're
+  // using observed attributes in that case.
+  let proto = (target.tagName.indexOf('-') !== -1) ?
+      target.__proto__.__proto__ :
+      target.__proto__;
+
   let protoProps = {};
   while (proto.constructor.name !== 'Element') {
     Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
@@ -51,11 +56,11 @@ function getProtoProperties(target) {
     }
     i++;
   }
-  return propNames;
+  return propNames || [];
 }
 
 function getAttributesIfCustomElement(target) {
-  if (target.tagName.indexOf('-') !== '-1') {
+  if (target.tagName.indexOf('-') !== -1) {
     return target.constructor.observedAttributes;
   } else {
     return [];

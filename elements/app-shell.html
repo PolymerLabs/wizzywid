@@ -348,7 +348,7 @@
         this.addEventListener('new-sample', this.createSample.bind(this));
         this.addEventListener('element-updated', function(event) {
           let detail = event.detail;
-          let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value);
+          let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
           // Update the history.
           this.$.actionHistory.add('update', this.activeElement,
             {
@@ -540,7 +540,7 @@
       /**
        * Updates the active element's displayed values.
        */
-      updateActiveElementValues(type, name, value) {
+      updateActiveElementValues(type, name, value, isAttribute) {
         let previousValue;
 
         if (type === 'style') {
@@ -557,20 +557,28 @@
         } else {
           previousValue = this.activeElement[name];
           if (value === 'true') {
-            this.activeElement[name] = true;
+            this._setPropertyOrValue(name, true, isAttribute);
           } else if (value === 'false') {
             if (this.activeElement.hasAttribute(name)) {
               this.activeElement.removeAttribute(name);
             } else {
-              this.activeElement[name] = false;
+              this._setPropertyOrValue(name, false, isAttribute);
             }
           } else {
-            this.activeElement[name] = value;
+            this._setPropertyOrValue(name, value, isAttribute);
           }
         }
 
         this.$.treeView.recomputeTree(this.$.viewContainer, this.activeElement);
         return previousValue;
+      }
+
+      _setPropertyOrValue(name, value, isAttribute) {
+        if (isAttribute) {
+          this.activeElement.setAttribute(name, value);
+        } else {
+          this.activeElement[name] = value;
+        }
       }
 
       /**
