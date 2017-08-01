@@ -12,6 +12,12 @@ function getProtoProperties(target) {
       target.__proto__;
 
   let protoProps = {};
+  // We literally want nothing other than 'href' from HTMLAnchorElement.
+  if (proto.constructor.name === 'HTMLAnchorElement') {
+    protoProps['href'] = Object.getOwnPropertyDescriptors(proto).href;
+    proto = proto.__proto__;
+
+  }
   while (proto.constructor.name !== 'Element') {
     Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
     proto = proto.__proto__;
@@ -28,7 +34,9 @@ function getProtoProperties(target) {
       // Native elements ones we don't care about
       'validity', 'useMap', 'innerText', 'outerText', 'style', 'accessKey',
       'draggable', 'lang', 'spellcheck', 'tabIndex', 'translate', 'align', 'dir',
-      // Spefic elements stuff
+      'isMap', 'useMap', 'hspace', 'vspace', 'referrerPolicy', 'crossOrigin',
+      'lowsrc', 'longDesc', 
+      // Specific elements stuff
       'receivedFocusFromKeyboard', 'pointerDown', 'valueAsNumber',
       'selectionDirection', 'selectionStart', 'selectionEnd'
       ];

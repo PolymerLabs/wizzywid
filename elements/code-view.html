@@ -210,7 +210,7 @@ ${domModule}
       }
 
       dumpElementEndTag(tag, node, indent) {
-        return tag === 'input' ? '' : `${indent}</${tag}>`;
+        return (tag === 'input' || tag === 'img') ? '' : `${indent}</${tag}>`;
       }
 
       dumpStyle(tag, node, indent) {
