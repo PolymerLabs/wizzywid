@@ -51,7 +51,7 @@
 
         if (!packageName) {
           // TODO: woof, this is bad.
-          packageName = window.shell.$.elements.namesToPackages[tag];
+          packageName = window.shell.$.custom.namesToPackages[tag];
           // If you still didn't find an answer, default to the tag name.
           if (!packageName) {
             packageName = tag;

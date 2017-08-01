@@ -297,8 +297,8 @@
           </designer-tab>
         </designer-tabs>
         <iron-pages class="dark elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
-          <palette-native name="native"></palette-native>
-          <palette-elements name="elements" id="elements"></palette-elements>
+          <palette-native name="native" id="native"></palette-native>
+          <palette-elements name="elements" id="custom"></palette-elements>
           <palette-samples name="samples"></palette-samples>
         </iron-pages>
       </div>
@@ -746,17 +746,10 @@
           return;
         }
         let slots = el.root ? el.root.querySelectorAll('slot') : [];
-        // TODO: fix this and make it less this and more something else.
-        if (tag === 'div') {
-          el.style.height = el.style.width = '200px';
-          el.style.backgroundColor = 'white';
-          el.textContent = 'div';
-        } else if (tag === 'input') {
-          el.placeholder = 'input';
-        } else if (tag === 'form') {
-          el.style.height = el.style.width = '200px';
-          el.style.backgroundColor = 'white';
-        } else if (tag === 'button' || tag === 'a' || tag === 'h1' || slots.length != 0) {
+
+        // If it's a native element, or has a slot, put something in that slot.
+        if ((this.$.native.elements.indexOf(tag) !== -1 && tag !== 'input') ||
+            slots.length != 0) {
           el.textContent = tag;
         }
       }
