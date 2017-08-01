@@ -83,7 +83,7 @@
           polygitBase = '<base href="https://polygit.org/polymer+:master/webcomponents+:master/shadycss+webcomponents+:master/paper*+polymerelements+:master/iron*+polymerelements+:master/app*+polymerelements+:master/neon*+polymerelements+:master/components/">';
         }
 
-        this.dumpChildren(parent, '    ', directoryPrefix);
+        this.dumpNode(parent, '    ', directoryPrefix);
 
         let domModule = `
 <dom-module id="main-app">
@@ -144,7 +144,7 @@ ${domModule}
         this.update(this.get(parent));
       }
 
-      dumpChildren(parent, indent, directoryPrefix) {
+      dumpNode(parent, indent, directoryPrefix) {
         let nodes = parent.children;
 
         for (let i = 0; i < nodes.length; i++) {
@@ -174,7 +174,7 @@ ${domModule}
           }
           else {
             this._template += '\n'
-            this.dumpChildren(nodes[i], indent + '  ', directoryPrefix) + '\n';
+            this.dumpNode(nodes[i], indent + '  ', directoryPrefix) + '\n';
             this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
           }
         }
