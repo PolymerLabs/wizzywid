@@ -5,11 +5,17 @@ window.addEventListener('WebComponentsReady', function() {
 });
 
 function getProtoProperties(target) {
-  // If this is a custom element, skip HTMLElement, since we're
-  // using observed attributes in that case.
-  let proto = (target.tagName.indexOf('-') !== -1) ?
-      target.__proto__.__proto__ :
-      target.__proto__;
+  // If this is a custom element, you need to go up the prototype
+  // chain until you get proper HTMLElement, since everything under it
+  // is generated prototypes and will have propeties that are dupes (like:
+  // every observedAttribute is also mirrored as a property)
+  const isCustomElement = target.tagName.indexOf('-') !== -1;
+  let proto = target.__proto__;
+  if (isCustomElement) {
+    while (proto.constructor !== window.HTMLElement.prototype.constructor) {
+      proto = proto.__proto__;
+    }
+  }
 
   let protoProps = {};
   // We literally want nothing other than 'href' from HTMLAnchorElement.
@@ -35,7 +41,7 @@ function getProtoProperties(target) {
       'validity', 'useMap', 'innerText', 'outerText', 'style', 'accessKey',
       'draggable', 'lang', 'spellcheck', 'tabIndex', 'translate', 'align', 'dir',
       'isMap', 'useMap', 'hspace', 'vspace', 'referrerPolicy', 'crossOrigin',
-      'lowsrc', 'longDesc', 
+      'lowsrc', 'longDesc',
       // Specific elements stuff
       'receivedFocusFromKeyboard', 'pointerDown', 'valueAsNumber',
       'selectionDirection', 'selectionStart', 'selectionEnd'

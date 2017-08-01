@@ -69,7 +69,11 @@
         for (let parent in subElements) {
           for (let i = 0; i < subElements[parent].length; i++) {
             subelements.push(`${parent}/${subElements[parent][i]}`);
-            this.namesToPackages[subElements[parent][i]] = parent;
+            let packageName = parent;
+            if (parent === 'app-layout') {
+              packageName = parent + '/' + subElements[parent][i];
+            }
+            this.namesToPackages[subElements[parent][i]] = packageName;
           }
         }
         this.elements = Object.keys(list).concat(subelements).sort();
@@ -83,10 +87,7 @@
           packageName = matches[1];
           kind = matches[2];
         }
-        if (packageName === 'app-layout') {
-          packageName = packageName + '/' + kind;
-        }
-        this.maybeDoHTMLImport(kind, packageName);
+        this.maybeDoHTMLImport(kind, this.namesToPackages[kind]);
       }
 
       maybeDoHTMLImport(kind, packageName) {
