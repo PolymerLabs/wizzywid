@@ -64,6 +64,7 @@
       "update-icons"
     ],
     "paper-input": ["paper-textarea"],
-    "paper-tabs": ["paper-tab"]
+    "paper-tabs": ["paper-tab"],
+    "app-layout": ["app-header", "app-toolbar", "app-drawer"]
   }
 }

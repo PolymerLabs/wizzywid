@@ -105,6 +105,9 @@
           packageName = matches[1];
           kind = matches[2];
         }
+        if (packageName === 'app-layout') {
+          packageName = packageName + '/' + kind;
+        }
         this.maybeDoHTMLImport(kind, packageName);
       }
 
