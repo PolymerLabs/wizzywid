@@ -238,16 +238,16 @@ ${indent}}
         for (let i = 0; i < attrs.length; i++) {
           let name = attrs[i];
           let value = node.getAttribute(name);
-
           if (value === true || value === "") {
             str += `${name} `;
           } else if (tag === 'iron-ajax' && name === 'params' && value && value.indexOf('[[') !== -1) {
-            // TODO: remove this enormous hack I added for the demo.
+            // HACK: This is an enourmous hack I added for the demo.
             // Problem: in order to put a data binding inside of the params attribute
-            // which is an object, I need to use $= Ugh.
-            str += `${name}$="${value}" `
+            // which is an object, I need to use $= Ugh. Also it's definitely
+            // an object so flip the quotes.
+            str += `${name}$='${value}' `
           } else if (this._attributeDefaultsForTag[tag][name] != value) {
-            str += `${name}="${value}" `
+            str += this._getAttrWithRightQuotes(name, value);
           }
         }
 
@@ -274,7 +274,7 @@ ${indent}}
           } else if (value === true) {
             str += `${name} `;
           } else if (this._propertyDefaultsForTag[tag][name] != value) {
-            str += `${name}="${value}" `
+            str += this._getAttrWithRightQuotes(name, value);
           }
         }
         return str.trim();
@@ -298,6 +298,11 @@ ${indent}}
       _doDefaultsForUnseenTag(tag) {
         let el = document.createElement(tag);
         this.save(tag, undefined, el);
+      }
+
+      _getAttrWithRightQuotes(name, value) {
+        const hasQuotes = value.indexOf('"') !== -1;
+        return hasQuotes ? `${name}='${value}' ` : `${name}="${value}" `;
       }
     }
     customElements.define(CodeView.is, CodeView);
