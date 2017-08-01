@@ -301,7 +301,7 @@ ${indent}}
       }
 
       _getAttrWithRightQuotes(name, value) {
-        const hasQuotes = value.indexOf('"') !== -1;
+        const hasQuotes = String(value).indexOf('"') !== -1;
         return hasQuotes ? `${name}='${value}' ` : `${name}="${value}" `;
       }
     }
