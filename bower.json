@@ -1,5 +1,5 @@
 {
-  "name": "polymer-designer",
+  "name": "wizzywid",
   "homepage": "https://github.com/notwaldorf/polymer-designer",
   "authors": [
     "Monica Dinculescu <noms@google.com>"
@@ -43,7 +43,11 @@
     "paper-progress": "PolymerElements/paper-progress#*",
     "paper-spinner": "PolymerElements/paper-spinner#*",
     "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
-    "paper-tabs": "PolymerElements/paper-tabs#*"
+    "paper-tabs": "PolymerElements/paper-tabs#*",
+    "iron-ajax": "PolymerElements/iron-ajax#*",
+    "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#*",
+    "iron-collapse": "PolymerElements/iron-collapse#*",
+    "iron-image": "PolymerElements/iron-image#*"
   },
   "subelements": {
     "iron-icons": [
