@@ -1,0 +1,53 @@
+{
+  "name": "vaadin-text-field",
+  "homepage": "https://vaadin.com/elements",
+  "authors": [
+    "Vaadin Ltd"
+  ],
+  "description": "vaadin-text-field",
+  "main": "vaadin-text-field.html",
+  "keywords": [
+    "Vaadin",
+    "input",
+    "text-field",
+    "web-components",
+    "web-component",
+    "polymer"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "gulpfile.js",
+    "package.json",
+    "wct.conf.js"
+  ],
+  "devDependencies": {
+    "elements-demo-resources": "^2.0.0",
+    "iron-component-page": "^3.0.0",
+    "iron-demo-helpers": "^2.0.0",
+    "iron-form": "^2.0.0",
+    "iron-test-helpers": "^2.0.0",
+    "web-component-tester": "^6.0.0"
+  },
+  "dependencies": {
+    "polymer": "^2.0.0",
+    "vaadin-themable-mixin": "vaadin/vaadin-themable-mixin#^1.1.0",
+    "vaadin-control-state-mixin": "vaadin/vaadin-control-state-mixin#^1.0.1"
+  },
+  "resolutions": {
+    "iron-ajax": "^2.0.0",
+    "iron-doc-viewer": "1 - 2"
+  },
+  "version": "1.0.0",
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.0",
+    "commit": "d554f9b053783b43cb0e7d0218b63d2284f5033c"
+  },
+  "_source": "https://github.com/vaadin/vaadin-text-field.git",
+  "_target": "^1.0.0",
+  "_originalSource": "vaadin-text-field"
+}

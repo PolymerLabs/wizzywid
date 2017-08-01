@@ -47,7 +47,8 @@
     "iron-ajax": "PolymerElements/iron-ajax#*",
     "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#*",
     "iron-collapse": "PolymerElements/iron-collapse#*",
-    "iron-image": "PolymerElements/iron-image#*"
+    "iron-image": "PolymerElements/iron-image#*",
+    "vaadin-date-picker": "vaadin/vaadin-date-picker#^v2.0.0-beta2"
   },
   "subelements": {
     "iron-icons": [
