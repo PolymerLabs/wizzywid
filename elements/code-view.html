@@ -183,13 +183,24 @@ ${domModule}
 
           // If this element doesn't have children, do it on one line.
           this._template += this.dumpElementStartTag(tag, nodes[i], indent);
+
+          if (tag === 'dom-repeat') {
+            // We need to wrap the children in a template.
+            this._template += `\n${indent}<template>`;
+          }
           if (nodes[i].children.length == 0) {
             this._template += this.dumpElementText(tag, nodes[i], '');
             this._template += this.dumpElementEndTag(tag, nodes[i], '') + '\n';
           }
+
           else {
             this._template += '\n'
             this.dumpNode(nodes[i], indent + '  ', directoryPrefix) + '\n';
+
+            if (tag === 'dom-repeat') {
+              // We need to wrap the children in a template.
+              this._template += `${indent}</template>\n`;
+            }
             this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
           }
         }
@@ -251,6 +262,14 @@ ${indent}}
           }
         }
 
+        // HACK, again: we can't use the dom-repeat's actual `items` attribute
+        // in the designer view, because it would instantly stamp. Instead,
+        // we saved a data-fakeItemsAttr. Restore it now!
+        let value = node.dataset['fakeItemsAttr'];
+        if (tag === 'dom-repeat' && value) {
+          str += `items="${value}" `;
+        }
+
         let props = Object.keys(this._propertyDefaultsForTag[tag]);
 
         for (let i = 0; i < props.length; i++) {
@@ -281,6 +300,9 @@ ${indent}}
       }
 
       dumpImports(tag, indent, directoryPrefix) {
+        if (tag === 'dom-repeat') {
+          return `${indent}<link rel="import" href="${directoryPrefix}polymer/lib/elements/dom-repeat.html">`;
+        }
         if (!this._propertyDefaultsForTag[tag]) {
           this._doDefaultsForUnseenTag(tag);
         }

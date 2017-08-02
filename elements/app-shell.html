@@ -563,7 +563,12 @@
           this.activeElement.style[name] = value;
         } else {
           previousValue = this.activeElement[name];
-          if (value === 'true') {
+
+          // If this is a dom-repeat, don't set the items attribute, set a fake
+          // items instead (so that it doesn't stamp).
+          if (this.activeElement.localName === 'dom-repeat' && name === 'items') {
+            this.activeElement.dataset['fakeItemsAttr'] = value;
+          } else if (value === 'true') {
             this._setPropertyOrValue(name, true, isAttribute);
           } else if (value === 'false') {
             if (this.activeElement.hasAttribute(name)) {
