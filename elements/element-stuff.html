@@ -27,18 +27,13 @@
             return;
           }
 
-          let newEvent = new Event('element-updated', {
-            bubbles: true,
-            cancelable: false,
-            composed: true
-          });
-          newEvent.detail = {
-            type: this.stuffType,
-            name: target.name,
-            value: target.value,
-            isAttribute: target.classList.contains('attribute')
-          };
-          this.dispatchEvent(newEvent);
+          Polymer.Base.fire('element-updated',
+              {
+                type: this.stuffType,
+                name: target.name,
+                value: target.value,
+                isAttribute: target.classList.contains('attribute')
+              }, {node: this});
         }
       }
     }

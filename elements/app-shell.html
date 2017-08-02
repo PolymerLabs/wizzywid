@@ -704,13 +704,7 @@
       }
 
       viewCode() {
-        let newEvent = new Event('update-code', {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        newEvent.detail = {target: this.$.viewContainer};
-        this.dispatchEvent(newEvent);
+        Polymer.Base.fire('update-code', {target: this.$.viewContainer}, {node: this});
       }
 
       viewDemo() {

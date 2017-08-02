@@ -169,13 +169,7 @@
       }
 
       _doEvent(node, name) {
-        let newEvent = new Event(name, {
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        });
-        newEvent.detail = {target: node};
-        this.dispatchEvent(newEvent);
+        Polymer.Base.fire(name, {target: node}, {node: this});
       }
 
       _updatePosition(node, detail) {

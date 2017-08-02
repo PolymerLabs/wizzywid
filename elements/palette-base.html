@@ -38,17 +38,11 @@
         }
 
         _fireEvent(name, tag, packageName, template) {
-          let newEvent = new Event(name, {
-            bubbles: true,
-            cancelable: false,
-            composed: true
-          });
-          newEvent.detail = {
+          Polymer.Base.fire(name, {
             type: tag,
             template: template,
             package: packageName
-          };
-          this.dispatchEvent(newEvent);
+          }, {node: this});
         }
       }
     }
