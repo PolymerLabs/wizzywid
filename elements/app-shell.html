@@ -167,21 +167,22 @@
             type: Object
           },
           mainPage: {
-            type: String
+            type: String,
+            value: 'designer'
           }
         }
-      }
-
-      constructor() {
-        super();
-        this.mainPage = 'designer';
       }
 
       connectedCallback() {
         super.connectedCallback();
 
-        // TODO: fix this!
+        // Explanation and apology: normally, codeView would be a child
+        // of this element, and could be this.$.codeView, but ace.js
+        // doesn't like being in the shadow dom, and this is why we
+        // can't have nice things.
         window.codeView.canvasElement = this.$.viewContainer;
+
+        // TODO: fix this!
         this.$.actionHistory.shell = this;
         this.$.viewContainer.shell = this;
 
@@ -191,44 +192,34 @@
         this.$.canvasControls.selectedElement = this.activeElement;
         this.$.canvasControls.actionHistory = this.$.actionHistory;
         this.$.canvasControls.canvasElement = this.$.viewContainer;
-
         this.$.appControls.actionHistory = this.$.actionHistory;
 
-        this.addEventListener('new-element', this.createElement.bind(this));
-        this.addEventListener('new-sample', this.createSample.bind(this));
-        this.addEventListener('refresh-view', this.refreshView.bind(this));
-        this.addEventListener('selected-element-changed', function(event) {
-          this.setActiveElement(event.detail.target);
-        }.bind(this));
-        this.addEventListener('finish-clone', function(event) {
-          this._finishNewElement(event.detail.target, event.detail.target.localName, true);
-        }.bind(this));
-        this.addEventListener('update-action-buttons', function(event) {
-          this.$.appControls.update(event.detail.undos, event.detail.redos);
-        }.bind(this));
-        this.addEventListener('package-names-ready', function(event) {
-          window.codeView.elementsToPackages = event.detail.list;
-        }.bind(this));
+        this.addEventListener('new-element', event => this.createElement(event));
+        this.addEventListener('new-sample', event => this.createSample(event));
+        this.addEventListener('element-updated', event => this.updateElement(event));
 
-        this.addEventListener('element-updated', function(event) {
-          let detail = event.detail;
-          let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
-          // Update the history.
-          this.$.actionHistory.add('update', this.activeElement,
-            {
-              type: detail.type, name: detail.name,
-              new: {value: detail.value},
-              old: {value: oldValue}
-            });
-        }.bind(this));
-        this.addEventListener('remove-from-canvas', function(event){
+        this.addEventListener('refresh-view', event => this.refreshView(event));
+        this.addEventListener('selected-element-changed', event => function(event) {
+          this.setActiveElement(event.detail.target);
+        });
+        this.addEventListener('finish-clone', event => {
+          this._finishNewElement(event.detail.target, event.detail.target.localName, true);
+        });
+        this.addEventListener('update-action-buttons', event => {
+          this.$.appControls.update(event.detail.undos, event.detail.redos);
+        });
+        this.addEventListener('package-names-ready', event => {
+          window.codeView.elementsToPackages = event.detail.list;
+        });
+
+        this.addEventListener('remove-from-canvas', event => {
           this.$.viewContainer.remove(event.detail.target);
           this.$.viewContainer.click();
-        }.bind(this));
-        this.addEventListener('add-to-canvas', function(event){
+        });
+        this.addEventListener('add-to-canvas', event => {
           this.$.viewContainer.add(event.detail.target);
           event.detail.target.click();
-        }.bind(this));
+        });
       }
 
       /*
@@ -296,16 +287,13 @@
         this.refreshView();
       }
 
-
       /**
        * Refreshes all the properties/styles of the active element.
        */
       refreshView() {
         let el = this.activeElement ? this.activeElement : this.$.viewContainer;
-
         // Display its properties in the side view.
         this.$.elementView.display(el);
-
         // Highlight it in the tree.
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
       }
@@ -313,6 +301,18 @@
       refreshViewWhileTracking() {
         let size = this.activeElement.getBoundingClientRect();
         this.$.elementView.displayPosition(size.top, size.left);
+      }
+
+      updateElement(event) {
+        let detail = event.detail;
+        let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
+        // Update the history.
+        this.$.actionHistory.add('update', this.activeElement,
+          {
+            type: detail.type, name: detail.name,
+            new: {value: detail.value},
+            old: {value: oldValue}
+          });
       }
 
       /**
@@ -356,14 +356,6 @@
         return previousValue;
       }
 
-      _setPropertyOrValue(name, value, isAttribute) {
-        if (isAttribute) {
-          this.activeElement.setAttribute(name, value);
-        } else {
-          this.activeElement[name] = value;
-        }
-      }
-
       viewCode() {
         Polymer.Base.fire('update-code', {target: this.$.viewContainer}, {node: this});
       }
@@ -372,6 +364,14 @@
         if (!window.codeView.get)
           return;
         this.$.demoView.display(window.codeView.get());
+      }
+
+      _setPropertyOrValue(name, value, isAttribute) {
+        if (isAttribute) {
+          this.activeElement.setAttribute(name, value);
+        } else {
+          this.activeElement[name] = value;
+        }
       }
 
       /**
@@ -407,8 +407,6 @@
         return this.$.viewContainer.has('#' + uId) ?
           this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
       }
-
-
     }
     customElements.define(AppShell.is, AppShell);
   </script>
