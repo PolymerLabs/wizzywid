@@ -7,9 +7,9 @@
 <dom-module id="palette-elements">
   <template strip-whitespace>
     <style include="palette-shared-styles"></style>
-    <input list="list" placeholder="Filter Custom Elements" id="filter">
 
     <!-- A typeahead search -->
+    <input list="list" placeholder="Filter Custom Elements" id="filter">
     <datalist id="list">
       <dom-repeat items="[[elements]]">
         <template>
@@ -24,7 +24,7 @@
         <button>[[item]]</button>
       </template>
     </dom-repeat>
-    <iron-ajax auto url="bower.json" handle-as="json" on-response="elementsReady"></iron-ajax>
+    <iron-ajax auto url="bower.json" handle-as="json" on-response="_elementsReady"></iron-ajax>
   </template>
   <script>
     /*
@@ -34,18 +34,13 @@
      */
     class ElementsView extends PaletteBase(Polymer.Element) {
       static get is() { return 'palette-elements'; }
-      static get properties() {
-        return {
-          elements: { type: Array }
-        }
-      }
 
       ready() {
         super.ready();
         this.namesToPackages = {};
       }
 
-      elementsReady(event) {
+      _elementsReady(event) {
         // First, some elements have sub-elements in the same package.
         let subElements = event.detail.response.subelements;
         let list = event.detail.response.devDependencies;

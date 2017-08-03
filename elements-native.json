@@ -1,0 +1,15 @@
+{
+  "elements":
+  [
+    "a",
+    "p",
+    "span",
+    "div",
+    "input",
+    "button",
+    "form",
+    "img",
+    "h1",
+    "iframe"
+  ]
+}

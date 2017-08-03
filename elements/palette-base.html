@@ -2,6 +2,12 @@
   (function() {
     window.PaletteBase = function(base) {
       return class extends base {
+        static get properties() {
+          return {
+            elements: { type: Array }
+          }
+        }
+        
         ready() {
           super.ready();
           this.addEventListener('click', this._click.bind(this));
@@ -11,8 +17,8 @@
           }
         }
 
-        connectedCallback() {
-          super.connectedCallback();
+        _elementsReady(event) {
+          this.elements = event.detail.response.elements;
         }
 
         _click(event) {

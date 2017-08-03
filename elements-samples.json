@@ -1,0 +1,14 @@
+{
+  "elements":
+  [
+    "flex-horizontal-layout",
+    "flex-vertical-layout",
+    "app-layout-sample",
+    "dom-repeat-sample",
+    "iron-form-sample",
+    "iron-pages-sample",
+    "paper-card-sample",
+    "paper-dropdown-menu-sample",
+    "wizzywid-sample"
+  ]
+}

@@ -7,9 +7,9 @@
 <dom-module id="palette-native">
   <template strip-whitespace>
     <style include="palette-shared-styles"></style>
-    <input list="list" placeholder="Filter Native Elements" id="filter">
 
     <!-- A typeahead search -->
+    <input list="list" placeholder="Filter Native Elements" id="filter">
     <datalist id="list">
       <dom-repeat items="[[elements]]">
         <template>
@@ -24,6 +24,8 @@
         <button>[[item]]</button>
       </template>
     </dom-repeat>
+
+    <iron-ajax auto url="elements-native.json" handle-as="json" on-response="_elementsReady"></iron-ajax>
   </template>
   <script>
     /*
@@ -33,16 +35,6 @@
      */
     class NativeView extends PaletteBase(Polymer.Element) {
       static get is() { return 'palette-native'; }
-      static get properties() {
-        return {
-          elements: { type: Array }
-        }
-      }
-
-      ready() {
-        super.ready();
-        this.elements = ['a', 'p', 'span', 'div', 'input', 'button', 'form', 'img', 'h1', 'iframe'];
-      }
 
       _doClick(target, kind) {
         this._fireEvent('new-element', kind);

@@ -1,19 +1,31 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="palette-shared-styles.html">
 <link rel="import" href="palette-base.html">
 
 <dom-module id="palette-samples">
   <template strip-whitespace>
     <style include="palette-shared-styles"></style>
-    <button>flex-horizontal-layout</button>
-    <button>flex-vertical-layout</button>
-    <button>app-layout-sample</button>
-    <button>dom-repeat-sample</button>
-    <button>iron-form-sample</button>
-    <button>iron-pages-sample</button>
-    <button>paper-card-sample</button>
-    <button>paper-dropdown-menu-sample</button>
-    <button>wizzywid-sample</button>
+
+    <!-- A typeahead search -->
+    <input list="list" placeholder="Filter Samples" id="filter">
+    <datalist id="list">
+      <dom-repeat items="[[elements]]">
+        <template>
+          <option value="[[item]]">
+        </template>
+      </dom-repeat>
+    </datalist>
+
+    <!-- The list of clickable buttons -->
+    <dom-repeat items="[[elements]]">
+      <template>
+        <button>[[item]]</button>
+      </template>
+    </dom-repeat>
+
+    <iron-ajax auto url="elements-samples.json" handle-as="json" on-response="_elementsReady"></iron-ajax>
+
   </template>
   <script>
     /*
