@@ -53,15 +53,6 @@
       isNativeElement(tag) {
         return this.$.native.elements.indexOf(tag) !== -1;
       }
-      /**
-       * Updates the views.
-       */
-      display(el) {
-        let computedStyle = window.getComputedStyle(el);
-        this.$.propertiesContainer.display(el);
-        this.$.stylesContainer.display(computedStyle);
-        this.$.flexContainer.display(computedStyle);
-      }
     }
     customElements.define(PaletteView.is, PaletteView);
   </script>
