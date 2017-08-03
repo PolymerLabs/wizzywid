@@ -212,12 +212,24 @@
         });
 
         this.addEventListener('remove-from-canvas', event => {
-          this.$.viewContainer.remove(event.detail.target);
-          this.$.viewContainer.click();
+          const parent = event.detail.parent;
+          const node = event.detail.target;
+          if (parent === this.$.viewContainer) {
+            this.$.viewContainer.remove(node);
+          } else {
+            parent.removeChild(node);
+          }
+          parent.click();
         });
         this.addEventListener('add-to-canvas', event => {
-          this.$.viewContainer.add(event.detail.target);
-          event.detail.target.click();
+          const parent = event.detail.parent;
+          const node = event.detail.target;
+          if (parent === this.$.viewContainer) {
+            this.$.viewContainer.add(node);
+          } else {
+            parent.appendChild(node);
+          }
+          node.click();
         });
         this.addEventListener('move', event => function(event) {
           this.$.canvasControls.move(event.detail.type, event.detail.skipHistory);
@@ -255,7 +267,7 @@
         // If we haven't before, save this initial state of a <tag> element,
         // so that we can diff it to produce the actual state of the world
         codeView.save(tag, event.detail.package, el);
-        this.$.actionHistory.add('new', el);
+        this.$.actionHistory.add('new', el, {parent: el.parentNode});
 
         this._finishNewElement(el, tag);
         // You need the item to render first.
@@ -277,7 +289,7 @@
         for (let i = 0; i < children.length; i++) {
           el = document.importNode(children[i], true);
           this.$.viewContainer.add(el);
-          this.$.actionHistory.add('new', el);
+          this.$.actionHistory.add('new', el, {parent: el.parentNode});
           let tag = el.tagName.toLowerCase();
           el.id = el.id || this._makeUniqueId(el, tag);
         }

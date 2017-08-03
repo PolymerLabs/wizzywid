@@ -116,7 +116,7 @@
         Polymer.Base.fire('finish-clone', {target: clone}, {node: this});
 
         // P.S: Since we did a clone, we already have the initial state of the <tag>.
-        this.actionHistory.add('new', clone);
+        this.actionHistory.add('new', clone, {parent: el.parentNode});
         this._refreshView();
       }
 

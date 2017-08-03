@@ -67,7 +67,9 @@
                   {node: this});
               break;
           case 'new':
-              this._doEvent(item.node, 'remove-from-canvas');
+              Polymer.Base.fire('remove-from-canvas',
+                  {target: item.node, parent: item.detail.parent},
+                  {node: this});
               break;
           case 'delete':
               if (item.node.id === 'viewContainer') {
@@ -119,7 +121,9 @@
                   {node: this});
               break;
           case 'new':
-              this._doEvent(item.node, 'add-to-canvas');
+              Polymer.Base.fire('add-to-canvas',
+                  {target: item.node, parent: item.detail.parent},
+                  {node: this});
               break;
           case 'delete':
               // If the node is the viewContainer, clear its inner HTML.
@@ -170,10 +174,6 @@
           return false;
         }
         return JSON.stringify(first) === JSON.stringify(second);
-      }
-
-      _doEvent(node, name) {
-        Polymer.Base.fire(name, {target: node}, {node: this});
       }
 
       _updatePosition(node, detail) {
