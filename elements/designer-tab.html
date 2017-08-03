@@ -6,7 +6,7 @@
       :host {
         display: inline-block;
         position: relative;
-        border-bottom: 3px solid transparent;
+        border-top: 3px solid transparent;
         color: white;
       }
       :host([disabled]) {
@@ -14,8 +14,8 @@
         pointer-events: none;
       }
       :host(.iron-selected) {
-        background: var(--light-grey);
-        border-bottom: 3px solid var(--highlight-pink);
+        background: var(--medium-grey);
+        border-top: 3px solid var(--highlight-pink);
       }
       :host ::slotted(*) {
         display: inline-block;
