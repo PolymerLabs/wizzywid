@@ -231,7 +231,7 @@
           }
           node.click();
         });
-        this.addEventListener('move', event => function(event) {
+        this.addEventListener('move', event => {
           this.$.canvasControls.move(event.detail.type, event.detail.skipHistory);
         });
       }
