@@ -12,6 +12,9 @@
   <script>
     class CodeView extends Polymer.Element {
       static get is() { return 'code-view'; }
+      static get properties() {
+        return { canvasElement: Object }
+      }
 
       // Yeah so Ace editor doesn't work with shadow roots because
       // it probably does a document.getElementById in the edit function.
@@ -81,7 +84,9 @@
         }
       }
 
-      get(parent, usePolygit) {
+      get(usePolygit) {
+        const parent = this.canvasElement;
+        
         // Imports. Yes i'm using element globals because I'm lazy. Fight me.
         this._imports = '';
         this._template = '';
