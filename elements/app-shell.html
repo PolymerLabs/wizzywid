@@ -332,7 +332,7 @@
           if (name === 'display' && value === 'flex') {
             let children = this.activeElement.children;
             for (let i = 0; i < children.length; i++) {
-              children[i].style.position = 'static';
+              children[i].style.position = 'relative';
               children[i].style.top = children[i].style.left = 'auto';
             }
           }
@@ -384,8 +384,6 @@
        * Initializes a new element that has just been added to the canvas.
        */
       _finishNewElement(el, tag, isClone) {
-        el.style.position = 'absolute';
-        el.style.left = el.style.top = '20px';
         el.id = this._makeUniqueId(el, tag);
 
         if (isClone) {
@@ -397,6 +395,11 @@
           return;
         }
 
+        // If it's a new element that isn't a clone, it was chosen from the
+        // palette, so position it somewhere slightly better.
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '20px';
+        
         // If it's a native element, or has a slot, put some text in that slot
         // to indicate that.
         let slots = el.root ? el.root.querySelectorAll('slot') : [];

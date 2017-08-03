@@ -218,7 +218,7 @@
             let oldTop = el.style.top;
             let oldPosition = el.style.position;
             if (reparented) {
-              el.style.position = 'static';
+              el.style.position = 'relative';
               el.style.left = el.style.top = '0px';
               this.actionHistory.add('reparent', el,
                   {

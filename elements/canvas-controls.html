@@ -114,8 +114,7 @@
         el.parentNode.appendChild(clone);
 
         Polymer.Base.fire('finish-clone', {target: clone}, {node: this});
-        clone.style.position = el.style.position;
-
+        
         // P.S: Since we did a clone, we already have the initial state of the <tag>.
         this.actionHistory.add('new', clone);
         this._refreshView();
