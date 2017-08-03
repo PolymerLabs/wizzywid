@@ -90,19 +90,13 @@
       }
 
       .drawer {
-        min-width: 300px;
-        width: 300px;
+        min-width: 270px;
+        width: 270px;
         height: 100%;
         overflow: hidden;
         background: var(--medium-grey);
         color: white;
       }
-
-      .drawer.small {
-        min-width: 250px;
-        width: 250px;
-      }
-
       .main-view {
         position: relative;
         height: 100%;
@@ -186,10 +180,8 @@
     </app-header>
 
     <div class="container">
-      <div class="drawer small">
-        <designer-tab class="single">
-          <button>tree</button>
-        </designer-tab>
+      <div class="drawer">
+        <designer-tab class="single"><button>tree</button></designer-tab>
         <tree-view name="tree" id="treeView"></tree-view>
       </div>
 
@@ -340,17 +332,17 @@
        * Updates the new active element in the view.
        */
       setActiveElement(el) {
-        if (el == this) {
+        if (el === this) {
           el = this.$.viewContainer;
         }
+
         if (this.activeElement) {
           this.activeElement.classList.remove('active');
         }
-
         el.classList.add('active');
-        this.$.canvasControls.selectedElement = this.activeElement = el;
 
-        // Disable a bunch of UI for the top level element.
+        // Tell everyone who cares about this.
+        this.$.canvasControls.selectedElement = this.activeElement = el;
         this.$.canvasControls.update(this.activeElement === this.$.viewContainer);
       }
 
@@ -416,18 +408,12 @@
 
         // Highlight it in the tree.
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
-
-        // Refresh the other tabs.
-        // this.viewCode();
-        // this.viewDemo();
       }
 
       refreshViewWhileTracking() {
         let size = this.activeElement.getBoundingClientRect();
         this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
-
-
 
       /**
        * Updates the active element's displayed values.
