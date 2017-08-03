@@ -85,6 +85,7 @@
         return this.$.canvas.children;
       }
       updateActiveElement(el) {
+        this.selectedElement = el;
         Polymer.Base.fire('selected-element-changed', {target: el}, {node: this});
         Polymer.Base.fire('refresh-view', {}, {node: this});
       }
@@ -149,10 +150,11 @@
               // Only some native elements and things with slots can be
               // drop targets.
               let slots = t.root ? t.root.querySelectorAll('slot') : [];
+
+              // input is the only native in this app that doesn't have a slot
               let canDrop =
-                t.tagName === 'DIV' || t.tagName === 'BUTTON' ||
-                t.tagName === 'FORM' ||
-                slots.length !== 0;
+                  (t.localName.indexOf('-') === -1 && t.localName !== 'input') ||
+                  slots.length !== 0;
 
               if (!canDrop) {
                 continue;
@@ -202,7 +204,7 @@
             if (reparented) {
               el.style.position = 'static';
               el.style.left = el.style.top = '0px';
-              this.shell.$.actionHistory.add('reparent', el,
+              this.actionHistory.add('reparent', el,
                   {
                     new: {
                       parent: newParent,
@@ -217,7 +219,7 @@
               el.style.position = 'absolute';
               el.style.left = rekt.left - parent.left + 'px';
               el.style.top = rekt.top - parent.top + 'px';
-              this.shell.$.actionHistory.add('move', el,
+              this.actionHistory.add('move', el,
                 {
                   new:{left: el.style.left, top: el.style.top, position: el.style.position},
                   old:{left: oldLeft, top: oldTop, position:oldPosition}
@@ -228,7 +230,7 @@
             break;
         }
         this.updateActiveElement(el);
-        this.shell.refreshViewWhileTracking();
+        Polymer.Base.fire('refresh-view', {whileTracking:true}, {node: this});
       }
 
       resizeElement(event, el) {
@@ -242,7 +244,7 @@
             break;
           case 'end':
             this._resizing = false;
-            this.shell.$.actionHistory.add('resize', el,
+            this.actionHistory.add('resize', el,
                {
                  new:{width: el.style.width, height: el.style.height},
                  old:{width: this._initialWidth + 'px', height: this._initialHeight + 'px'}
@@ -280,12 +282,12 @@
       }
 
       onKeyDown(event) {
-        let el = this.shell.activeElement;
+        let el = this.selectedElement;
         if (!el) {
           return;
         }
 
-        // This is a gloabl window handler, so clicks can come from anywhere
+        // This is a global window handler, so clicks can come from anywhere
         // We only care about keys that come after you've clicked on an element,
         // or keys after you've selected something from the tree view.
         // TODO: can this be less bad since it's p horrid?
@@ -303,7 +305,7 @@
           case 38:  // up arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this.shell.moveUp();
+              Polymer.Base.fire('move', {type:'up'}, {node: this});
             } else {
               el.style.top = oldTop - 10 + 'px';
             }
@@ -311,7 +313,7 @@
           case 40:  // down arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this.shell.moveDown();
+              Polymer.Base.fire('move', {type:'down'}, {node: this});
             } else {
               el.style.top = oldTop + 10 + 'px';
             }
@@ -319,7 +321,7 @@
           case 37:  // left arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this.shell.moveBack();
+              Polymer.Base.fire('move', {type:'back'}, {node: this});
             } else {
               el.style.left = oldLeft - 10 + 'px';
             }
@@ -327,13 +329,13 @@
           case 39:  // right arrow
             if (event.shiftKey) {
               event.preventDefault();
-              this.shell.moveForward();
+              Polymer.Base.fire('move', {type:'forward'}, {node: this});
             } else {
               el.style.left = oldLeft + 10 + 'px';
             }
             break;
         }
-        this.shell.$.actionHistory.add('move', el,
+        this.actionHistory.add('move', el,
             {
               new:{left: el.style.left, top: el.style.top, position: el.style.position},
               old:{left: oldLeft, top: oldTop, position:oldPosition}

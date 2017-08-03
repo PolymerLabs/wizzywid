@@ -182,16 +182,14 @@
         // can't have nice things.
         window.codeView.canvasElement = this.$.viewContainer;
 
-        // TODO: fix this!
-        this.$.viewContainer.shell = this;
 
         this.setActiveElement(this.$.viewContainer);
         this.refreshView();
 
-        this.$.canvasControls.selectedElement = this.activeElement;
         this.$.canvasControls.actionHistory = this.$.actionHistory;
         this.$.canvasControls.canvasElement = this.$.viewContainer;
         this.$.appControls.actionHistory = this.$.actionHistory;
+        this.$.viewContainer.actionHistory = this.$.actionHistory;
 
         this.addEventListener('new-element', event => this.createElement(event));
         this.addEventListener('new-sample', event => this.createSample(event));
@@ -220,7 +218,7 @@
           event.detail.target.click();
         });
         this.addEventListener('move', event => function(event) {
-          this.$.canvasControls.move(event.detail.type);
+          this.$.canvasControls.move(event.detail.type, event.detail.skipHistory);
         });
       }
 
@@ -238,7 +236,9 @@
         el.classList.add('active');
 
         // Tell everyone who cares about this.
-        this.$.canvasControls.selectedElement = this.activeElement = el;
+        this.$.canvasControls.selectedElement =
+            this.$.viewContainer.selectedElement = this.activeElement = el;
+        this.$.canvasControls.selectedElement = this.activeElement;
         this.$.canvasControls.update(this.activeElement === this.$.viewContainer);
       }
 
@@ -292,7 +292,13 @@
       /**
        * Refreshes all the properties/styles of the active element.
        */
-      refreshView() {
+      refreshView(event) {
+        if (event && event.detail.whileTracking) {
+          let size = this.activeElement.getBoundingClientRect();
+          this.$.elementView.displayPosition(size.top, size.left);
+          return;
+        }
+
         let el = this.activeElement ? this.activeElement : this.$.viewContainer;
         // Display its properties in the side view.
         this.$.elementView.display(el);
@@ -300,16 +306,11 @@
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
       }
 
-      refreshViewWhileTracking() {
-        let size = this.activeElement.getBoundingClientRect();
-        this.$.elementView.displayPosition(size.top, size.left);
-      }
-
       updateElement(event) {
         let detail = event.detail;
         let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
 
-        if (detail.noUpdateHistory) {
+        if (detail.skipHistory) {
           return;
         }
         this.$.actionHistory.add('update', this.activeElement,

@@ -152,17 +152,23 @@
       /**
        * Moving elements in the DOM
        */
-      move(type) {
+      move(type, skipHistory) {
         switch(type) {
           case 'forward':
-            this.moveForward(false);
+            this.moveForward(skipHistory);
             break;
           case 'back':
-            this.moveBack(false);
+            this.moveBack(skipHistory);
+            break;
+          case 'up':
+            this.moveUp(skipHistory);
+            break;
+          case 'down':
+            this.moveUp(skipHistory);
             break;
         }
       }
-      moveBack(noUpdateHistory) {
+      moveBack(skipHistory) {
         const el = this.selectedElement;
         if (this._isCanvasElement(el)) {
           return;
@@ -175,13 +181,15 @@
         } else {
           parent.appendChild(el);
         }
-        if (!!noUpdateHistory) {
-          this.actionHistory.add('move-back', el);
-        }
         this._refreshView();
+        if (skipHistory) {
+          return;
+        }
+        this.actionHistory.add('move-back', el);
+
       }
 
-      moveForward(noUpdateHistory) {
+      moveForward(skipHistory) {
         const el = this.selectedElement;
         if (this._isCanvasElement(el)) {
           return;
@@ -201,29 +209,32 @@
         } else {
           parent.insertBefore(el, parent.firstChild);
         }
-        if (!!noUpdateHistory) {
-          this.actionHistory.add('move-forward', el);
-        }
         this._refreshView();
+        if (skipHistory) {
+          return;
+        }
+        this.actionHistory.add('move-forward', el);
       }
 
-      moveUp(noUpdateHistory) {
+      moveUp(skipHistory) {
         const el = this.selectedElement;
         let parent = el.parentElement;
         // If the parent isn't already the viewContainer, move it one up.
         if (this._isCanvasElement(el) || (parent && parent.id === 'canvas')) {
           return;
         }
-        if (!!noUpdateHistory) {
-          this.actionHistory.add('move-up', el,
-          {old: {parent: parent}, new: {parent: parent.parentElement}});
-        }
         parent.removeChild(el);
         parent.parentElement.appendChild(el);
         this._refreshView();
+
+        if (skipHistory) {
+          return;
+        }
+        this.actionHistory.add('move-up', el,
+          {old: {parent: parent}, new: {parent: parent.parentElement}});
       }
 
-      moveDown(noUpdateHistory) {
+      moveDown(skipHistory) {
         const el = this.selectedElement;
         let sibling = el.nextElementSibling;
         if (this._isCanvasElement(el) || !sibling) {
@@ -243,17 +254,18 @@
           return;
         }
 
-        if (!!noUpdateHistory) {
-          this.actionHistory.add('move-down', el,
-              {
-                old: {parent: el.parentElement},
-                new: {parent: sibling}
-              });
-        }
-
         // If you can, add it there.
         sibling.appendChild(el);
         this._refreshView();
+
+        if (skipHistory) {
+          return;
+        }
+        this.actionHistory.add('move-down', el,
+            {
+              old: {parent: el.parentElement},
+              new: {parent: sibling}
+            });
       }
 
       _refreshView() {

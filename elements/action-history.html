@@ -63,7 +63,7 @@
         switch(item.action) {
           case 'update':
               Polymer.Base.fire('element-updated',
-                  {type: detail.type, name: detail.name, value: detail.old.value, noUpdateHistory: true},
+                  {type: detail.type, name: detail.name, value: detail.old.value, skipHistory: true},
                   {node: this});
               break;
           case 'new':
@@ -95,10 +95,10 @@
               this._reparent(item.node, detail.new.parent, detail.old.parent);
               break;
           case 'move-back':
-              Polymer.Base.fire('move', {type:'forward'}, {node: this});
+              Polymer.Base.fire('move', {type:'forward', skipHistory: true}, {node: this});
               break;
           case 'move-forward':
-              Polymer.Base.fire('move', {type:'back'}, {node: this});
+              Polymer.Base.fire('move', {type:'back', skipHistory: true}, {node: this});
               break;
         }
         item.node.click();
@@ -115,7 +115,7 @@
         switch(item.action) {
           case 'update':
               Polymer.Base.fire('element-updated',
-                  {type: detail.type, name: detail.name, value: detail.new.value, noUpdateHistory: true},
+                  {type: detail.type, name: detail.name, value: detail.new.value, skipHistory: true},
                   {node: this});
               break;
           case 'new':
@@ -149,10 +149,10 @@
               this._reparent(item.node, detail.old.parent, detail.new.parent);
               break;
           case 'move-back':
-              Polymer.Base.fire('move', {type:'forward'}, {node: this});
+              Polymer.Base.fire('move', {type:'forward', skipHistory: true}, {node: this});
               break;
           case 'move-forward':
-              Polymer.Base.fire('move', {type:'back'}, {node: this});
+              Polymer.Base.fire('move', {type:'back', skipHistory: true}, {node: this});
               break;
         }
         item.node.click();
