@@ -7,7 +7,7 @@
 <link rel="import" href="element-stuff-flex.html">
 <link rel="import" href="element-stuff-properties.html">
 
-<dom-module id="element-stuff">
+<dom-module id="element-view">
   <template>
     <style>
       :host {
@@ -41,8 +41,8 @@
     </iron-pages>
   </template>
   <script>
-    class ElementStuff extends Polymer.Element {
-      static get is() { return 'element-stuff'; }
+    class ElementView extends Polymer.Element {
+      static get is() { return 'element-view'; }
       static get properties() {
         return {
           selected: {
@@ -62,6 +62,6 @@
         this.$.flexContainer.display(computedStyle);
       }
     }
-    customElements.define(ElementStuff.is, ElementStuff);
+    customElements.define(ElementView.is, ElementView);
   </script>
 </dom-module>
