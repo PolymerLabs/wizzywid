@@ -14,13 +14,18 @@
         background-position: 0px 0px;
         transform: translateZ(0);
       }
-      #canvas > * {
+      #canvas * {
         cursor: pointer;
+      }
+      #canvas *:not(.active):hover {
+        outline: solid 2px #90CAF9 !important;
+        outline-offset: 2px;
       }
       .active {
         outline: solid 3px var(--highlight-blue) !important;
         outline-offset: 2px;
       }
+
       /* Show a resize cursor in the corner */
       .active:after {
         position: absolute;
@@ -169,6 +174,12 @@
               let b = t.getBoundingClientRect();
               if (rekt.left > b.left && rekt.left < b.left + b.width &&
                   rekt.top > b.top && rekt.top < b.top + b.height) {
+
+                // New target! Remove the other target indicators.
+                var previousTargets = this.root.querySelectorAll('.over');
+                for (var j = 0; j < previousTargets.length; j++ ){
+                  previousTargets[j].classList.remove('over');
+                }
                 t.classList.add('over');
                 this._dropTarget = t;
               }
@@ -190,7 +201,6 @@
                 this._dropTarget.textContent = '';
               }
               this._dropTarget.appendChild(el);
-              this._dropTarget.classList.remove('over');
               newParent = this._dropTarget;
               this._dropTarget = null;
             } else if (el.parentElement && (el.parentElement !== this.$.canvas)) {
@@ -207,7 +217,7 @@
             let oldTop = el.style.top;
             let oldPosition = el.style.position;
             if (reparented) {
-              el.style.position = 'static';
+              el.style.position = 'relative';
               el.style.left = el.style.top = '0px';
               this.actionHistory.add('reparent', el,
                   {
@@ -230,6 +240,11 @@
                   old:{left: oldLeft, top: oldTop, position:oldPosition}
                 });
             }
+
+            if (newParent)
+              newParent.classList.remove('over');
+            if (oldParent)
+              oldParent.classList.remove('over');
             el.classList.remove('dragging');
             el.classList.remove('resizing');
             el.style.transform = el.style.webkitTransform = 'none';
