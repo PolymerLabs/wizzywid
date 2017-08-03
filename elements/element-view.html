@@ -60,6 +60,10 @@
         this.$.stylesContainer.display(computedStyle);
         this.$.flexContainer.display(computedStyle);
       }
+
+      displayPosition(top, left) {
+        this.$.stylesContainer.display({top: top + 'px', left: left + 'px'});
+      }
     }
     customElements.define(ElementView.is, ElementView);
   </script>

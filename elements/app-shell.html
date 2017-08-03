@@ -52,12 +52,6 @@
         margin: 0 8px;
       }
 
-      app-header button {
-        color: white;
-        text-align: center;
-        margin: 8px;
-      }
-
       button[disabled] {
         opacity: 0.3;
       }
@@ -366,7 +360,7 @@
 
       refreshViewWhileTracking() {
         let size = this.activeElement.getBoundingClientRect();
-        this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
+        this.$.elementView.displayPosition(size.top, size.left);
       }
 
       /**
