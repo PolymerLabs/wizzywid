@@ -14,9 +14,7 @@
 
 <link rel="import" href="action-history.html">
 <link rel="import" href="tree-view.html">
-<link rel="import" href="element-stuff-styles.html">
-<link rel="import" href="element-stuff-flex.html">
-<link rel="import" href="element-stuff-properties.html">
+<link rel="import" href="element-stuff.html">
 <link rel="import" href="canvas-controls.html">
 <link rel="import" href="canvas-view.html">
 
@@ -132,7 +130,7 @@
         color: white;
       }
 
-      .main-view iron-pages {
+      .main-view iron-pages  {
         height: 100%;
         padding-bottom: 0;
         overflow: auto;
@@ -215,23 +213,8 @@
 
       <div class="drawer">
         <canvas-controls id="canvasControls"></canvas-controls>
+        <element-stuff id="elementStuff"></element-stuff>
 
-        <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
-          <designer-tab name="properties">
-            <button>properties</button>
-          </designer-tab>
-          <designer-tab name="styles">
-            <button>styles</button>
-          </designer-tab>
-          <designer-tab name="flex">
-            <button>flex</button>
-          </designer-tab>
-        </designer-tabs>
-        <iron-pages class="dark" role="main" selected="[[stylePage]]" attr-for-selected="name" selected-attribute="visible">
-          <element-stuff-properties name="properties" id="propertiesContainer"></element-stuff-properties>
-          <element-stuff-styles name="styles" id="stylesContainer"></element-stuff-styles>
-          <element-stuff-flex name="flex" id="flexContainer"></element-stuff-flex>
-        </iron-pages>
         <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
           <designer-tab name="native">
             <button>Native</button>
@@ -401,10 +384,7 @@
         let el = this.activeElement ? this.activeElement : this.$.viewContainer;
 
         // Display its properties in the side view.
-        let computedStyle = window.getComputedStyle(el);
-        this.$.propertiesContainer.display(el);
-        this.$.stylesContainer.display(computedStyle);
-        this.$.flexContainer.display(computedStyle);
+        this.$.elementStuff.display(el);
 
         // Highlight it in the tree.
         this.$.treeView.recomputeTree(this.$.viewContainer, el);

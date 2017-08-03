@@ -1,41 +1,67 @@
-<script>
-  (function() {
-    window.ElementStuff = function(base) {
-      return class extends base {
-        ready() {
-          super.ready();
-          this._recomputeStuff();
-          this.root.addEventListener('change', this._do.bind(this));
-        }
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
-        _recomputeStuff() {
-          this._stuff = [];
-          let els = this.root.querySelectorAll('[name]');
-          for (let i = 0 ; i < els.length; i++) {
-            this._stuff.push(els[i].name);
+<link rel="import" href="designer-tabs.html">
+<link rel="import" href="designer-tab.html">
+<link rel="import" href="element-stuff-styles.html">
+<link rel="import" href="element-stuff-flex.html">
+<link rel="import" href="element-stuff-properties.html">
+
+<dom-module id="element-stuff">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      iron-pages {
+        overflow: hidden;
+        height: 250px;
+        padding-bottom: 20px;
+        background: var(--medium-grey);
+        color: white;
+      }
+    </style>
+    <designer-tabs attr-for-selected="name" selected="{{selected}}">
+      <designer-tab name="properties">
+        <button>properties</button>
+      </designer-tab>
+      <designer-tab name="styles">
+        <button>styles</button>
+      </designer-tab>
+      <designer-tab name="flex">
+        <button>flex</button>
+      </designer-tab>
+    </designer-tabs>
+
+    <iron-pages class="dark" role="main" attr-for-selected="name" selected-attribute="visible"
+          selected="[[selected]]">
+      <element-stuff-properties name="properties" id="propertiesContainer"></element-stuff-properties>
+      <element-stuff-styles name="styles" id="stylesContainer"></element-stuff-styles>
+      <element-stuff-flex name="flex" id="flexContainer"></element-stuff-flex>
+    </iron-pages>
+  </template>
+  <script>
+    class ElementStuff extends Polymer.Element {
+      static get is() { return 'element-stuff'; }
+      static get properties() {
+        return {
+          selected: {
+            type: String,
+            value: 'properties'
           }
-        }
-
-        _do(event) {
-          let target = event.composedPath()[0];
-
-          // Is it a custom thing?
-          if (target.classList.contains('style-label')) {
-            // Set the name on the next input
-            target.nextElementSibling.name = target.value;
-            this._recomputeStuff();
-            return;
-          }
-
-          Polymer.Base.fire('element-updated',
-              {
-                type: this.stuffType,
-                name: target.name,
-                value: target.value,
-                isAttribute: target.classList.contains('attribute')
-              }, {node: this});
         }
       }
+
+      /**
+       * Updates the views.
+       */
+      display(el) {
+        let computedStyle = window.getComputedStyle(el);
+        this.$.propertiesContainer.display(el);
+        this.$.stylesContainer.display(computedStyle);
+        this.$.flexContainer.display(computedStyle);
+      }
     }
-  })();
-</script>
+    customElements.define(ElementStuff.is, ElementStuff);
+  </script>
+</dom-module>

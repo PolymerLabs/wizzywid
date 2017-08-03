@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="element-stuff.html">
+<link rel="import" href="element-stuff-base.html">
 <link rel="import" href="element-stuff-shared-styles.html">
 
 <dom-module id="element-stuff-flex">
@@ -74,7 +74,7 @@
 
   </template>
   <script>
-    class ElementFlex extends ElementStuff(Polymer.Element) {
+    class ElementFlex extends ElementStuffBase(Polymer.Element) {
       static get is() { return 'element-stuff-flex'; }
       constructor() {
         super();
