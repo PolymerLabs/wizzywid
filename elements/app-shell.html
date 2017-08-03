@@ -332,10 +332,10 @@
           if (name === 'display' && value === 'flex') {
             let children = this.activeElement.children;
             for (let i = 0; i < children.length; i++) {
-              children[i].style.position = 'relative';
+              children[i].style.position = 'static';
               children[i].style.top = children[i].style.left = 'auto';
             }
-          } 
+          }
           previousValue = this.activeElement.style[name];
           this.activeElement.style[name] = value;
         } else {
