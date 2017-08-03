@@ -114,7 +114,7 @@
         el.parentNode.appendChild(clone);
 
         Polymer.Base.fire('finish-clone', {target: clone}, {node: this});
-        
+
         // P.S: Since we did a clone, we already have the initial state of the <tag>.
         this.actionHistory.add('new', clone);
         this._refreshView();
@@ -181,7 +181,7 @@
           parent.appendChild(el);
         }
         this._refreshView();
-        if (skipHistory) {
+        if (skipHistory === true) {
           return;
         }
         this.actionHistory.add('move-back', el);
@@ -209,7 +209,7 @@
           parent.insertBefore(el, parent.firstChild);
         }
         this._refreshView();
-        if (skipHistory) {
+        if (skipHistory === true) {
           return;
         }
         this.actionHistory.add('move-forward', el);
@@ -226,7 +226,7 @@
         parent.parentElement.appendChild(el);
         this._refreshView();
 
-        if (skipHistory) {
+        if (skipHistory === true) {
           return;
         }
         this.actionHistory.add('move-up', el,
@@ -244,9 +244,7 @@
         // (where I copied this code from like a lazy bum)
         let slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
         let canDrop =
-          sibling.tagName === 'DIV' || sibling.tagName === 'BUTTON' ||
-          sibling.tagName === 'FORM' || sibling.tagName === 'A' ||
-          sibling.tagName === 'H1' ||
+          (sibling.localName.indexOf('-') === -1 && sibling.localName !== 'input') ||
           slots.length !== 0;
 
         if (!canDrop) {
@@ -254,15 +252,16 @@
         }
 
         // If you can, add it there.
+        const oldParent = el.parentElement;
         sibling.appendChild(el);
         this._refreshView();
 
-        if (skipHistory) {
+        if (skipHistory === true) {
           return;
         }
         this.actionHistory.add('move-down', el,
             {
-              old: {parent: el.parentElement},
+              old: {parent: oldParent},
               new: {parent: sibling}
             });
       }
