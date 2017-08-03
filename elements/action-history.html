@@ -85,16 +85,14 @@
               this._updateSize(item.node, detail.old);
               break;
           case 'reparent':
+          case 'move-up':
+          case 'move-down':
               this._reparent(item.node, detail.new.parent, detail.old.parent);
               this._updatePosition(item.node, detail.old);
               break;
           case 'fit':
               this._updatePosition(item.node, detail.old);
               this._updateSize(item.node, detail.old);
-              break;
-          case 'move-up':
-          case 'move-down':
-              this._reparent(item.node, detail.new.parent, detail.old.parent);
               break;
           case 'move-back':
               Polymer.Base.fire('move', {type:'forward', skipHistory: true}, {node: this});
@@ -141,16 +139,14 @@
               this._updateSize(item.node, detail.new);
               break;
           case 'reparent':
+          case 'move-up':
+          case 'move-down':
               this._reparent(item.node, detail.old.parent, detail.new.parent);
               this._updatePosition(item.node, detail.new);
               break;
           case 'fit':
               this._updateSize(item.node, detail.new);
               this._updatePosition(item.node, detail.new);
-              break;
-          case 'move-up':
-          case 'move-down':
-              this._reparent(item.node, detail.old.parent, detail.new.parent);
               break;
           case 'move-back':
               Polymer.Base.fire('move', {type:'forward', skipHistory: true}, {node: this});

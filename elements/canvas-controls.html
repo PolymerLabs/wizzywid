@@ -254,6 +254,8 @@
         // If you can, add it there.
         const oldParent = el.parentElement;
         sibling.appendChild(el);
+        const oldPosition = el.style.position;
+        el.style.position = 'relative';
         this._refreshView();
 
         if (skipHistory === true) {
@@ -261,8 +263,8 @@
         }
         this.actionHistory.add('move-down', el,
             {
-              old: {parent: oldParent},
-              new: {parent: sibling}
+              old: {parent: oldParent, position: oldPosition},
+              new: {parent: sibling, position: 'relative'}
             });
       }
 
