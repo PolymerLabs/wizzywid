@@ -62,7 +62,9 @@
         item.node.click();
         switch(item.action) {
           case 'update':
-              this.shell.updateActiveElementValues(detail.type, detail.name, detail.old.value);
+              Polymer.Base.fire('element-updated',
+                  {type: detail.type, name: detail.name, value: detail.old.value, noUpdateHistory: true},
+                  {node: this});
               break;
           case 'new':
               this._doEvent(item.node, 'remove-from-canvas');
@@ -93,10 +95,10 @@
               this._reparent(item.node, detail.new.parent, detail.old.parent);
               break;
           case 'move-back':
-              this.shell.moveForward(false);
+              Polymer.Base.fire('move', {type:'forward'}, {node: this});
               break;
           case 'move-forward':
-              this.shell.moveBack(false);
+              Polymer.Base.fire('move', {type:'back'}, {node: this});
               break;
         }
         item.node.click();
@@ -112,7 +114,9 @@
         item.node.click();
         switch(item.action) {
           case 'update':
-              this.shell.updateActiveElementValues(detail.type, detail.name, detail.new.value);
+              Polymer.Base.fire('element-updated',
+                  {type: detail.type, name: detail.name, value: detail.new.value, noUpdateHistory: true},
+                  {node: this});
               break;
           case 'new':
               this._doEvent(item.node, 'add-to-canvas');
@@ -145,10 +149,10 @@
               this._reparent(item.node, detail.old.parent, detail.new.parent);
               break;
           case 'move-back':
-              this.shell.moveForward(false);
+              Polymer.Base.fire('move', {type:'forward'}, {node: this});
               break;
           case 'move-forward':
-              this.shell.moveBack(false);
+              Polymer.Base.fire('move', {type:'back'}, {node: this});
               break;
         }
         item.node.click();
@@ -156,7 +160,7 @@
 
       updateButtons() {
         Polymer.Base.fire('update-action-buttons',
-        {undos: this.undoHistory.length, redos: this.redoHistory.length}, {node: this});
+            {undos: this.undoHistory.length, redos: this.redoHistory.length}, {node: this});
       }
 
       _itemsMatch(action, first, second) {

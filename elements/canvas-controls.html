@@ -152,6 +152,16 @@
       /**
        * Moving elements in the DOM
        */
+      move(type) {
+        switch(type) {
+          case 'forward':
+            this.moveForward(false);
+            break;
+          case 'back':
+            this.moveBack(false);
+            break;
+        }
+      }
       moveBack(noUpdateHistory) {
         const el = this.selectedElement;
         if (this._isCanvasElement(el)) {

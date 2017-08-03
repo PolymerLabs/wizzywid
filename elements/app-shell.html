@@ -183,7 +183,6 @@
         window.codeView.canvasElement = this.$.viewContainer;
 
         // TODO: fix this!
-        this.$.actionHistory.shell = this;
         this.$.viewContainer.shell = this;
 
         this.setActiveElement(this.$.viewContainer);
@@ -199,7 +198,7 @@
         this.addEventListener('element-updated', event => this.updateElement(event));
 
         this.addEventListener('refresh-view', event => this.refreshView(event));
-        this.addEventListener('selected-element-changed', event => function(event) {
+        this.addEventListener('selected-element-changed', event => {
           this.setActiveElement(event.detail.target);
         });
         this.addEventListener('finish-clone', event => {
@@ -219,6 +218,9 @@
         this.addEventListener('add-to-canvas', event => {
           this.$.viewContainer.add(event.detail.target);
           event.detail.target.click();
+        });
+        this.addEventListener('move', event => function(event) {
+          this.$.canvasControls.move(event.detail.type);
         });
       }
 
@@ -306,7 +308,10 @@
       updateElement(event) {
         let detail = event.detail;
         let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
-        // Update the history.
+
+        if (detail.noUpdateHistory) {
+          return;
+        }
         this.$.actionHistory.add('update', this.activeElement,
           {
             type: detail.type, name: detail.name,
