@@ -83,6 +83,8 @@
         overflow: hidden;
         background: var(--medium-grey);
         color: white;
+        display: flex;
+        flex-direction: column;
       }
 
       .main-view {
@@ -399,7 +401,7 @@
         // palette, so position it somewhere slightly better.
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
-        
+
         // If it's a native element, or has a slot, put some text in that slot
         // to indicate that.
         let slots = el.root ? el.root.querySelectorAll('slot') : [];

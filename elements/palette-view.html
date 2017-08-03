@@ -11,14 +11,16 @@
   <template>
     <style>
       :host {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
       }
       iron-pages {
+        flex: 1;
         overflow: hidden;
         padding-bottom: 20px;
         background: var(--medium-grey);
         color: white;
-        height: calc(100% - 250px - 40px - 40px - 20px) !important;
       }
     </style>
     <designer-tabs attr-for-selected="name" selected="{{selected}}">
