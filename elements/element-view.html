@@ -57,7 +57,7 @@
       display(el) {
         let computedStyle = window.getComputedStyle(el);
         this.$.propertiesContainer.display(el);
-        this.$.stylesContainer.display(computedStyle);
+        this.$.stylesContainer.display(computedStyle, el);
         this.$.flexContainer.display(computedStyle);
       }
 

@@ -53,7 +53,7 @@
         super();
         this.stuffType = 'style';
       }
-      display(elementStyles) {
+      display(elementStyles, selectedElement) {
         for (let i = 0; i < this._stuff.length; i++) {
           let name = this._stuff[i];
           if (!elementStyles[name])
@@ -61,6 +61,10 @@
           let el = this.root.querySelector(`[name=${name}]`);
           if (name === 'backgroundColor' || name === 'color') {
             el.value = this._rgb2hex(elementStyles[name]);
+          } else if (name === 'width' || name === 'height') {
+            // For width or height, the computedStyle gives us exact pixels
+            // rather than % positioning.
+            el.value = selectedElement.style[name];
           } else {
             el.value = elementStyles[name];
           }
