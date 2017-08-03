@@ -1,0 +1,260 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="app-icons.html">
+<link rel="import" href="designer-tab.html">
+<dom-module id="canvas-controls">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+      designer-tab {
+        color: white;
+        background: var(--dark-grey);
+        width: 100%;
+        height: 41px;
+        margin: 0;
+        padding: 0;
+        border: none;
+        display: flex;
+        padding: 10px 0;
+        font-size: 10px;
+        justify-content: space-around;
+      }
+      button {
+        padding: 0;
+        cursor: pointer;
+      }
+      button[disabled] {
+        opacity: 0.3;
+      }
+    </style>
+    <designer-tab>
+      <button on-click="delete" title="Delete element">
+        <iron-icon icon="designer:delete"></iron-icon>
+      </button>
+      <button on-click="clone" id="cloneBtn" title="Clone element">
+        <iron-icon icon="designer:copy"></iron-icon>
+      </button>
+      <button on-click="fit" id="fitBtn" title="Fit to parent">
+        <iron-icon icon="designer:fit"></iron-icon>
+      </button>
+      <button on-click="moveUp" title="Move to parent. Also Shift+UpArrow" id="moveUpBtn">
+        <iron-icon icon="designer:up"></iron-icon>
+      </button>
+      <button on-click="moveDown" title="Move to first child. Also Shift+DownArrow" id="moveDownBtn">
+        <iron-icon icon="designer:down"></iron-icon>
+      </button>
+      <button on-click="moveBack" title="Move back. Also Shift+LeftArrow" id="moveBackBtn">
+        <iron-icon icon="designer:back"></iron-icon>
+      </button>
+      <button on-click="moveForward" title="Move forward. Also Shift+RightArrow" id="moveForwardBtn">
+        <iron-icon icon="designer:forward"></iron-icon>
+      </button>
+    </designer-tab>
+  </template>
+  <script>
+    class CanvasControls extends Polymer.Element {
+      static get is() { return 'canvas-controls'; }
+      static get properties() { return {
+          selectedElement: {
+            type: Object,
+            observer: '_selectedElementChanged'
+          },
+          canvasElement: Object,
+          actionHistory: Object
+        }
+      }
+
+      update(disableUI) {
+        this.$.cloneBtn.disabled = disableUI;
+        this.$.fitBtn.disabled = disableUI;
+        this.$.moveUpBtn.disabled = disableUI;
+        this.$.moveDownBtn.disabled = disableUI;
+        this.$.moveBackBtn.disabled = disableUI;
+        this.$.moveForwardBtn.disabled = disableUI;
+      }
+
+      /**
+       * Deletes the active element.
+       */
+      delete() {
+        if (!this.selectedElement) {
+          console.log('🔥 how did i get here?');
+          return;
+        }
+
+        const el = this.selectedElement;
+        // Deleting the top level app should remove its children.
+        if (this._isCanvasElement(el)) {
+          this.actionHistory.add('delete', el, {innerHTML: el.getInnerHTML()});
+          el.setInnerHTML('');
+        } else {
+          const parent = el.parentElement;
+          parent.removeChild(el);
+          this.selectedElement = parent;
+          this.actionHistory.add('delete', el, {parent: parent});
+        }
+        this._refreshView();
+      }
+
+      /**
+       * Creates a sibling copy of the active element.
+       */
+      clone() {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+
+        let clone = el.cloneNode(true);
+        el.parentNode.appendChild(clone);
+
+        Polymer.Base.fire('finish-clone', {target: clone}, {node: this});
+        clone.style.position = el.style.position;
+
+        // P.S: Since we did a clone, we already have the initial state of the <tag>.
+        this.actionHistory.add('new', clone);
+        this._refreshView();
+      }
+
+      /**
+       * Fit an element to its target
+       */
+      fit() {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+
+        this.actionHistory.add('fit', el,
+          {
+            new: {
+              position: 'absolute',
+              left: '0', top: '0',
+              width: '100%', height: '100%'
+            },
+            old: {
+              position: el.style.position,
+              left: el.style.left, top: el.style.top,
+              width: el.style.width, height: el.style.height,
+            }
+          });
+
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '0px';
+        el.style.height = el.style.width = '100%';
+      }
+
+      /**
+       * Moving elements in the DOM
+       */
+      moveBack(noUpdateHistory) {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+
+        let parent = el.parentElement;
+        let previous = el.previousElementSibling;
+        if (previous) {
+          parent.insertBefore(el, previous);
+        } else {
+          parent.appendChild(el);
+        }
+        if (!!noUpdateHistory) {
+          this.actionHistory.add('move-back', el);
+        }
+        this._refreshView();
+      }
+
+      moveForward(noUpdateHistory) {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+        let parent = el.parentElement;
+
+        // Since you can't insertAfter your next sibling, you need to
+        // insert before two siblings over.
+        let next = el.nextElementSibling;
+        if (next) {
+          next = next.nextElementSibling;
+          if (next) {
+            parent.insertBefore(el, next);
+          } else {
+            parent.appendChild(el);
+          }
+        } else {
+          parent.insertBefore(el, parent.firstChild);
+        }
+        if (!!noUpdateHistory) {
+          this.actionHistory.add('move-forward', el);
+        }
+        this._refreshView();
+      }
+
+      moveUp(noUpdateHistory) {
+        const el = this.selectedElement;
+        let parent = el.parentElement;
+        // If the parent isn't already the viewContainer, move it one up.
+        if (this._isCanvasElement(el) || (parent && parent.id === 'canvas')) {
+          return;
+        }
+        if (!!noUpdateHistory) {
+          this.actionHistory.add('move-up', el,
+          {old: {parent: parent}, new: {parent: parent.parentElement}});
+        }
+        parent.removeChild(el);
+        parent.parentElement.appendChild(el);
+        this._refreshView();
+      }
+
+      moveDown(noUpdateHistory) {
+        const el = this.selectedElement;
+        let sibling = el.nextElementSibling;
+        if (this._isCanvasElement(el) || !sibling) {
+          return;
+        }
+
+        // Not everything accepts children, as we've learnt from canvas-view
+        // (where I copied this code from like a lazy bum)
+        let slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
+        let canDrop =
+          sibling.tagName === 'DIV' || sibling.tagName === 'BUTTON' ||
+          sibling.tagName === 'FORM' || sibling.tagName === 'A' ||
+          sibling.tagName === 'H1' ||
+          slots.length !== 0;
+
+        if (!canDrop) {
+          return;
+        }
+
+        if (!!noUpdateHistory) {
+          this.actionHistory.add('move-down', el,
+              {
+                old: {parent: el.parentElement},
+                new: {parent: sibling}
+              });
+        }
+
+        // If you can, add it there.
+        sibling.appendChild(el);
+        this._refreshView();
+      }
+
+      _refreshView() {
+        Polymer.Base.fire('refresh-view', {}, {node: this});
+      }
+
+      _selectedElementChanged() {
+        Polymer.Base.fire('selected-element-changed', {target: this.selectedElement}, {node: this});
+      }
+
+      _isCanvasElement(el) {
+        return (el === this.canvasElement);
+      }
+    }
+    customElements.define(CanvasControls.is, CanvasControls);
+  </script>
+</dom-module>

@@ -16,6 +16,7 @@
 <link rel="import" href="element-stuff-styles.html">
 <link rel="import" href="element-stuff-flex.html">
 <link rel="import" href="element-stuff-properties.html">
+<link rel="import" href="canvas-controls.html">
 <link rel="import" href="canvas-view.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -41,6 +42,10 @@
         width: 100%;
         position: fixed;
         z-index: 100;
+      }
+
+      app-header .actions {
+        display: flex;
       }
 
       button {
@@ -157,15 +162,6 @@
         height: 100%;
       }
 
-      .actions {
-        display: flex;
-        padding: 10px 0;
-        font-size: 10px;
-        justify-content: space-around;
-      }
-      .actions button {
-        padding: 0;
-      }
       iframe {
         width: 100%;
         height: 100%;
@@ -212,6 +208,7 @@
         </span>
       </app-toolbar>
     </app-header>
+
     <div class="container">
       <div class="drawer small">
         <designer-tab class="single">
@@ -249,30 +246,8 @@
       </div>
 
       <div class="drawer">
-        <designer-tab class="single actions">
-          <button on-click="deleteElement" title="Delete element">
-            <iron-icon icon="designer:delete"></iron-icon>
-          </button>
-          <button on-click="cloneElement" id="cloneBtn" title="Clone element">
-            <iron-icon icon="designer:copy"></iron-icon>
-          </button>
-          <button on-click="fitElement" id="fitBtn" title="Fit to parent">
-            <iron-icon icon="designer:fit"></iron-icon>
-          </button>
-          <button on-click="moveUp" title="Move to parent. Also Shift+UpArrow" id="moveUpBtn">
-            <iron-icon icon="designer:up"></iron-icon>
-          </button>
-          <button on-click="moveDown" title="Move to first child. Also Shift+DownArrow" id="moveDownBtn">
-            <iron-icon icon="designer:down"></iron-icon>
-          </button>
-          <button on-click="moveBack" title="Move back. Also Shift+LeftArrow" id="moveBackBtn">
-            <iron-icon icon="designer:back"></iron-icon>
-          </button>
-          <button on-click="moveForward" title="Move forward. Also Shift+RightArrow" id="moveForwardBtn">
-            <iron-icon icon="designer:forward"></iron-icon>
-          </button>
+        <canvas-controls id="canvasControls"></canvas-controls>
 
-        </designer-tab>
         <designer-tabs attr-for-selected="name" selected="{{stylePage}}">
           <designer-tab name="properties">
             <button>properties</button>
@@ -353,8 +328,19 @@
         this.setActiveElement(this.$.viewContainer);
         this.refreshView();
 
+        this.$.canvasControls.selectedElement = this.activeElement;
+        this.$.canvasControls.actionHistory = this.$.actionHistory;
+        this.$.canvasControls.canvasElement = this.$.viewContainer;
+
         this.addEventListener('new-element', this.createElement.bind(this));
         this.addEventListener('new-sample', this.createSample.bind(this));
+        this.addEventListener('refresh-view', this.refreshView.bind(this));
+        this.addEventListener('selected-element-changed', function(event) {
+          this.setActiveElement(event.detail.target);
+        }.bind(this));
+        this.addEventListener('finish-clone', function(event) {
+          this._finishNewElement(event.detail.target, event.detail.target.localName, true);
+        }.bind(this));
         this.addEventListener('element-updated', function(event) {
           let detail = event.detail;
           let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
@@ -388,16 +374,10 @@
         }
 
         el.classList.add('active');
-        this.activeElement = el;
+        this.$.canvasControls.selectedElement = this.activeElement = el;
 
         // Disable a bunch of UI for the top level element.
-        let disableUI = this._mainAppSelected();
-        this.$.cloneBtn.disabled = disableUI;
-        this.$.fitBtn.disabled = disableUI;
-        this.$.moveUpBtn.disabled = disableUI;
-        this.$.moveDownBtn.disabled = disableUI;
-        this.$.moveBackBtn.disabled = disableUI;
-        this.$.moveForwardBtn.disabled = disableUI;
+        this.$.canvasControls.update(this.activeElement === this.$.viewContainer);
       }
 
       /*
@@ -447,54 +427,6 @@
         this.refreshView();
       }
 
-      /**
-       * Deletes the active element.
-       */
-      deleteElement() {
-        if (!this.activeElement) {
-          return;
-        }
-
-        let el = this.activeElement;
-        // Deleting the top level app should remove its children.
-        if (this._mainAppSelected()) {
-          this.$.actionHistory.add('delete', el, {innerHTML: el.getInnerHTML()});
-          el.setInnerHTML('');
-        } else {
-          let parent = el.parentElement;
-          parent.removeChild(el);
-          this.setActiveElement(parent);
-          this.$.actionHistory.add('delete', el, {parent: parent});
-        }
-        this.refreshView();
-      }
-
-      /**
-       * Creates a sibling copy of the active element.
-       */
-      cloneElement() {
-        if (this._mainAppSelected()) {
-          return;
-        }
-
-        let el = this.activeElement;
-        let clone = el.cloneNode(true);
-        el.parentNode.appendChild(clone);
-        let tag = clone.tagName.toLowerCase();
-        clone.id = this._makeUniqueId(clone, tag);
-        this._finishNewElement(clone, tag, true);
-        clone.style.position = el.style.position;
-
-        // Go through the children and reset their IDs too.
-        let children = clone.querySelectorAll('*');
-        for (let i = 0; i < children.length; i++) {
-          children[i].id = this._makeUniqueId(children[i], children[i].tagName.toLowerCase());
-        }
-
-        // P.S: Since we did a clone, we already have the initial state of the <tag>.
-        this.$.actionHistory.add('new', clone);
-        this.refreshView();
-      }
 
       /**
        * Refreshes all the properties/styles of the active element.
@@ -521,32 +453,7 @@
         this.$.stylesContainer.display({top: size.top + 'px', left: size.left + 'px'});
       }
 
-      /**
-       * Fit an element to its target
-       */
-      fitElement() {
-        if (this._mainAppSelected()) {
-          return;
-        }
-        let el = this.activeElement;
-        this.$.actionHistory.add('fit', el,
-          {
-            new: {
-              position: 'absolute',
-              left: '0', top: '0',
-              width: '100%', height: '100%'
-            },
-            old: {
-              position: el.style.position,
-              left: el.style.left, top: el.style.top,
-              width: el.style.width, height: el.style.height,
-            }
-          });
 
-        el.style.position = 'absolute';
-        el.style.left = el.style.top = '0px';
-        el.style.height = el.style.width = '100%';
-      }
 
       /**
        * Updates the active element's displayed values.
@@ -597,101 +504,7 @@
         }
       }
 
-      /**
-       * Moving elements in the DOM
-       */
-      moveBack(noUpdateHistory) {
-        if (this._mainAppSelected()) {
-          return;
-        }
-        let el = this.activeElement;
-        let parent = el.parentElement;
-        let previous = el.previousElementSibling;
-        if (previous) {
-          parent.insertBefore(el, previous);
-        } else {
-          parent.appendChild(el);
-        }
-        if (!!noUpdateHistory) {
-          this.$.actionHistory.add('move-back', el);
-        }
-        this.refreshView();
-      }
 
-      moveForward(noUpdateHistory) {
-        if (this._mainAppSelected()) {
-          return;
-        }
-        let el = this.activeElement;
-        let parent = el.parentElement;
-
-        // Since you can't insertAfter your next sibling, you need to
-        // insert before two siblings over.
-        let next = el.nextElementSibling;
-        if (next) {
-          next = next.nextElementSibling;
-          if (next) {
-            parent.insertBefore(el, next);
-          } else {
-            parent.appendChild(el);
-          }
-        } else {
-          parent.insertBefore(el, parent.firstChild);
-        }
-        if (!!noUpdateHistory) {
-          this.$.actionHistory.add('move-forward', el);
-        }
-        this.refreshView();
-      }
-
-      moveUp(noUpdateHistory) {
-        let el = this.activeElement;
-        let parent = el.parentElement;
-        // If the parent isn't already the viewContainer, move it one up.
-        if (this._mainAppSelected() || (parent && parent.id === 'canvas')) {
-          return;
-        }
-        if (!!noUpdateHistory) {
-          this.$.actionHistory.add('move-up', el,
-          {old: {parent: parent}, new: {parent: parent.parentElement}});
-        }
-        parent.removeChild(el);
-        parent.parentElement.appendChild(el);
-        this.refreshView();
-      }
-
-      moveDown(noUpdateHistory) {
-        let el = this.activeElement;
-        let sibling = el.nextElementSibling;
-        if (this._mainAppSelected() || !sibling) {
-          return;
-        }
-
-        // Not everything accepts children, as we've learnt from canvas-view
-        // (where I copied this code from like a lazy bum)
-        let slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
-        let canDrop =
-          sibling.tagName === 'DIV' || sibling.tagName === 'BUTTON' ||
-          sibling.tagName === 'FORM' || sibling.tagName === 'A' ||
-          sibling.tagName === 'H1' ||
-          slots.length !== 0;
-
-        if (!canDrop) {
-          return;
-        }
-
-        if (!!noUpdateHistory) {
-          this.$.actionHistory.add('move-down', el,
-              {
-                old: {parent: el.parentElement},
-                new: {parent: sibling}
-              });
-        }
-
-        // If you can, add it there.
-        sibling.appendChild(el);
-        this.refreshView();
-      }
 
       jsFiddleIt() {
         let code = window.codeView.get(this.$.viewContainer, true);
@@ -747,11 +560,17 @@
         el.id = this._makeUniqueId(el, tag);
 
         if (isClone) {
+          // Go through the children and reset their IDs too.
+          let children = el.querySelectorAll('*');
+          for (let i = 0; i < el.length; i++) {
+            el[i].id = this._makeUniqueId(el[i], el[i].localName);
+          }
           return;
         }
-        let slots = el.root ? el.root.querySelectorAll('slot') : [];
 
-        // If it's a native element, or has a slot, put something in that slot.
+        // If it's a native element, or has a slot, put some text in that slot
+        // to indicate that.
+        let slots = el.root ? el.root.querySelectorAll('slot') : [];
         if ((this.$.native.elements.indexOf(tag) !== -1 && tag !== 'input') ||
             slots.length != 0) {
           el.textContent = tag;
@@ -765,12 +584,7 @@
           this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
       }
 
-      _mainAppSelected(el) {
-        if (!el) {
-          el = this.activeElement;
-        }
-        return (el == this.$.viewContainer);
-      }
+
     }
     customElements.define(AppShell.is, AppShell);
   </script>

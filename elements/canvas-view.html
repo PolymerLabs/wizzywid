@@ -86,8 +86,8 @@
         return this.$.canvas.children;
       }
       updateActiveElement(el) {
-        this.shell.setActiveElement(el);
-        this.shell.refreshView();
+        Polymer.Base.fire('selected-element-changed', {target: el}, {node: this});
+        Polymer.Base.fire('refresh-view', {}, {node: this});
       }
 
       _getRealEventElement(event) {
