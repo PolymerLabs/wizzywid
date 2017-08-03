@@ -226,6 +226,7 @@
                 });
             }
             el.classList.remove('dragging');
+            el.classList.remove('resizing');
             el.style.transform = el.style.webkitTransform = 'none';
             break;
         }
@@ -250,6 +251,15 @@
                  old:{width: this._initialWidth + 'px', height: this._initialHeight + 'px'}
                });
             el.classList.remove('resizing');
+            el.classList.remove('dragging');
+
+            // Ensure that this element is still selected after we're done.
+            // i.e.: Sometimes the end of a resize can end up outside of the element,
+            // and register as a click on the main canvas, deselecting the thing
+            // you were dragging.
+            setTimeout(function() {
+              el.click();
+            }, 100)
             break;
         }
         this.updateActiveElement(el);
