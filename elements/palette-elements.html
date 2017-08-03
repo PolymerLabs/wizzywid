@@ -77,6 +77,8 @@
           }
         }
         this.elements = Object.keys(list).concat(subelements).sort();
+
+        Polymer.Base.fire('package-names-ready', {list: this.namesToPackages}, {node: this});
       }
 
       _doClick(target, kind) {

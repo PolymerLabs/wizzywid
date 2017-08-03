@@ -13,7 +13,7 @@
     class CodeView extends Polymer.Element {
       static get is() { return 'code-view'; }
       static get properties() {
-        return { canvasElement: Object }
+        return { canvasElement: Object, elementsToPackages: Object }
       }
 
       // Yeah so Ace editor doesn't work with shadow roots because
@@ -53,8 +53,7 @@
         this._attributeDefaultsForTag[tag] = {};
 
         if (!packageName) {
-          // TODO: woof, this is bad.
-          packageName = window.shell.$.custom.namesToPackages[tag];
+          packageName = this.elementsToPackages[tag];
           // If you still didn't find an answer, default to the tag name.
           if (!packageName) {
             packageName = tag;
@@ -86,7 +85,7 @@
 
       get(usePolygit) {
         const parent = this.canvasElement;
-        
+
         // Imports. Yes i'm using element globals because I'm lazy. Fight me.
         this._imports = '';
         this._template = '';

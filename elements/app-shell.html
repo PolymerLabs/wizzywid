@@ -8,15 +8,13 @@
 <link rel="import" href="app-controls.html">
 <link rel="import" href="designer-tabs.html">
 <link rel="import" href="designer-tab.html">
-<link rel="import" href="palette-native.html">
-<link rel="import" href="palette-elements.html">
-<link rel="import" href="palette-samples.html">
+<link rel="import" href="palette-view.html">
 
 <link rel="import" href="action-history.html">
 <link rel="import" href="tree-view.html">
 <link rel="import" href="element-view.html">
-<link rel="import" href="canvas-controls.html">
 <link rel="import" href="canvas-view.html">
+<link rel="import" href="canvas-controls.html">
 
 <script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
 <dom-module id="app-shell">
@@ -122,22 +120,10 @@
         width: 100%;
       }
 
-      iron-pages.dark {
-        height: 250px;
-        overflow:hidden;
-        padding-bottom: 20px;
-        background: var(--medium-grey);
-        color: white;
-      }
-
       .main-view iron-pages  {
         height: 100%;
         padding-bottom: 0;
         overflow: auto;
-      }
-
-      iron-pages.elements {
-        height: calc(100% - 250px - 40px - 40px - 20px) !important;
       }
 
       iron-pages > div {
@@ -213,24 +199,8 @@
 
       <div class="drawer">
         <canvas-controls id="canvasControls"></canvas-controls>
-        <element-view id="elementStuff"></element-view>
-
-        <designer-tabs attr-for-selected="name" selected="{{viewPage}}">
-          <designer-tab name="native">
-            <button>Native</button>
-          </designer-tab>
-          <designer-tab name="elements">
-            <button>Custom</button>
-          </designer-tab>
-          <designer-tab name="samples">
-            <button>Samples</button>
-          </designer-tab>
-        </designer-tabs>
-        <iron-pages class="dark elements" selected="[[viewPage]]" attr-for-selected="name" selected-attribute="visible">
-          <palette-native name="native" id="native"></palette-native>
-          <palette-elements name="elements" id="custom"></palette-elements>
-          <palette-samples name="samples"></palette-samples>
-        </iron-pages>
+        <element-view id="elementView"></element-view>
+        <palette-view id="paletteView"></palette-view>
       </div>
     </div>
   </template>
@@ -290,6 +260,10 @@
         this.addEventListener('update-action-buttons', function(event) {
           this.$.appControls.update(event.detail.undos, event.detail.redos);
         }.bind(this));
+        this.addEventListener('package-names-ready', function(event) {
+          window.codeView.elementsToPackages = event.detail.list;
+        }.bind(this));
+
         this.addEventListener('element-updated', function(event) {
           let detail = event.detail;
           let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
@@ -384,7 +358,7 @@
         let el = this.activeElement ? this.activeElement : this.$.viewContainer;
 
         // Display its properties in the side view.
-        this.$.elementStuff.display(el);
+        this.$.elementView.display(el);
 
         // Highlight it in the tree.
         this.$.treeView.recomputeTree(this.$.viewContainer, el);
@@ -486,7 +460,8 @@
         // If it's a native element, or has a slot, put some text in that slot
         // to indicate that.
         let slots = el.root ? el.root.querySelectorAll('slot') : [];
-        if ((this.$.native.elements.indexOf(tag) !== -1 && tag !== 'input') ||
+
+        if ((this.$.paletteView.isNativeElement(tag) && tag !== 'input') ||
             slots.length != 0) {
           el.textContent = tag;
         }
