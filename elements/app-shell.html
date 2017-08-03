@@ -11,6 +11,7 @@
 <link rel="import" href="palette-view.html">
 
 <link rel="import" href="action-history.html">
+<link rel="import" href="demo-view.html">
 <link rel="import" href="tree-view.html">
 <link rel="import" href="element-view.html">
 <link rel="import" href="canvas-view.html">
@@ -106,15 +107,11 @@
         color: inherit;
       }
 
-      [hidden] {
-        display: none !important;
-      }
-
       designer-tabs {
         width: 100%;
       }
 
-      .main-view iron-pages  {
+       iron-pages  {
         height: 100%;
         padding-bottom: 0;
         overflow: auto;
@@ -124,10 +121,6 @@
         height: 100%;
       }
 
-      iframe {
-        width: 100%;
-        height: 100%;
-      }
       .heavy {
         font-weight: 900;
         letter-spacing: 2px;
@@ -137,13 +130,8 @@
         opacity: 0.5;
         letter-spacing: normal;
       }
-      #loadingScreen {
-        position: absolute;
-        top: 60px;
-        left: 20px;
-      }
 
-      div[name="designer"], #demoContainer {
+      div[name="designer"] {
         overflow: hidden;
       }
     </style>
@@ -179,15 +167,13 @@
           </designer-tab>
         </designer-tabs>
         <iron-pages role="main" selected="[[mainPage]]" attr-for-selected="name" selected-attribute="visible">
+
           <div name="designer">
-            <canvas-view  id="viewContainer" style="height:100%"></canvas-view>
+            <canvas-view id="viewContainer" style="height:100%"></canvas-view>
           </div>
-          <div name="code" style="width:100%;height:100%;">
-            <slot name="code"></slot>
-          </div>
-          <div name="preview" id="demoContainer">
-            <div id="loadingScreen">🛀 Hold on, loading...</div>
-          </div>
+
+          <div name="code" style="width:100%;height:100%;"><slot name="code"></slot></div>
+          <demo-view id="demoView" name="preview"></demo-view>
         </iron-pages>
       </div>
 
@@ -206,12 +192,6 @@
           activeElement: {
             type: Object
           },
-          stylesPage: {
-            type:String
-          },
-          viewPage: {
-            type:String
-          },
           mainPage: {
             type: String
           }
@@ -220,8 +200,6 @@
 
       constructor() {
         super();
-        this.stylePage = 'properties';
-        this.viewPage = 'native';
         this.mainPage = 'designer';
       }
 
@@ -419,19 +397,7 @@
       viewDemo() {
         if (!window.codeView.get)
           return;
-        let iframe = document.createElement('iframe');
-        iframe.frameBorder = '0';
-        this.$.demoContainer.removeChild(this.$.demoContainer.lastChild);
-        this.$.demoContainer.appendChild(iframe);
-        this.$.loadingScreen.hidden = false;
-        iframe.onload = function() {
-          this.$.loadingScreen.hidden = true;
-        }.bind(this);
-        let doc = iframe.contentWindow.document;
-        var code = window.codeView.get(this.$.viewContainer);
-        doc.open();
-        doc.write(code);
-        doc.close();
+        this.$.demoView.display(window.codeView.get());
       }
 
       /**
