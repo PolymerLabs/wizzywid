@@ -7,7 +7,10 @@ should -- making that kind of app is really hard, and requires a lot of work and
 
 👉 I've built this with the idea that if you want to customize it (i.e. add
   your own custom elements to it, or very specific features), you should be
-  able to clone it, make changes, and deploy it somewhere.
+  able to clone it, make changes, and deploy it somewhere. Bug fixes are
+  always appreciated ❤️.
+
+<img width="985" alt="screenshot of wizzywid" src="https://user-images.githubusercontent.com/1369170/28957463-d0f66dae-78a6-11e7-8fc2-696f7cb657ca.png">
 
 ## Developing
 
