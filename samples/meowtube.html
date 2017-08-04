@@ -19,6 +19,7 @@
       background:white;
       padding:10px;
       width:100%;
+      height: 100%;
       flex-wrap: wrap;
     }
   </style>
@@ -26,14 +27,16 @@
   <app-header id="appHeader">
     <app-toolbar>
       <div>🐱📺 meowtube</div>
-      <paper-spinner active="[[loading]]"></paper-spinner>
+      <paper-spinner></paper-spinner>
     </app-toolbar>
   </app-header>
 
   <paper-input label="Find your meows" value="{{query}}" style="margin: 20px;"></paper-input>
 
   <iron-ajax url="https://www.googleapis.com/youtube/v3/search"
-      handle-as="json" auto="true" last-response="{{videos}}"
+      handle-as="json" auto="true"
+      params='{"part":"snippet", "q":"cats", "key": "AIzaSyAuecFZ9xJXbGDkQYWBmYrtzOGJD-iDIgI", "type": "video", "maxResults":"10"}'
+      last-response="{{videos}}"
       hidden></iron-ajax>
 
   <div id="flexHorizontal">
