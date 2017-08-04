@@ -292,17 +292,21 @@
         // Clone the template and add it to the document.
         let children = template.content.children;
         let el;
+        let nonStyleChildren = 0;
         for (let i = 0; i < children.length; i++) {
           el = document.importNode(children[i], true);
           this.$.viewContainer.add(el);
           this.$.actionHistory.add('new', el, {parent: el.parentNode});
-          let tag = el.tagName.toLowerCase();
+          let tag = el.localName;
+          if (tag !== 'style') {
+            nonStyleChildren++;
+          }
           el.id = el.id || this._makeUniqueId(el, tag);
         }
-
         // Position the sample better, if it was a one element thing.
-        if (children.length === 1 && templateTag !== 'app-layout-sample' &&
+        if (nonStyleChildren === 1 && templateTag !== 'app-layout-sample' &&
             templateTag !== 'wizzywid-sample') {
+          el.style.boxSizing = 'border-box';
           el.style.position = 'absolute';
           el.style.left = el.style.top = '20px';
         }
@@ -417,6 +421,7 @@
 
         // If it's a new element that isn't a clone, it was chosen from the
         // palette, so position it somewhere slightly better.
+        el.style.boxSizing = 'border-box';
         el.style.position = 'absolute';
         el.style.left = el.style.top = '20px';
 
