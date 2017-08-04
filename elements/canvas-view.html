@@ -157,7 +157,7 @@
 
             // See if it's over anything.
             this._dropTarget = null;
-            let targets = this.root.querySelectorAll('*');
+            let targets = this.$.canvas.querySelectorAll('*');
             for (let i = 0; i < targets.length; i++) {
               let t = targets[i];
               t.classList.remove('over');
