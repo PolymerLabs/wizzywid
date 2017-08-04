@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<template>
+  <style>
+    #appHeader {
+      background-color: #4285f4;
+      color: white;
+      transform: translate3d(0px, 0px, 0px);
+    }
+    div#flexHorizontal {
+      box-sizing: border-box;
+      display:flex;
+      flex-direction:row;
+      background:white;
+      padding:10px;
+      width:100%;
+      flex-wrap: wrap;
+    }
+  </style>
+
+  <app-header id="appHeader">
+    <app-toolbar>
+      <div>🐱📺 meowtube</div>
+      <paper-spinner active="[[loading]]"></paper-spinner>
+    </app-toolbar>
+  </app-header>
+
+  <paper-input label="Find your meows" value="{{query}}" style="margin: 20px;"></paper-input>
+
+  <iron-ajax url="https://www.googleapis.com/youtube/v3/search"
+      handle-as="json" auto="true" last-response="{{videos}}"
+      hidden></iron-ajax>
+
+  <div id="flexHorizontal">
+    <dom-repeat fake-items-attr="[[videos.items]]">
+      <a href="https://www.youtube.com/watch?v=[[item.id.videoId]]">
+        <paper-card image="[[item.snippet.thumbnails.high.url]]" style="margin: 10px;width: 200px;">
+          <div class="card-content" style="height:50px;overflow:auto;">
+            <p>[[item.snippet.title]]</p>
+            <p hidden>[[item.snippet.description]]</p>
+          </div>
+        </paper-card>
+      </a>
+    </dom-repeat>
+  </div>
+</template>
