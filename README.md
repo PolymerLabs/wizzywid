@@ -10,7 +10,7 @@ should -- making that kind of app is really hard, and requires a lot of work and
   able to clone it, make changes, and deploy it somewhere. Bug fixes are
   always appreciated ❤️.
 
-<img width="985" alt="screenshot of wizzywid" src="https://user-images.githubusercontent.com/1369170/28957463-d0f66dae-78a6-11e7-8fc2-696f7cb657ca.png">
+<img width="985" alt="screenshot of wizzywid" src="https://user-images.githubusercontent.com/1369170/28957547-22175752-78a7-11e7-8770-49df35698e55.png">
 
 ## Developing
 
