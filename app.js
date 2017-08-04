@@ -1,5 +1,14 @@
 window.addEventListener('WebComponentsReady', function() {
-  if (window.location.search === '?tufte') {
+  window.addEventListener('hashchange', retheme);
+  retheme();
+
+  document.addEventListener('update-code', function(event) {
+    codeView.dump(event.detail.target);
+  }, true);
+});
+
+function retheme()  {
+  if (window.location.hash === '#tufte' || window.location.search === '?tufte') {
     window.shell.updateStyles({
       '--canvas-background': 'var(--tufte-salmon)',
       '--almost-black': 'var(--tufte-purple)',
@@ -10,12 +19,19 @@ window.addEventListener('WebComponentsReady', function() {
       '--highlight-blue': 'var(--tufte-yellow)',
       '--input-border-color': 'var(--tufte-yellow)'
     });
+  } else {
+    window.shell.updateStyles({
+      '--canvas-background': 'white',
+      '--almost-black': '#141720',
+      '--dark-grey': '#232733',
+      '--medium-grey': '#2f3545',
+      '--light-grey': '#383f52',
+      '--highlight-pink': '#e91e63',
+      '--highlight-blue': '#2196f3',
+      '--input-border-color': '#596c7a'
+    });
   }
-  document.addEventListener('update-code', function(event) {
-    codeView.dump(event.detail.target);
-  }, true);
-});
-
+}
 function getProtoProperties(target) {
   // If this is a custom element, you need to go up the prototype
   // chain until you get proper HTMLElement, since everything under it
