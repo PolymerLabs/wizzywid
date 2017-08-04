@@ -123,10 +123,16 @@
         if (el === this) {
           return;
         }
+
+        // If we're already resizing, continue.
+        if (this._resizing) {
+          this.resizeElement(event, el);
+          return;
+        }
+
         let rekt = el.getBoundingClientRect();
         let shouldResize = this.dragShouldSize(event, rekt);
-
-        if (shouldResize && !this._resizing) {
+        if (shouldResize) {
           this._resizing = true;
           this._initialWidth = rekt.width;
           this._initialHeight = rekt.height;
@@ -291,8 +297,9 @@
       }
 
       dragShouldSize(event, rect) {
-        return (Math.abs(rect.right - event.detail.x) < 10) &&
-          (Math.abs(rect.bottom - event.detail.y) < 10);
+        const right = Math.abs(rect.right - event.detail.x);
+        const bottom = Math.abs(rect.bottom - event.detail.y);
+        return (right < 8 && bottom < 8);
       }
 
       deepTargetFind(x, y, notThis) {
