@@ -1,4 +1,16 @@
 window.addEventListener('WebComponentsReady', function() {
+  if (window.location.search === '?tufte') {
+    window.shell.updateStyles({
+      '--canvas-background': 'var(--tufte-salmon)',
+      '--almost-black': 'var(--tufte-purple)',
+      '--dark-grey': 'var(--tufte-pink)',
+      '--medium-grey': 'var(--tufte-blue)',
+      '--light-grey': 'var(--tufte-purple)',
+      '--highlight-pink': 'var(--tufte-yellow)',
+      '--highlight-blue': 'var(--tufte-yellow)',
+      '--input-border-color': 'var(--tufte-yellow)'
+    });
+  }
   document.addEventListener('update-code', function(event) {
     codeView.dump(event.detail.target);
   }, true);
