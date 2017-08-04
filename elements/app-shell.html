@@ -12,6 +12,7 @@
 
 <link rel="import" href="action-history.html">
 <link rel="import" href="demo-view.html">
+<link rel="import" href="help-view.html">
 <link rel="import" href="tree-view.html">
 <link rel="import" href="element-view.html">
 <link rel="import" href="canvas-view.html">
@@ -25,12 +26,6 @@
         display: block;
         box-sizing: border-box;
         position: relative;
-
-        --tufte-blue: #62bff7;
-        --tufte-pink: #f15195;
-        --tufte-purple: #594a7d;
-        --tufte-yellow: #f5e566;
-        --tufte-salmon: #f35970;
 
         /* Default colour scheme */
         --canvas-background: white;
@@ -152,7 +147,7 @@
           <designer-tab name="code">
             <button on-click="viewCode">Code</button>
           </designer-tab>
-          <designer-tab name="help" disabled>
+          <designer-tab name="help">
             <button>Help</button>
           </designer-tab>
         </designer-tabs>
@@ -160,6 +155,7 @@
           <canvas-view name="designer" id="viewContainer" style="height:100%"></canvas-view>
           <div name="code" style="width:100%;height:100%;"><slot name="code"></slot></div>
           <demo-view id="demoView" name="preview"></demo-view>
+          <help-view name="help"></help-view>
         </iron-pages>
       </div>
 

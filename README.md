@@ -65,3 +65,7 @@ and in the template the contents of your new sample. Note that this template
 obviously has no shadow DOM (unless you add just a custom element), so if in it
 you add a `<style> div {color: red}</style>`, this will, of course, style
 all the divs in the app, and you'll have a hard time removing that code :(
+
+### Adding a new theme
+To reskin the app, you need to define a set of custom properties. Check the `retheme`
+method in `app.js` for the list.

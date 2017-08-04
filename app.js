@@ -10,18 +10,20 @@ window.addEventListener('WebComponentsReady', function() {
 function retheme()  {
   if (window.location.hash === '#tufte' || window.location.search === '?tufte') {
     window.shell.updateStyles({
-      '--canvas-background': 'var(--tufte-salmon)',
-      '--almost-black': 'var(--tufte-purple)',
-      '--dark-grey': 'var(--tufte-pink)',
-      '--medium-grey': 'var(--tufte-blue)',
-      '--light-grey': 'var(--tufte-purple)',
-      '--highlight-pink': 'var(--tufte-yellow)',
-      '--highlight-blue': 'var(--tufte-yellow)',
-      '--input-border-color': 'var(--tufte-yellow)'
+      '--canvas-background': '#f35970',
+      '--help-color': 'white',
+      '--almost-black': '#594a7d',
+      '--dark-grey': '#f15195',
+      '--medium-grey': '#62bff7',
+      '--light-grey': '#594a7d',
+      '--highlight-pink': '#f5e566',
+      '--highlight-blue': '#f5e566',
+      '--input-border-color': '#f5e566'
     });
   } else {
     window.shell.updateStyles({
       '--canvas-background': 'white',
+      '--help-color': 'black',
       '--almost-black': '#141720',
       '--dark-grey': '#232733',
       '--medium-grey': '#2f3545',
