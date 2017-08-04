@@ -79,11 +79,11 @@
         super.connectedCallback();
 
         Polymer.Gestures.addListener(this.$.canvas, 'track', this.trackElement.bind(this));
-        this.addEventListener('click', function(event) {
+        this.$.canvas.addEventListener('click', function(event) {
           // If this element is a link, it will actually do a navigation, so, don't.
           event.preventDefault();
           event.stopImmediatePropagation();
-          this.updateActiveElement(this._getRealEventElement(event));
+          this.updateActiveElement(event.target);
         }.bind(this));
 
         window.addEventListener('keydown', this.onKeyDown.bind(this), true);
@@ -111,19 +111,6 @@
         this.selectedElement = el;
         Polymer.Base.fire('selected-element-changed', {target: el}, {node: this});
         Polymer.Base.fire('refresh-view', {}, {node: this});
-      }
-
-      _getRealEventElement(event) {
-        let el = event.composedPath()[0];
-
-        // You might have clicked on someting inside a shadow root.
-        // In that case, select the top most shadow root element.
-        let shadowParent = el;
-        while (shadowParent !== this) {
-          el = shadowParent;
-          shadowParent = el.getRootNode().host;
-        }
-        return el;
       }
 
       trackElement(event) {
