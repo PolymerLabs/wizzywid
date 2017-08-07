@@ -31,10 +31,13 @@
         outline: solid 2px #90CAF9 !important;
         outline-offset: 2px;
       }
-      .active {
+      .active, :host(.active) {
         outline: solid 3px var(--highlight-blue) !important;
         outline-offset: 2px;
         transform: translateZ(0);
+      }
+      :host(.active) {
+        outline-offset: -3px;
       }
 
       /* Show a resize cursor in the corner */
@@ -120,10 +123,9 @@
 
       trackElement(event) {
         let el = event.target;
-        if (el === this) {
+        if (el === this || el === this.$.canvas) {
           return;
         }
-
         // If we're already resizing, continue.
         if (this._resizing) {
           this.resizeElement(event, el);
