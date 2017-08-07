@@ -60,6 +60,9 @@
           } else if (prop === 'classList') {
             // Lol what's a blacklist.
             el.value = target[prop].toString().replace('active', '').replace('dragging', '').replace('resizing', '');
+            if (target.id === 'viewContainer') {
+              el.value = el.value.replace('iron-selected', '');
+            }
           } else if (prop === 'textContent') {
             // If this element has children, then disable textContent since
             // changing it will only lead to surprise tears.
