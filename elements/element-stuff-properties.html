@@ -26,13 +26,13 @@
       }
       display(target) {
         this._displayBasicProperties(target);
+        this.$.bonus.innerHTML = '';
 
         // If this is the top level div, we don't want any other properties shown.
         if (target.id === 'viewContainer') {
           return;
         }
 
-        this.$.bonus.innerHTML = '';
         // If this is a native element, then start walking up the prototype
         // chain to get all the props it has. If it's a custom element,
         // then assume it's a v1 element and look at its observedAttributes
