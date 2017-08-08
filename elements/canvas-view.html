@@ -83,6 +83,9 @@
         super.connectedCallback();
 
         Polymer.Gestures.addListener(this.$.canvas, 'track', this.trackElement.bind(this));
+        this.addEventListener('click', event => {
+          this.updateActiveElement(this);
+        });
         this.$.canvas.addEventListener('click', event => {
           // If this element is a link, it will actually do a navigation, so, don't.
           event.preventDefault();
