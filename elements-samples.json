@@ -3,11 +3,13 @@
   [
     "flex-horizontal-layout",
     "flex-vertical-layout",
+    "app-header-sample",
     "app-layout-sample",
     "dom-repeat-sample",
     "iron-form-sample",
     "iron-pages-sample",
-    "paper-card-sample",
+    "paper-card-image-sample",
+    "paper-card-actions-sample",
     "paper-dropdown-menu-sample",
     "wizzywid-sample",
     "meowtube"
