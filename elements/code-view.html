@@ -187,26 +187,27 @@ ${domModule}
 
           // If this element doesn't have children, do it on one line.
           this._template += this.dumpElementStartTag(tag, nodes[i], indent);
+          if (tag === 'dom-repeat') {
+            // We need to wrap the children in a template.
+            this._template += `\n${indent}  <template>`;
+          }
+
+          let endTagIndent = indent;
+          if (nodes[i].children.length == 0) {
+            this._template += this.dumpElementText(tag, nodes[i], '');
+            endTagIndent = '';
+          } else {
+            this._template += '\n'
+            this.dumpNode(nodes[i], indent + '  ', directoryPrefix) + '\n';
+          }
 
           if (tag === 'dom-repeat') {
             // We need to wrap the children in a template.
-            this._template += `\n${indent}<template>`;
-          }
-          if (nodes[i].children.length == 0) {
-            this._template += this.dumpElementText(tag, nodes[i], '');
-            this._template += this.dumpElementEndTag(tag, nodes[i], '') + '\n';
+            this._template += `${indent}  </template>\n`;
+            endTagIndent = indent;
           }
 
-          else {
-            this._template += '\n'
-            this.dumpNode(nodes[i], indent + '  ', directoryPrefix) + '\n';
-
-            if (tag === 'dom-repeat') {
-              // We need to wrap the children in a template.
-              this._template += `${indent}</template>\n`;
-            }
-            this._template += this.dumpElementEndTag(tag, nodes[i], indent) + '\n';
-          }
+          this._template += this.dumpElementEndTag(tag, nodes[i], endTagIndent) + '\n';
         }
       }
 
