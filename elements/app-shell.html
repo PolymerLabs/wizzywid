@@ -190,7 +190,6 @@
         // can't have nice things.
         window.codeView.canvasElement = this.$.viewContainer;
 
-
         this.setActiveElement(this.$.viewContainer);
         this.refreshView();
 
@@ -303,14 +302,15 @@
           }
           el.id = el.id || this._makeUniqueId(el, tag);
         }
+
         // Position the sample better, if it was a one element thing.
         if (nonStyleChildren === 1 && templateTag !== 'app-layout-sample' &&
             templateTag !== 'wizzywid-sample') {
           el.style.boxSizing = 'border-box';
           el.style.position = 'absolute';
           el.style.left = el.style.top = '20px';
+          el.click();
         }
-        this.refreshView();
       }
 
       /**

@@ -245,7 +245,7 @@
         let slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
         let canDrop =
           (sibling.localName.indexOf('-') === -1 && sibling.localName !== 'input') ||
-          slots.length !== 0;
+           sibling.localName === 'dom-repeat' || slots.length !== 0;
 
         if (!canDrop) {
           return;
