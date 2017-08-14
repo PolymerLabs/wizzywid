@@ -48,11 +48,11 @@ function getProtoProperties(target) {
   }
 
   let protoProps = {};
-  // We literally want nothing other than 'href' from HTMLAnchorElement.
+  // We literally want nothing other than 'href' and 'target' from HTMLAnchorElement.
   if (proto.constructor.name === 'HTMLAnchorElement') {
     protoProps['href'] = Object.getOwnPropertyDescriptors(proto).href;
+    protoProps['target'] = Object.getOwnPropertyDescriptors(proto).target;
     proto = proto.__proto__;
-
   }
   while (proto.constructor.name !== 'Element') {
     Object.assign(protoProps, Object.getOwnPropertyDescriptors(proto));
