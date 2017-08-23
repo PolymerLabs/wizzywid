@@ -68,4 +68,4 @@ all the divs in the app, and you'll have a hard time removing that code :(
 
 ### Adding a new theme
 To reskin the app, you need to define a set of custom properties. Check the `retheme`
-method in `app.js` for the list.
+method in `app.js` for the list. Or see it in [action](https://polymerlabs.github.io/wizzywid/#tufte).
