@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 <link rel="import" href="element-stuff-base.html">
 <link rel="import" href="element-stuff-shared-styles.html">
 
@@ -38,10 +39,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div class="content-wrapper">
-      <label for="color">color</label><input name="color" type="color" id="color">
-      <label for="bkground-color">bkground color</label><input name="backgroundColor" type="color" id="bkground-color">
-      <label for="box-sizing">box-sizing</label>
-      <select name="box-sizing" id="box-sizing">
+      <label>color</label><paper-swatch-picker name="color" horizontal-align="right"></paper-swatch-picker><br>
+      <label>bkground color</label><paper-swatch-picker name="backgroundColor" horizontal-align="right"></paper-swatch-picker><br>
+      <label>box-sizing</label>
+      <select name="box-sizing">
         <option>border-box</option>
         <option>content-box</option>
       </select>
@@ -64,7 +65,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <label for="height">height</label><input name="height" id="height">
       <div id="bonus"></div>
       <button class="add" on-click="addStyle">+ Add style</button>
-  </div>
+    </div>
   </template>
   <script>
     class ElementStyles extends ElementStuffBase(Polymer.Element) {
@@ -80,7 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             continue;
           let el = this.root.querySelector(`[name=${name}]`);
           if (name === 'backgroundColor' || name === 'color') {
-            el.value = this._rgb2hex(elementStyles[name]);
+            el.color = this._rgb2hex(elementStyles[name]);
           } else if (name === 'width' || name === 'height') {
             // For width or height, the computedStyle gives us exact pixels
             // rather than % positioning.
