@@ -108,7 +108,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           input.name = name;
           if (isAttribute) {
             input.classList.add('attribute');
-            input.value = target.getAttribute(name) || '';
+            if (name === 'items' && target.localName === 'dom-repeat') {
+              // We did a giant hack for dom-repeats where we can't actually set
+              // the items property, since that would immediately stamp the children,
+              // so instead we set fakeItemsAttr as a convention (see
+              // app-shell::updateActiveElementValues). Anyway, fake display it
+              // correctly here.
+              input.value = target.dataset['fakeItemsAttr'] || '';
+            } else {
+              input.value = target.getAttribute(name) || '';
+            }
           } else {
             input.value = target[name] || '';
           }
