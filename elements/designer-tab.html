@@ -23,6 +23,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         opacity: 0.3;
         pointer-events: none;
       }
+      :host:hover {
+        border-top: 3px solid var(--highlight-pink);
+      }
       :host(.iron-selected) {
         background: var(--medium-grey);
         border-top: 3px solid var(--highlight-pink);
@@ -40,6 +43,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         line-height: 1.5;
         color: inherit;
         margin: 0 8px;
+        outline: none;
+        cursor: pointer;
       }
     </style>
     <slot></slot>

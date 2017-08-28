@@ -31,30 +31,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-top: 4px;
       }
     </style>
-    <label>color</label><input name="color" type="color"><br>
-    <label>bkground color</label><input name="backgroundColor" type="color">
-    <label>box-sizing</label>
-    <select name="box-sizing">
-      <option>border-box</option>
-      <option>content-box</option>
-    </select>
-    <label>border</label><input name="border">
-    <label>box shadow</label><input name="boxShadow">
-    <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
-    <label>padding</label><input name="padding">
-    <label>margin</label><input name="margin">
-    <label>position</label>
-    <select name="position">
-      <option>static</option>
-      <option>absolute</option>
-      <option>relative</option>
-    </select>
-    <label>left</label><input name="left">
-    <label>top</label><input name="top">
-    <label>width</label><input name="width">
-    <label>height</label><input name="height">
-    <div id="bonus"></div>
-    <button class="add" on-click="addStyle">+ Add style</button>
+    <div class="content-wrapper">
+      <label>color</label><input name="color" type="color"><br>
+      <label>bkground color</label><input name="backgroundColor" type="color">
+      <label>box-sizing</label>
+      <select name="box-sizing">
+        <option>border-box</option>
+        <option>content-box</option>
+      </select>
+      <label>border</label><input name="border">
+      <label>box shadow</label><input name="boxShadow">
+      <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
+      <label>padding</label><input name="padding">
+      <label>margin</label><input name="margin">
+      <label>position</label>
+      <select name="position">
+        <option>static</option>
+        <option>absolute</option>
+        <option>relative</option>
+      </select>
+      <label>left</label><input name="left">
+      <label>top</label><input name="top">
+      <label>width</label><input name="width">
+      <label>height</label><input name="height">
+      <div id="bonus"></div>
+      <button class="add" on-click="addStyle">+ Add style</button>
+  </div>
   </template>
   <script>
     class ElementStyles extends ElementStuffBase(Polymer.Element) {

@@ -15,17 +15,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="element-stuff-properties">
   <template strip-whitespace>
     <style include="element-stuff-shared-styles"></style>
-    <div>
-      <label>textContent</label>
-      <input name="textContent">
-      <label>id</label>
-      <input name="id">
-      <label>slot</label>
-      <input name="slot">
-      <label>classList</label>
-      <input name="classList">
-    </div>
-    <div id="bonus"></div>
+    <div class="content-wrapper">
+      <div>
+        <label>textContent</label>
+        <input name="textContent">
+        <label>id</label>
+        <input name="id">
+        <label>slot</label>
+        <input name="slot">
+        <label>classList</label>
+        <input name="classList">
+      </div>
+      <div id="bonus"></div>
+  </div>
   </template>
   <script>
     class ElementProperties extends ElementStuffBase(Polymer.Element) {
