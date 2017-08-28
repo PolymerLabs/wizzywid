@@ -50,7 +50,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       hidden></iron-ajax>
 
   <div id="flexHorizontal">
-    <dom-repeat items="[[videos.items]]">
+    <dom-repeat data-fake-items-attr="[[videos.items]]">
       <a href="https://www.youtube.com/watch?v=[[item.id.videoId]]">
         <paper-card image="[[item.snippet.thumbnails.high.url]]" style="margin: 10px;width: 200px;">
           <div class="card-content" style="height:50px;overflow:auto;">
