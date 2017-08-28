@@ -50,6 +50,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       hidden></iron-ajax>
 
   <div id="flexHorizontal">
+    <!-- Note that we have to use a fake items attribute on the dom-repeat,
+    otherwise it will automatically stamp the items in the designer view -->
     <dom-repeat data-fake-items-attr="[[videos.items]]">
       <a href="https://www.youtube.com/watch?v=[[item.id.videoId]]">
         <paper-card image="[[item.snippet.thumbnails.high.url]]" style="margin: 10px;width: 200px;">
