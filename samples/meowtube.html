@@ -45,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <iron-ajax url="https://www.googleapis.com/youtube/v3/search"
       handle-as="json" auto="true"
-      params='{"part":"snippet", "q":"cats", "key": "AIzaSyAuecFZ9xJXbGDkQYWBmYrtzOGJD-iDIgI", "type": "video", "maxResults":"10"}'
+      params='{"part":"snippet", "q":"[[query]] cats", "key": "AIzaSyAuecFZ9xJXbGDkQYWBmYrtzOGJD-iDIgI", "type": "video", "maxResults":"10"}'
       last-response="{{videos}}"
       hidden></iron-ajax>
 
