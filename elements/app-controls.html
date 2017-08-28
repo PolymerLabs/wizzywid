@@ -22,9 +22,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: white;
         border: none;
         cursor: pointer;
+        transition: all .05s ease-in;
       }
       button[disabled] {
         opacity: 0.3;
+      }
+      button:hover {
+        transform: scale(1.1);
       }
       .separator {
         border-left: var(--light-grey) solid 1px;

@@ -15,8 +15,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
         height: 100%;
         overflow: auto;
-        margin: 14px 0 14px 8px;
-        padding-bottom:14px;
+        box-sizing: border-box;
+      }
+      .content-wrapper {
+        padding: .5em;
       }
       label, input, select {
         display: inline-block;
@@ -48,6 +50,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       select {
         background: transparent;
+      }
+      select:focus option {
+        color: black;
       }
     </style>
   </template>

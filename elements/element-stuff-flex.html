@@ -15,73 +15,73 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="element-stuff-flex">
   <template>
     <style include="element-stuff-shared-styles"></style>
-
-    <label>position</label>
-    <select name="position">
-      <option>static</option>
-      <option>absolute</option>
-      <option>relative</option>
-    </select>
-    <label>display</label>
-    <select name="display">
-      <option>block</option>
-      <option>inline-block</option>
-      <option>flex</option>
-      <option>contents</option>
-      <option>grid</option>
-      <option>inherit</option>
-      <option>initial</option>
-      <option>none</option>
-    </select>
-    <label>flex-direction</label>
-    <select name="flexDirection">
-      <option>row</option>
-      <option>row-reverse</option>
-      <option selected>column</option>
-      <option>column-reverse</option>
-    </select>
-    <label>flex-wrap</label>
-    <select name="flexWrap">
-      <option selected>nowrap</option>
-      <option>wrap</option>
-      <option>wrap-reverse</option>
-    </select>
-    <label>justify-content</label>
-    <select name="justifyContent">
-      <option selected>flex-start</option>
-      <option>flex-end</option>
-      <option>center</option>
-      <option>space-between</option>
-      <option>space-around</option>
-    </select>
-    <label>align-items</label>
-    <select name="alignItems">
-      <option selected>flex-start</option>
-      <option>flex-end</option>
-      <option>center</option>
-      <option>baseline</option>
-      <option>stretch</option>
-    </select>
-    <label>align-content</label>
-    <select name="alignContent">
-      <option selected>flex-start</option>
-      <option>flex-end</option>
-      <option>center</option>
-      <option>space-between</option>
-      <option>space-around</option>
-      <option>stretch</option>
-    </select>
-    <label>align-self</label>
-    <select name="alignSelf">
-      <option selected>auto</option>
-      <option>flex-start</option>
-      <option>flex-end</option>
-      <option>center</option>
-      <option>baseline</option>
-      <option>stretch</option>
-    </select>
-    <label>flex</label><input name="flex">
-
+    <div class="content-wrapper">
+      <label>position</label>
+      <select name="position">
+        <option>static</option>
+        <option>absolute</option>
+        <option>relative</option>
+      </select>
+      <label>display</label>
+      <select name="display">
+        <option>block</option>
+        <option>inline-block</option>
+        <option>flex</option>
+        <option>contents</option>
+        <option>grid</option>
+        <option>inherit</option>
+        <option>initial</option>
+        <option>none</option>
+      </select>
+      <label>flex-direction</label>
+      <select name="flexDirection">
+        <option>row</option>
+        <option>row-reverse</option>
+        <option selected>column</option>
+        <option>column-reverse</option>
+      </select>
+      <label>flex-wrap</label>
+      <select name="flexWrap">
+        <option selected>nowrap</option>
+        <option>wrap</option>
+        <option>wrap-reverse</option>
+      </select>
+      <label>justify-content</label>
+      <select name="justifyContent">
+        <option selected>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>space-between</option>
+        <option>space-around</option>
+      </select>
+      <label>align-items</label>
+      <select name="alignItems">
+        <option selected>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>baseline</option>
+        <option>stretch</option>
+      </select>
+      <label>align-content</label>
+      <select name="alignContent">
+        <option selected>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>space-between</option>
+        <option>space-around</option>
+        <option>stretch</option>
+      </select>
+      <label>align-self</label>
+      <select name="alignSelf">
+        <option selected>auto</option>
+        <option>flex-start</option>
+        <option>flex-end</option>
+        <option>center</option>
+        <option>baseline</option>
+        <option>stretch</option>
+      </select>
+      <label>flex</label><input name="flex">
+    </div>
   </template>
   <script>
     class ElementFlex extends ElementStuffBase(Polymer.Element) {
