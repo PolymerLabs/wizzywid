@@ -1,0 +1,59 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="designer-tab">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+        border-top: 3px solid transparent;
+        color: white;
+        transition: border .1s ease-in;
+      }
+      :host([disabled]) {
+        opacity: 0.3;
+        pointer-events: none;
+      }
+      :host(:hover) {
+        border-color: var(--light-grey);
+      }
+      :host(.iron-selected) {
+        background: var(--medium-grey);
+        border-color: var(--highlight-pink);
+      }
+      :host ::slotted(*) {
+        display: inline-block;
+        background: transparent;
+        border: none;
+        padding: 10px 5px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        font-weight: 500;
+        text-decoration: none;
+        text-transform: uppercase;
+        line-height: 1.5;
+        color: inherit;
+        margin: 0 8px;
+        outline: none;
+        cursor: pointer;
+      }
+    </style>
+    <slot></slot>
+  </template>
+  <script>
+    class DesignerTab extends Polymer.Element {
+      static get is() { return 'designer-tab'; }
+    }
+    customElements.define(DesignerTab.is, DesignerTab);
+  </script>
+</dom-module>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <script src="common.js"></script>
+
+  <link rel="import" href="../../iron-form/iron-form.html">
+  <link rel="import" href="../../iron-meta/iron-meta.html">
+  <link rel="import" href="../vaadin-date-picker-light.html">
+</head>
+
+<body>
+  <test-fixture id="custom-input-datepicker">
+    <template>
+      <vaadin-date-picker-light>
+        <iron-input>
+          <input>
+        </iron-input>
+      </vaadin-date-picker-light>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('custom input', () => {
+      var datepicker;
+
+      beforeEach(done => {
+        datepicker = fixture('custom-input-datepicker');
+        datepicker.$.overlay.$.monthScroller.bufferSize = 0;
+        datepicker.$.overlay.$.yearScroller.bufferSize = 0;
+        setTimeout(done);
+      });
+
+      it('should open calendar on tap', () => {
+        // mock-interactions tap does not work in mobile devices
+        tap(datepicker);
+        expect(datepicker.$.dropdown.opened).to.be.true;
+      });
+
+      it('should open calendar on input', done => {
+        var target = datepicker._inputElement;
+        target.value = '1';
+        datepicker._nativeInput.dispatchEvent(new CustomEvent('input', {bubbles: true}));
+
+        listenForEvent(datepicker, 'iron-overlay-opened', () => {
+          expect(datepicker.$.dropdown.opened).to.be.true;
+          done();
+        });
+      });
+
+      it('should not auto focus overlay', () => {
+        expect(datepicker.$.dropdown.noAutoFocus).to.equal(true);
+      });
+    });
+  </script>
+
+</body>
+
+</html>

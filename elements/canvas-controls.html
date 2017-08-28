@@ -1,0 +1,329 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="app-icons.html">
+<link rel="import" href="designer-tab.html">
+<dom-module id="canvas-controls">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+      designer-tab {
+        color: white;
+        background: var(--dark-grey);
+        width: 100%;
+        height: 41px;
+        margin: 0;
+        padding: 0;
+        border: none;
+        display: flex;
+        padding: 0 0 1em;
+        font-size: 10px;
+        line-height: 1em;
+        justify-content: space-around;
+      }
+      button {
+        padding: 0;
+        cursor: pointer;
+        font-size: 8px;
+        border: 2px solid transparent;
+        border-width: 2px 0;
+        position: relative;
+        margin: 0;
+        transition: all .05s ease-in;
+      }
+      button[disabled] {
+        pointer-events: none;
+        opacity: 0.3;
+      }
+      button::before,
+      button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        border: 2px solid transparent;
+        border-width: 0 2px 0;
+        box-sizing: border-box;
+      }
+      button::after {
+        top: auto;
+        bottom: 0;
+      }
+      button:hover,
+      button:hover::before,
+      button:hover::after {
+        border-color: var(--light-grey);
+      }
+      button:active,
+      button:active::before,
+      button:active::after {
+        border-color: var(--highlight-pink);
+      }
+    </style>
+    <designer-tab>
+      <button on-click="delete" title="Delete element">
+        <iron-icon icon="designer:delete"></iron-icon>
+      </button>
+      <button on-click="clone" id="cloneBtn" title="Clone element">
+        <iron-icon icon="designer:copy"></iron-icon>
+      </button>
+      <button on-click="fit" id="fitBtn" title="Fit to parent">
+        <iron-icon icon="designer:fit"></iron-icon>
+      </button>
+      <button on-click="moveUp" title="Move to parent. Also Shift+UpArrow" id="moveUpBtn">
+        <iron-icon icon="designer:up"></iron-icon>
+      </button>
+      <button on-click="moveDown" title="Move to first child. Also Shift+DownArrow" id="moveDownBtn">
+        <iron-icon icon="designer:down"></iron-icon>
+      </button>
+      <button on-click="moveBack" title="Move back. Also Shift+LeftArrow" id="moveBackBtn">
+        <iron-icon icon="designer:back"></iron-icon>
+      </button>
+      <button on-click="moveForward" title="Move forward. Also Shift+RightArrow" id="moveForwardBtn">
+        <iron-icon icon="designer:forward"></iron-icon>
+      </button>
+    </designer-tab>
+  </template>
+  <script>
+    class CanvasControls extends Polymer.Element {
+      static get is() { return 'canvas-controls'; }
+      static get properties() { return {
+          selectedElement: {
+            type: Object,
+            observer: '_selectedElementChanged'
+          },
+          canvasElement: Object,
+          actionHistory: Object
+        }
+      }
+
+      /**
+       * Disable a bunch of UI if the selected element is the canvas element.
+       */
+      update(disableUI) {
+        this.$.cloneBtn.disabled = disableUI;
+        this.$.fitBtn.disabled = disableUI;
+        this.$.moveUpBtn.disabled = disableUI;
+        this.$.moveDownBtn.disabled = disableUI;
+        this.$.moveBackBtn.disabled = disableUI;
+        this.$.moveForwardBtn.disabled = disableUI;
+      }
+
+      /**
+       * Deletes the active element.
+       */
+      delete() {
+        if (!this.selectedElement) {
+          console.log('🔥 how did i get here?');
+          return;
+        }
+
+        const el = this.selectedElement;
+        // Deleting the top level app should remove its children.
+        if (this._isCanvasElement(el)) {
+          this.actionHistory.add('delete', el, {innerHTML: el.getInnerHTML()});
+          el.setInnerHTML('');
+        } else {
+          const parent = el.parentElement;
+          parent.removeChild(el);
+          this.selectedElement = parent;
+          this.actionHistory.add('delete', el, {parent: parent});
+        }
+        this._refreshView();
+      }
+
+      /**
+       * Creates a sibling copy of the active element.
+       */
+      clone() {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+
+        let clone = el.cloneNode(true);
+        el.parentNode.appendChild(clone);
+
+        Polymer.Base.fire('finish-clone', {target: clone}, {node: this});
+
+        // P.S: Since we did a clone, we already have the initial state of the <tag>.
+        this.actionHistory.add('new', clone, {parent: el.parentNode});
+        this._refreshView();
+      }
+
+      /**
+       * Fit an element to its target
+       */
+      fit() {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+
+        this.actionHistory.add('fit', el,
+          {
+            new: {
+              position: 'absolute',
+              left: '0', top: '0',
+              width: '100%', height: '100%'
+            },
+            old: {
+              position: el.style.position,
+              left: el.style.left, top: el.style.top,
+              width: el.style.width, height: el.style.height,
+            }
+          });
+
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '0px';
+        el.style.height = el.style.width = '100%';
+      }
+
+      /**
+       * Moving elements in the DOM
+       */
+      move(type, skipHistory) {
+        switch(type) {
+          case 'forward':
+            this.moveForward(skipHistory);
+            break;
+          case 'back':
+            this.moveBack(skipHistory);
+            break;
+          case 'up':
+            this.moveUp(skipHistory);
+            break;
+          case 'down':
+            this.moveDown(skipHistory);
+            break;
+        }
+      }
+      moveBack(skipHistory) {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+
+        let parent = el.parentElement;
+        let previous = el.previousElementSibling;
+        if (previous) {
+          parent.insertBefore(el, previous);
+        } else {
+          parent.appendChild(el);
+        }
+        this._refreshView();
+        if (skipHistory === true) {
+          return;
+        }
+        this.actionHistory.add('move-back', el);
+
+      }
+
+      moveForward(skipHistory) {
+        const el = this.selectedElement;
+        if (this._isCanvasElement(el)) {
+          return;
+        }
+        let parent = el.parentElement;
+
+        // Since you can't insertAfter your next sibling, you need to
+        // insert before two siblings over.
+        let next = el.nextElementSibling;
+        if (next) {
+          next = next.nextElementSibling;
+          if (next) {
+            parent.insertBefore(el, next);
+          } else {
+            parent.appendChild(el);
+          }
+        } else {
+          parent.insertBefore(el, parent.firstChild);
+        }
+        this._refreshView();
+        if (skipHistory === true) {
+          return;
+        }
+        this.actionHistory.add('move-forward', el);
+      }
+
+      moveUp(skipHistory) {
+        const el = this.selectedElement;
+        let parent = el.parentElement;
+        // If the parent isn't already the viewContainer, move it one up.
+        if (this._isCanvasElement(el) || (parent && parent.id === 'canvas')) {
+          return;
+        }
+        parent.removeChild(el);
+        parent.parentElement.appendChild(el);
+        this._refreshView();
+
+        if (skipHistory === true) {
+          return;
+        }
+        this.actionHistory.add('move-up', el,
+          {old: {parent: parent}, new: {parent: parent.parentElement}});
+      }
+
+      moveDown(skipHistory) {
+        const el = this.selectedElement;
+        let sibling = el.nextElementSibling;
+        if (this._isCanvasElement(el) || !sibling) {
+          return;
+        }
+
+        // Not everything accepts children, as we've learnt from canvas-view
+        // (where I copied this code from like a lazy bum)
+        let slots = sibling.root ? sibling.root.querySelectorAll('slot') : [];
+        let canDrop =
+          (sibling.localName.indexOf('-') === -1 && sibling.localName !== 'input') ||
+           sibling.localName === 'dom-repeat' || slots.length !== 0;
+
+        if (!canDrop) {
+          return;
+        }
+
+        // If you can, add it there.
+        const oldParent = el.parentElement;
+        sibling.appendChild(el);
+        const oldPosition = el.style.position;
+        el.style.position = 'relative';
+        this._refreshView();
+
+        if (skipHistory === true) {
+          return;
+        }
+        this.actionHistory.add('move-down', el,
+            {
+              old: {parent: oldParent, position: oldPosition},
+              new: {parent: sibling, position: 'relative'}
+            });
+      }
+
+      _refreshView() {
+        Polymer.Base.fire('refresh-view', {}, {node: this});
+      }
+
+      _selectedElementChanged() {
+        Polymer.Base.fire('selected-element-changed', {target: this.selectedElement}, {node: this});
+      }
+
+      _isCanvasElement(el) {
+        return (el === this.canvasElement);
+      }
+    }
+    customElements.define(CanvasControls.is, CanvasControls);
+  </script>
+</dom-module>

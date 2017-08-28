@@ -1,0 +1,187 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="tree-view">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: var(--dark-grey);
+      }
+      button {
+        border: none;
+        font-size: 13px;
+        display: block;
+        padding: 4px 0;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        display: inline-block;
+        margin: 0;
+        background: var(--dark-grey);
+        position: relative;
+        top: 0.5em;
+        color: white;
+      }
+      button:hover, button:focus {
+        background: var(--light-grey);
+      }
+      span {
+        margin: 4px;
+      }
+      .id {
+        font-style: italic;
+        color: var(--highlight-pink);
+      }
+      .selected {
+        background: var(--light-grey);
+        outline: none;
+      }
+      #tree ul:first-child {
+        padding-left: 0px;
+      }
+      ul, li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul {
+        padding-left: 14px;
+      }
+      li {
+        padding-left: 10px;
+        border: 1px solid silver;
+        border-width: 0 0 1px 1px;
+      }
+      li.has-children { border-bottom: 0px; }
+      li ul {
+        margin-left: -10px;
+        padding-left: 20px;
+      }
+    </style>
+    <div id="tree"></div>
+  </template>
+  <script>
+    class TreeView extends Polymer.Element {
+      static get is() { return 'tree-view'; }
+
+      ready() {
+        super.ready();
+        this.$.tree.addEventListener('click', this.findElement.bind(this))
+      }
+
+      recomputeTree(parent, active) {
+        this.$.tree.innerHTML = '';
+        // Since we can't add a pojo to each button, generate a new index for
+        // each button in the this.items array of useful data.
+        this._index = 0;
+        this.items = this.getChildren(parent, this.$.tree);
+        this.highlight(active);
+        this.$.tree
+        return this.items;
+      }
+
+      _makeButton(tag, id, index) {
+        let aButton = document.createElement('button');
+        aButton.dataset.index = index;
+        let aTag = document.createElement('span');
+        aTag.className = 'tag';
+        aTag.textContent = tag;
+        let aId = document.createElement('span');
+        aId.className = 'id';
+        aId.textContent = id;
+        aButton.appendChild(aTag);
+        aButton.appendChild(aId);
+        return aButton;
+      }
+
+      getChildren(parent, div) {
+        // At every new parent, we create a new <ul>
+        let ul = document.createElement('ul');
+        div.appendChild(ul);
+
+        let isViewContainer = parent.id === 'viewContainer';
+        let data = {
+          tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
+          id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
+          text: isViewContainer ? '' : '"' + parent.textContent + '"',
+          ref: parent,
+          index: this._index
+        };
+
+        // Create this node's content;
+        let li = document.createElement('li');
+        let button = this._makeButton(data.tag, data.id, data.index);
+        li.appendChild(button);
+        ul.appendChild(li);
+
+        this._index++;
+        let nodes = [data];
+
+        // If this node has children...
+        for (let i = 0; i < parent.children.length; i++) {
+          let child = parent.children[i];
+          // Skip <style> nodes;
+          if (child.localName === 'style') {
+            continue;
+          }
+
+          li.className = 'has-children';
+          nodes = nodes.concat(this.getChildren(child, li));
+        }
+        return nodes;
+      }
+
+      findElement(event) {
+        // If the target is a <span>, you clicked on the span inside the button
+        // so you need to use currentTarget.
+        let item = event.target;
+        if (item.tagName === 'SPAN') {
+          item = item.parentElement;
+        }
+        this.selectTreeElement(item);
+
+        // Find the actual element it points to.
+        let index = item.dataset.index;
+        let el = this.items[index].ref;
+        el.click();
+      }
+
+      selectTreeElement(item) {
+        if (this._previouslySelected) {
+          this._previouslySelected.classList.remove('selected');
+        }
+        this._previouslySelected = item;
+        item.classList.add('selected');
+      }
+
+      highlight(element) {
+        // Find it in the tree.
+        let buttons = this.root.querySelectorAll('button');
+        if (buttons.length !== this.items.length) {
+          return;
+        }
+
+        for (let i = 0; i < this.items.length; i++) {
+          if (this.items[i].ref === element) {
+            this.selectTreeElement(buttons[i]);
+            return;
+          }
+        }
+      }
+    }
+    customElements.define(TreeView.is, TreeView);
+  </script>
+</dom-module>

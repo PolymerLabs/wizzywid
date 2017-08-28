@@ -1,0 +1,59 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="palette-shared-styles.html">
+<link rel="import" href="palette-base.html">
+
+<dom-module id="palette-samples">
+  <template strip-whitespace>
+    <style include="palette-shared-styles"></style>
+
+    <!-- A typeahead search -->
+    <input list="list" placeholder="Filter Samples" id="filter">
+    <datalist id="list">
+      <dom-repeat items="[[elements]]">
+        <template>
+          <option value="[[item]]">
+        </template>
+      </dom-repeat>
+    </datalist>
+
+    <!-- The list of clickable buttons -->
+    <dom-repeat items="[[elements]]">
+      <template>
+        <button>[[item]]</button>
+      </template>
+    </dom-repeat>
+
+    <iron-ajax auto url="elements-samples.json" handle-as="json" on-response="_elementsReady"></iron-ajax>
+
+  </template>
+  <script>
+    /*
+     * List of custom templates that can be added to the view.
+     */
+    class SamplesView extends PaletteBase(Polymer.Element) {
+      static get is() { return 'palette-samples'; }
+
+      _doClick(target, kind) {
+        let url = `samples/${kind}.html`;
+
+        Polymer.Base.importHref(url, function(e) {
+          let doc = e.target.import;
+          let template = doc.querySelector('template');
+          this._fireEvent('new-sample', kind, '', template);
+        }.bind(this));
+      }
+    }
+    customElements.define(SamplesView.is, SamplesView);
+  </script>
+</dom-module>

@@ -1,0 +1,48 @@
+{
+  "name": "vaadin-button",
+  "homepage": "https://vaadin.com/elements",
+  "authors": [
+    "Vaadin Ltd"
+  ],
+  "description": "vaadin-button",
+  "main": "vaadin-button.html",
+  "keywords": [
+    "Vaadin",
+    "button",
+    "web-components",
+    "web-component",
+    "polymer"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "gulpfile.js",
+    "package.json",
+    "wct.conf.js"
+  ],
+  "devDependencies": {
+    "elements-demo-resources": "^2.0.0",
+    "iron-component-page": "^3.0.0",
+    "iron-demo-helpers": "^2.0.0",
+    "iron-test-helpers": "^2.0.0",
+    "web-component-tester": "^6.0.0"
+  },
+  "dependencies": {
+    "polymer": "^2.0.0",
+    "vaadin-control-state-mixin": "vaadin/vaadin-control-state-mixin#^1.0.0",
+    "vaadin-themable-mixin": "vaadin/vaadin-themable-mixin#^1.1.0"
+  },
+  "version": "1.0.0",
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.0",
+    "commit": "4abb6ba1db926ec20d38ce2bc3ac26aa98f48e3d"
+  },
+  "_source": "https://github.com/vaadin/vaadin-button.git",
+  "_target": "^1.0.0",
+  "_originalSource": "vaadin-button"
+}

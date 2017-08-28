@@ -1,0 +1,103 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="element-stuff-base.html">
+<link rel="import" href="element-stuff-shared-styles.html">
+
+<dom-module id="element-stuff-styles">
+  <template strip-whitespace>
+    <style include="element-stuff-shared-styles">
+      button.add {
+        display: inline-block;
+        background: transparent;
+        border: none;
+        padding: 4px 10px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        font-weight: 500;
+        text-decoration: none;
+        text-transform: uppercase;
+        line-height: 1.5;
+        color: white;
+        background: #232733;
+        margin-top: 4px;
+      }
+    </style>
+    <div class="content-wrapper">
+      <label>color</label><input name="color" type="color"><br>
+      <label>bkground color</label><input name="backgroundColor" type="color">
+      <label>box-sizing</label>
+      <select name="box-sizing">
+        <option>border-box</option>
+        <option>content-box</option>
+      </select>
+      <label>border</label><input name="border">
+      <label>box shadow</label><input name="boxShadow">
+      <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
+      <label>padding</label><input name="padding">
+      <label>margin</label><input name="margin">
+      <label>position</label>
+      <select name="position">
+        <option>static</option>
+        <option>absolute</option>
+        <option>relative</option>
+      </select>
+      <label>left</label><input name="left">
+      <label>top</label><input name="top">
+      <label>width</label><input name="width">
+      <label>height</label><input name="height">
+      <div id="bonus"></div>
+      <button class="add" on-click="addStyle">+ Add style</button>
+  </div>
+  </template>
+  <script>
+    class ElementStyles extends ElementStuffBase(Polymer.Element) {
+      static get is() { return 'element-stuff-styles'; }
+      constructor() {
+        super();
+        this.stuffType = 'style';
+      }
+      display(elementStyles, selectedElement) {
+        for (let i = 0; i < this._stuff.length; i++) {
+          let name = this._stuff[i];
+          if (!elementStyles[name])
+            continue;
+          let el = this.root.querySelector(`[name=${name}]`);
+          if (name === 'backgroundColor' || name === 'color') {
+            el.value = this._rgb2hex(elementStyles[name]);
+          } else if (name === 'width' || name === 'height') {
+            // For width or height, the computedStyle gives us exact pixels
+            // rather than % positioning.
+            el.value = selectedElement.style[name];
+          } else {
+            el.value = elementStyles[name];
+          }
+        }
+      }
+      addStyle(event) {
+        let label = document.createElement('input');
+        label.className = 'style-label';
+        let input = document.createElement('input');
+        input.className = 'style-value';
+        this.$.bonus.appendChild(label);
+        this.$.bonus.appendChild(input);
+      }
+      _rgb2hex(rgb) {
+       rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+       return (rgb && rgb.length === 4) ? "#" +
+        ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+        ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+      }
+    }
+    customElements.define(ElementStyles.is, ElementStyles);
+  </script>
+</dom-module>

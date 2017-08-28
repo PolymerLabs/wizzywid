@@ -1,0 +1,79 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="designer-tabs.html">
+<link rel="import" href="designer-tab.html">
+<link rel="import" href="element-stuff-styles.html">
+<link rel="import" href="element-stuff-flex.html">
+<link rel="import" href="element-stuff-properties.html">
+
+<dom-module id="element-view">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      iron-pages {
+        overflow: hidden;
+        height: 250px;
+        background: var(--medium-grey);
+        color: white;
+      }
+    </style>
+    <designer-tabs attr-for-selected="name" selected="{{selected}}">
+      <designer-tab name="properties">
+        <button>properties</button>
+      </designer-tab>
+      <designer-tab name="styles">
+        <button>styles</button>
+      </designer-tab>
+      <designer-tab name="flex">
+        <button>flex</button>
+      </designer-tab>
+    </designer-tabs>
+
+    <iron-pages attr-for-selected="name" selected-attribute="visible" selected="[[selected]]">
+      <element-stuff-properties name="properties" id="propertiesContainer"></element-stuff-properties>
+      <element-stuff-styles name="styles" id="stylesContainer"></element-stuff-styles>
+      <element-stuff-flex name="flex" id="flexContainer"></element-stuff-flex>
+    </iron-pages>
+  </template>
+  <script>
+    class ElementView extends Polymer.Element {
+      static get is() { return 'element-view'; }
+      static get properties() {
+        return {
+          selected: {
+            type: String,
+            value: 'properties'
+          }
+        }
+      }
+
+      /**
+       * Updates the views.
+       */
+      display(el) {
+        let computedStyle = window.getComputedStyle(el);
+        this.$.propertiesContainer.display(el);
+        this.$.stylesContainer.display(computedStyle, el);
+        this.$.flexContainer.display(computedStyle);
+      }
+
+      displayPosition(top, left) {
+        this.$.stylesContainer.display({top: top + 'px', left: left + 'px'});
+      }
+    }
+    customElements.define(ElementView.is, ElementView);
+  </script>
+</dom-module>

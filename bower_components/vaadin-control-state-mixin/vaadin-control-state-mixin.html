@@ -1,0 +1,214 @@
+<!--
+@license
+Copyright (c) 2017 Vaadin Ltd.
+This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
+-->
+
+<script>
+  window.Vaadin = window.Vaadin || {};
+
+  /**
+   * A private mixin to avoid problems with dynamic properties and Polymer Analyzer.
+   * No need to expose these properties in the API docs.
+   */
+  Vaadin.TabIndexMixin = superClass => class VaadinTabIndexMixin extends superClass {
+    static get properties() {
+      var properties = {
+        /**
+         * Internal property needed to listen to `tabindex` attribute changes.
+         *
+         * For changing the tabindex of this component use the native `tabIndex` propety.
+         * @private
+         */
+        tabindex: {
+          type: Number,
+          value: 0,
+          reflectToAttribute: true,
+          observer: '_tabindexChanged'
+        }
+      };
+
+      if (window.ShadyDOM) {
+        // ShadyDOM browsers need the `tabIndex` in order to notify when the user changes it programatically.
+        properties['tabIndex'] = properties.tabindex;
+      }
+
+      return properties;
+    }
+  };
+
+  /**
+   * Polymer.IronControlState is not a proper 2.0 class, also, its tabindex
+   * implementation fails in the shadow dom, so we have this for vaadin elements.
+   * @polymerMixin
+   */
+  Vaadin.ControlStateMixin = superClass => class VaadinControlStateMixin extends Vaadin.TabIndexMixin(superClass) {
+    static get properties() {
+      return {
+        /**
+         * Specify that this control should have input focus when the page loads.
+         */
+        autofocus: {
+          type: Boolean
+        },
+
+        /**
+         * If true, the element currently has focus.
+         */
+        focused: {
+          type: Boolean,
+          notify: true,
+          readOnly: true,
+          observer: '_focusedChanged',
+          reflectToAttribute: true
+        },
+
+        /**
+         * Stores the previous value of tabindex attribute of the disabled element
+         */
+        _previousTabIndex: {
+          type: Number
+        },
+
+        /**
+         * If true, the user cannot interact with this element.
+         */
+        disabled: {
+          type: Boolean,
+          observer: '_disabledChanged',
+          reflectToAttribute: true
+        },
+
+        _isShiftTabbing: Boolean,
+      };
+    }
+
+    ready() {
+      super.ready();
+
+      this.addEventListener('focus', e => this._focus(e));
+
+      this.addEventListener('blur', () => this._setFocused(false));
+
+      this.addEventListener('click', e => this._focus(e));
+
+      this.addEventListener('keydown', e => {
+        if (e.shiftKey && e.keyCode === 9) {
+          // Flag is checked in _focus event handler.
+          this._isShiftTabbing = true;
+          HTMLElement.prototype.focus.apply(this);
+          // Event handling in IE is asynchronous and the flag is removed asynchronously as well
+          setTimeout(() => this._isShiftTabbing = false, 0);
+        }
+      });
+
+      if (this.autofocus && !this.focused) {
+        window.requestAnimationFrame(() => this._focus());
+      }
+
+      this._boundKeydownListener = this._bodyKeydownListener.bind(this);
+      this._boundKeyupListener = this._bodyKeyupListener.bind(this);
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+
+      document.body.addEventListener('keydown', this._boundKeydownListener, true);
+      document.body.addEventListener('keyup', this._boundKeyupListener, true);
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+
+      document.body.removeEventListener('keydown', this._boundKeydownListener, true);
+      document.body.removeEventListener('keyup', this._boundKeyupListener, true);
+    }
+
+    _focusedChanged(focused) {
+      // focus-ring is true when the element was focused from the keyboard.
+      // Focus Ring [A11ycasts]: https://youtu.be/ilj2P5-5CjI
+      if (this.focused && this._tabPressed) {
+        this.setAttribute('focus-ring', '');
+      } else {
+        this.removeAttribute('focus-ring');
+      }
+    }
+
+    _bodyKeydownListener(e) {
+      this._tabPressed = e.keyCode === 9;
+    }
+
+    _bodyKeyupListener() {
+      this._tabPressed = false;
+    }
+
+    /**
+     * Any element extending this mixin is required to implement this getter.
+     * It returns the actual focusable element in the component.
+     */
+    get focusElement() {
+      window.console.warn(`Please implement the 'focusElement' property in <${this.localName}>`);
+      return this;
+    }
+
+    _focus(e) {
+      if (this._isShiftTabbing) {
+        return;
+      }
+
+      this._setFocused(!this.disabled);
+      this.focusElement.focus();
+    }
+
+    /**
+     * Moving the focus from the host element causes firing of the blur event what leads to problems in IE.
+     * @private
+     */
+    focus() {
+      this.focusElement.focus();
+    }
+
+    /**
+     * Native bluring in the host element does nothing because it does not have the focus.
+     * In chrome it works, but not in FF.
+     * @private
+     */
+    blur() {
+      this.focusElement.blur();
+    }
+
+    _disabledChanged(disabled) {
+      this.focusElement.disabled = disabled;
+      if (disabled) {
+        this._setFocused(false);
+        this.blur();
+        this._previousTabIndex = this.tabindex;
+        this.tabindex = -1;
+        this.setAttribute('aria-disabled', 'true');
+      } else {
+        if (typeof this._previousTabIndex !== 'undefined') {
+          this.tabindex = this._previousTabIndex;
+        }
+        this.removeAttribute('aria-disabled');
+      }
+    }
+
+    _tabindexChanged(tabindex) {
+      if (tabindex !== undefined) {
+        this.focusElement.tabIndex = tabindex;
+      }
+
+      if (this.disabled && this.tabindex) {
+        // If tabindex attribute was changed while checkbox was disabled
+        if (this.tabindex !== -1) {
+          this._previousTabIndex = this.tabindex;
+        }
+        this.tabindex = tabindex = undefined;
+      }
+
+      if (window.ShadyDOM) {
+        this.setProperties({tabIndex: tabindex, tabindex: tabindex});
+      }
+    }
+  };
+</script>

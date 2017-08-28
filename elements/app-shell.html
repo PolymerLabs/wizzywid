@@ -1,0 +1,459 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="app-icons.html">
+<link rel="import" href="app-controls.html">
+<link rel="import" href="designer-tabs.html">
+<link rel="import" href="designer-tab.html">
+<link rel="import" href="palette-view.html">
+
+<link rel="import" href="action-history.html">
+<link rel="import" href="demo-view.html">
+<link rel="import" href="help-view.html">
+<link rel="import" href="tree-view.html">
+<link rel="import" href="element-view.html">
+<link rel="import" href="canvas-view.html">
+<link rel="import" href="canvas-controls.html">
+
+<script src="../third-party/ace.js" type="text/javascript" charset="utf-8"></script>
+<dom-module id="app-shell">
+  <template>
+    <style>
+      :host{
+        display: block;
+        box-sizing: border-box;
+        position: relative;
+
+        /* Default colour scheme */
+        --canvas-background: white;
+        --almost-black: #141720;
+        --dark-grey: #232733;
+        --medium-grey: #2f3545;
+        --light-grey: #383f52;
+        --highlight-pink: #e91e63;
+        --highlight-blue: #2196f3;
+        --input-border-color: #596c7a;
+      }
+
+      app-header {
+        background-color: var(--almost-black);
+        color: white;
+        height: 60px;
+        width: 100%;
+        position: fixed;
+        z-index: 100;
+      }
+
+      button {
+        background: transparent;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      button[disabled] {
+        pointer-events: none;
+        opacity: 0.3;
+      }
+
+      app-toolbar {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      designer-tab.single {
+        color: white;
+        background: var(--dark-grey);
+        width: 100%;
+        height: 41px;
+        margin: 0;
+        padding: 0;
+        border: none;
+      }
+
+      .app-body {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
+        padding-top: 60px;
+        height: 100vh;
+      }
+
+      .drawer {
+        min-width: 270px;
+        width: 270px;
+        height: 100%;
+        overflow: hidden;
+        background: var(--medium-grey);
+        color: white;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .main-view {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+      }
+
+      iron-pages  {
+        height: 100%;
+        overflow: auto;
+      }
+
+      .heavy {
+        font-weight: 900;
+        letter-spacing: 2px;
+      }
+      .lite {
+        font-weight: 100;
+        opacity: 0.5;
+        letter-spacing: normal;
+      }
+      canvas-view {
+        overflow: auto;
+      }
+    </style>
+
+    <action-history id="actionHistory"></action-history>
+
+    <app-header fixed>
+      <app-toolbar>
+        <span class="heavy">wizzywid <span class="lite">// what you see is what you deserve</span></span>
+        <app-controls id="appControls"></app-controls>
+      </app-toolbar>
+    </app-header>
+
+    <div class="app-body">
+      <div class="drawer">
+        <designer-tab class="single"><button>tree</button></designer-tab>
+        <tree-view name="tree" id="treeView"></tree-view>
+      </div>
+
+      <div class="main-view">
+        <designer-tabs attr-for-selected="name" selected="{{mainPage}}">
+          <designer-tab name="designer">
+            <button>Designer</button>
+          </designer-tab>
+          <designer-tab name="preview">
+            <button on-click="viewDemo">Preview</button>
+          </designer-tab>
+          <designer-tab name="code">
+            <button on-click="viewCode">Code</button>
+          </designer-tab>
+          <designer-tab name="help">
+            <button>Help</button>
+          </designer-tab>
+        </designer-tabs>
+        <iron-pages selected="[[mainPage]]" attr-for-selected="name" selected-attribute="visible">
+          <canvas-view name="designer" id="viewContainer" style="height:100%"></canvas-view>
+          <div name="code" style="width:100%;height:100%;"><slot name="code"></slot></div>
+          <demo-view id="demoView" name="preview"></demo-view>
+          <help-view name="help"></help-view>
+        </iron-pages>
+      </div>
+
+      <div class="drawer">
+        <canvas-controls id="canvasControls"></canvas-controls>
+        <element-view id="elementView"></element-view>
+        <palette-view id="paletteView"></palette-view>
+      </div>
+    </div>
+  </template>
+  <script>
+    class AppShell extends Polymer.Element {
+      static get is() { return 'app-shell'; }
+      static get properties() {
+        return {
+          activeElement: {
+            type: Object
+          },
+          mainPage: {
+            type: String,
+            value: 'designer'
+          }
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        // Explanation and apology: normally, codeView would be a child
+        // of this element, and could be this.$.codeView, but ace.js
+        // doesn't like being in the shadow dom, and this is why we
+        // can't have nice things.
+        window.codeView.canvasElement = this.$.viewContainer;
+
+        this.setActiveElement(this.$.viewContainer);
+        this.refreshView();
+
+        this.$.canvasControls.actionHistory = this.$.actionHistory;
+        this.$.canvasControls.canvasElement = this.$.viewContainer;
+        this.$.appControls.actionHistory = this.$.actionHistory;
+        this.$.viewContainer.actionHistory = this.$.actionHistory;
+
+        this.addEventListener('new-element', event => this.createElement(event));
+        this.addEventListener('new-sample', event => this.createSample(event));
+        this.addEventListener('element-updated', event => this.updateElement(event));
+
+        this.addEventListener('refresh-view', event => this.refreshView(event));
+        this.addEventListener('selected-element-changed', event => {
+          this.setActiveElement(event.detail.target);
+        });
+        this.addEventListener('finish-clone', event => {
+          this._finishNewElement(event.detail.target, event.detail.target.localName, true);
+        });
+        this.addEventListener('update-action-buttons', event => {
+          this.$.appControls.update(event.detail.undos, event.detail.redos);
+        });
+        this.addEventListener('package-names-ready', event => {
+          window.codeView.elementsToPackages = event.detail.list;
+        });
+
+        this.addEventListener('remove-from-canvas', event => {
+          const parent = event.detail.parent;
+          const node = event.detail.target;
+          if (parent === this.$.viewContainer) {
+            this.$.viewContainer.remove(node);
+          } else {
+            parent.removeChild(node);
+          }
+          parent.click();
+        });
+        this.addEventListener('add-to-canvas', event => {
+          const parent = event.detail.parent;
+          const node = event.detail.target;
+          if (parent === this.$.viewContainer) {
+            this.$.viewContainer.add(node);
+          } else {
+            parent.appendChild(node);
+          }
+          node.click();
+        });
+        this.addEventListener('move', event => {
+          this.$.canvasControls.move(event.detail.type, event.detail.skipHistory);
+        });
+      }
+
+      /*
+       * Updates the new active element in the view.
+       */
+      setActiveElement(el) {
+        if (el === this) {
+          el = this.$.viewContainer;
+        }
+
+        if (this.activeElement) {
+          this.activeElement.classList.remove('active');
+        }
+        el.classList.add('active');
+
+        // Tell everyone who cares about this.
+        this.$.canvasControls.selectedElement =
+            this.$.viewContainer.selectedElement = this.activeElement = el;
+        this.$.canvasControls.selectedElement = this.activeElement;
+        this.$.canvasControls.update(this.activeElement === this.$.viewContainer);
+      }
+
+      /*
+       * Adds a new element to the view.
+       */
+      createElement(event) {
+        let tag = event.detail.type.toLowerCase();
+        let el = document.createElement(tag);
+        this.$.viewContainer.add(el);
+
+        // If we haven't before, save this initial state of a <tag> element,
+        // so that we can diff it to produce the actual state of the world
+        codeView.save(tag, event.detail.package, el);
+        this.$.actionHistory.add('new', el, {parent: el.parentNode});
+
+        this._finishNewElement(el, tag);
+        // You need the item to render first.
+        requestAnimationFrame(function() {
+          el.click();
+        });
+      }
+
+      /*
+       * Adds a new sample code to the view.
+       */
+      createSample(event) {
+        let template = event.detail.template;
+        let templateTag = event.detail.type;
+
+        // Clone the template and add it to the document.
+        let children = template.content.children;
+        let el;
+        let nonStyleChildren = 0;
+        for (let i = 0; i < children.length; i++) {
+          el = document.importNode(children[i], true);
+          this.$.viewContainer.add(el);
+          this.$.actionHistory.add('new', el, {parent: el.parentNode});
+          let tag = el.localName;
+          if (tag !== 'style') {
+            nonStyleChildren++;
+          }
+          el.id = el.id || this._makeUniqueId(el, tag);
+        }
+
+        // Position the sample better, if it was a one element thing.
+        if (nonStyleChildren === 1 && templateTag !== 'app-layout-sample' &&
+            templateTag !== 'wizzywid-sample') {
+          el.style.boxSizing = 'border-box';
+          el.style.position = 'absolute';
+          el.style.left = el.style.top = '20px';
+          el.click();
+        }
+        this.refreshView();
+      }
+
+      /**
+       * Refreshes all the properties/styles of the active element.
+       */
+      refreshView(event) {
+        if (event && event.detail.whileTracking) {
+          let size = this.activeElement.getBoundingClientRect();
+          this.$.elementView.displayPosition(size.top, size.left);
+          return;
+        }
+
+        let el = this.activeElement ? this.activeElement : this.$.viewContainer;
+        // Display its properties in the side view.
+        this.$.elementView.display(el);
+        // Highlight it in the tree.
+        this.$.treeView.recomputeTree(this.$.viewContainer, el);
+      }
+
+      updateElement(event) {
+        let detail = event.detail;
+        let oldValue = this.updateActiveElementValues(detail.type, detail.name, detail.value, detail.isAttribute);
+
+        if (detail.skipHistory) {
+          return;
+        }
+        this.$.actionHistory.add('update', this.activeElement,
+          {
+            type: detail.type, name: detail.name,
+            new: {value: detail.value},
+            old: {value: oldValue}
+          });
+      }
+
+      /**
+       * Updates the active element's displayed values.
+       */
+      updateActiveElementValues(type, name, value, isAttribute) {
+        let previousValue;
+
+        if (type === 'style') {
+          // If we switch to flexbox, automatically reposition the children
+          if (name === 'display' && value === 'flex') {
+            let children = this.activeElement.children;
+            for (let i = 0; i < children.length; i++) {
+              children[i].style.position = 'relative';
+              children[i].style.top = children[i].style.left = 'auto';
+            }
+          }
+          previousValue = this.activeElement.style[name];
+          this.activeElement.style[name] = value;
+        } else {
+          previousValue = this.activeElement[name];
+
+          // If this is a dom-repeat, don't set the items attribute, set a fake
+          // items instead (so that it doesn't stamp).
+          if (this.activeElement.localName === 'dom-repeat' && name === 'items') {
+            this.activeElement.dataset['fakeItemsAttr'] = value;
+          } else if (value === 'true') {
+            this._setPropertyOrValue(name, true, isAttribute);
+          } else if (value === 'false') {
+            if (this.activeElement.hasAttribute(name)) {
+              this.activeElement.removeAttribute(name);
+            } else {
+              this._setPropertyOrValue(name, false, isAttribute);
+            }
+          } else {
+            this._setPropertyOrValue(name, value, isAttribute);
+          }
+        }
+
+        this.$.treeView.recomputeTree(this.$.viewContainer, this.activeElement);
+        return previousValue;
+      }
+
+      viewCode() {
+        Polymer.Base.fire('update-code', {target: this.$.viewContainer}, {node: this});
+      }
+
+      viewDemo() {
+        if (!window.codeView.get)
+          return;
+        this.$.demoView.display(window.codeView.get());
+      }
+
+      _setPropertyOrValue(name, value, isAttribute) {
+        if (isAttribute) {
+          this.activeElement.setAttribute(name, value);
+        } else {
+          this.activeElement[name] = value;
+        }
+      }
+
+      /**
+       * Initializes a new element that has just been added to the canvas.
+       */
+      _finishNewElement(el, tag, isClone) {
+        el.id = this._makeUniqueId(el, tag);
+
+        if (isClone) {
+          // Go through the children and reset their IDs too.
+          let children = el.querySelectorAll('*');
+          for (let i = 0; i < el.length; i++) {
+            el[i].id = this._makeUniqueId(el[i], el[i].localName);
+          }
+          return;
+        }
+
+        // If it's a new element that isn't a clone, it was chosen from the
+        // palette, so position it somewhere slightly better.
+        el.style.boxSizing = 'border-box';
+        el.style.position = 'absolute';
+        el.style.left = el.style.top = '20px';
+
+        // If it's a native element, or has a slot, put some text in that slot
+        // to indicate that.
+        let slots = el.root ? el.root.querySelectorAll('slot') : [];
+
+        if ((this.$.paletteView.isNativeElement(tag) && tag !== 'input') ||
+            slots.length != 0) {
+          el.textContent = tag;
+        }
+      }
+
+      _makeUniqueId(node, id, suffix) {
+        id = id.replace('-', '_');
+        let uId = id + (suffix || '');
+        return this.$.viewContainer.has('#' + uId) ?
+          this._makeUniqueId(node, id, suffix ? ++suffix : 1) : uId;
+      }
+    }
+    customElements.define(AppShell.is, AppShell);
+  </script>
+</dom-module>
