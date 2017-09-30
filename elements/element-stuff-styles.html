@@ -37,6 +37,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       button.add:hover {
         background: var(--highlight-pink);
       }
+      paper-swatch-picker {
+        border: 1px solid var(--input-border-color);
+        border-radius: 5px;
+        margin: 2px 0;
+        --paper-icon-button-ink-color: var(--input-border-color);
+        --paper-icon-button: {
+          padding: 0;
+          height: 20px;
+          width: 20px;
+        };
+      }
     </style>
     <div class="content-wrapper">
       <label>color</label><paper-swatch-picker name="color" horizontal-align="right"></paper-swatch-picker><br>
