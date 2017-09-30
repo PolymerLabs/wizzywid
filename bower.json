@@ -19,6 +19,7 @@
     "iron-pages": "PolymerElements/iron-pages#^2.0.0",
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.0",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#^2.0.0",
+    "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
     "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
@@ -43,7 +44,6 @@
     "paper-menu-button": "PolymerElements/paper-menu-button#*",
     "paper-progress": "PolymerElements/paper-progress#*",
     "paper-spinner": "PolymerElements/paper-spinner#*",
-    "paper-swatch-picker": "PolymerElements/paper-swatch-picker#*",
     "paper-tabs": "PolymerElements/paper-tabs#*",
     "iron-ajax": "PolymerElements/iron-ajax#*",
     "iron-autogrow-textarea": "PolymerElements/iron-autogrow-textarea#*",
