@@ -38,17 +38,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return;
           }
 
-          // FIXME : A bit silly but useful for custom-element cases
-          let _value = target.value;
-          if (!_value) {
-            _value = target.color;
-          }
+          let value = target.value;
+          if (target.classList.contains('custom-picker')) { value = target.color; }
 
           Polymer.Base.fire('element-updated',
               {
                 type: this.stuffType,
                 name: target.getAttribute('name'),
-                value: _value,
+                value: value,
                 isAttribute: target.classList.contains('attribute')
               }, {node: this});
         }
