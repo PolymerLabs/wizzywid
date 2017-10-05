@@ -39,14 +39,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: relative;
 
         /* Default colour scheme */
-        --canvas-background: white;
+        /*--canvas-background: white;
         --almost-black: #141720;
         --dark-grey: #232733;
         --medium-grey: #2f3545;
         --light-grey: #383f52;
         --highlight-pink: #e91e63;
         --highlight-blue: #2196f3;
-        --input-border-color: #596c7a;
+        --input-border-color: #596c7a;*/
       }
 
       app-header {
@@ -59,10 +59,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       button {
-        background: transparent;
         color: white;
         border: none;
         cursor: pointer;
+      }
+      button:hover {
+        box-shadow: inset 0 3px 0 var(--light-grey);
+      }
+      button:focus {
+        box-shadow: inset 0 3px 0 var(--highlight-pink);
       }
 
       button[disabled] {
@@ -83,6 +88,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0;
         padding: 0;
         border: none;
+      }
+      designer-tab.single span {
+        box-shadow: none;
       }
 
       .app-body {
@@ -163,14 +171,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="app-body" fullscreen$="[[toggleFullscreen]]">
       <div class="drawer">
-        <designer-tab class="single"><button>tree</button></designer-tab>
+        <designer-tab class="single"><span>Tree</span></designer-tab>
         <tree-view name="tree" id="treeView"></tree-view>
       </div>
 
       <div class="main-view">
         <designer-tabs attr-for-selected="name" selected="{{mainPage}}">
           <designer-tab name="designer">
-            <button>Designer</button>
+            <button role="button">Designer</button>
           </designer-tab>
           <designer-tab name="preview">
             <button on-click="viewDemo">Preview</button>
@@ -179,7 +187,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <button on-click="viewCode">Code</button>
           </designer-tab>
           <designer-tab name="help">
-            <button>Help</button>
+            <button role="button">Help</button>
           </designer-tab>
         </designer-tabs>
         <paper-toggle-button unchecked noink checked="{{toggleFullscreen}}">Fullscreen</paper-toggle-button>

@@ -17,14 +17,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style include="element-stuff-shared-styles"></style>
     <div class="content-wrapper">
       <div>
-        <label>textContent</label>
-        <input name="textContent">
-        <label>id</label>
-        <input name="id">
-        <label>slot</label>
-        <input name="slot">
-        <label>classList</label>
-        <input name="classList">
+        <label for="textContent">textContent</label>
+        <input name="textContent" id="textContent">
+        <label for="id">id</label>
+        <input name="id" id="id">
+        <label for="slot">slot</label>
+        <input name="slot" id="slot">
+        <label for="classList">classList</label>
+        <input name="classList" id="classList">
       </div>
       <div id="bonus"></div>
   </div>
@@ -103,9 +103,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           let label = document.createElement('label');
           label.textContent = name;
+          label.setAttribute('for', name);
+          // label.htmlFor = name;
           this.$.bonus.appendChild(label);
           let input = document.createElement('input');
           input.name = name;
+          input.setAttribute('id', name);
           if (isAttribute) {
             input.classList.add('attribute');
             if (name === 'items' && target.localName === 'dom-repeat') {

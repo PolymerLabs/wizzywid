@@ -16,14 +16,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <style include="element-stuff-shared-styles"></style>
     <div class="content-wrapper">
-      <label>position</label>
-      <select name="position">
+      <label for="position">position</label>
+      <select name="position" id="position">
         <option>static</option>
         <option>absolute</option>
         <option>relative</option>
       </select>
-      <label>display</label>
-      <select name="display">
+      <label for="display">display</label>
+      <select name="display" id="display">
         <option>block</option>
         <option>inline-block</option>
         <option>flex</option>
@@ -33,37 +33,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <option>initial</option>
         <option>none</option>
       </select>
-      <label>flex-direction</label>
-      <select name="flexDirection">
+      <label for="flex-direction">flex-direction</label>
+      <select name="flexDirection" id="flex-direction">
         <option>row</option>
         <option>row-reverse</option>
         <option selected>column</option>
         <option>column-reverse</option>
       </select>
-      <label>flex-wrap</label>
-      <select name="flexWrap">
+      <label for="flex-wrap">flex-wrap</label>
+      <select name="flexWrap" id="flex-wrap">
         <option selected>nowrap</option>
         <option>wrap</option>
         <option>wrap-reverse</option>
       </select>
-      <label>justify-content</label>
-      <select name="justifyContent">
+      <label for="justify-content">justify-content</label>
+      <select name="justifyContent" id="justify-content">
         <option selected>flex-start</option>
         <option>flex-end</option>
         <option>center</option>
         <option>space-between</option>
         <option>space-around</option>
       </select>
-      <label>align-items</label>
-      <select name="alignItems">
+      <label for="align-items">align-items</label>
+      <select name="alignItems" id="align-items">
         <option selected>flex-start</option>
         <option>flex-end</option>
         <option>center</option>
         <option>baseline</option>
         <option>stretch</option>
       </select>
-      <label>align-content</label>
-      <select name="alignContent">
+      <label for="align-content">align-content</label>
+      <select name="alignContent" id="align-content">
         <option selected>flex-start</option>
         <option>flex-end</option>
         <option>center</option>
@@ -71,8 +71,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <option>space-around</option>
         <option>stretch</option>
       </select>
-      <label>align-self</label>
-      <select name="alignSelf">
+      <label for="align-self">align-self</label>
+      <select name="alignSelf" id="align-self">
         <option selected>auto</option>
         <option>flex-start</option>
         <option>flex-end</option>
@@ -80,7 +80,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <option>baseline</option>
         <option>stretch</option>
       </select>
-      <label>flex</label><input name="flex">
+      <label for="flex">flex</label>
+      <input name="flex" id="flex">
     </div>
   </template>
   <script>

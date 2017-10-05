@@ -32,16 +32,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--medium-grey);
         color: white;
       }
+      button:hover {
+        box-shadow: inset 0 3px 0 var(--light-grey);
+      }
+      button:focus {
+        box-shadow: inset 0 3px 0 var(--highlight-pink);
+      }
     </style>
     <designer-tabs attr-for-selected="name" selected="{{selected}}">
       <designer-tab name="native">
-        <button>Native</button>
+        <button role="button">Native</button>
       </designer-tab>
       <designer-tab name="elements">
-        <button>Custom</button>
+        <button role="button">Custom</button>
       </designer-tab>
       <designer-tab name="samples">
-        <button>Samples</button>
+        <button role="button">Samples</button>
       </designer-tab>
     </designer-tabs>
     <iron-pages selected="[[selected]]" attr-for-selected="name" selected-attribute="visible">

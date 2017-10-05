@@ -16,26 +16,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: inline-block;
         position: relative;
-        border-top: 3px solid transparent;
+        /*border-top: 3px solid transparent;*/
         color: white;
-        transition: border .1s ease-in;
+        /*transition: border .1s ease-in;*/
       }
       :host([disabled]) {
         opacity: 0.3;
         pointer-events: none;
       }
-      :host(:hover) {
+      /*:host(:hover) {
         border-color: var(--light-grey);
-      }
-      :host(.iron-selected) {
+      }*/
+      /*:host(.iron-selected) {
         background: var(--medium-grey);
         border-color: var(--highlight-pink);
-      }
+      }*/
+      /*:host(.iron-selected) ::slotted(*) {
+        outline: none;
+      }*/
       :host ::slotted(*) {
         display: inline-block;
-        background: transparent;
+        background-color: transparent;
         border: none;
-        padding: 10px 5px;
+        padding: 10px 14px;
         font-size: 12px;
         letter-spacing: 1px;
         font-weight: 500;
@@ -43,9 +46,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         text-transform: uppercase;
         line-height: 1.5;
         color: inherit;
-        margin: 0 8px;
         outline: none;
         cursor: pointer;
+        transition: box-shadow .1s ease-in;
+      }
+      :host(.iron-selected) ::slotted(*) {
+        pointer-events: none;
+        background: var(--medium-grey);
+        box-shadow: inset 0 3px 0 var(--highlight-pink);
       }
     </style>
     <slot></slot>
