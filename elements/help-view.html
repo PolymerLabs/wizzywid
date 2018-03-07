@@ -15,9 +15,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
-        overflow: hidden;
         height: 100%;
         width: 100%;
+        overflow-x: hidden;
+        text-align: justify;
         box-sizing: border-box;
         padding: 20px;
         background: var(--canvas-background);
@@ -28,6 +29,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         line-height: 40px;
         color: var(--highlight-pink);
       }
+      h2:first-of-type {
+        margin-top: 0;
+      }
       p {
         font-size: 15px;
         font-weight: 400;
@@ -36,7 +40,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <h2>About</h2>
-    <p>This is a very simple UI prototyping tool for HTML, web components, and Polymer.</p>
+    <p>This is a very simple UI prototyping tool for HTML, web components, and Polymer.
+      View on <a href="https://github.com/PolymerLabs/wizzywid" title="WIZZYWID - GitHub">GitHub</a>.
+    </p>
     <h2>Getting Started</h2>
     <p>➕ To <b>add</b> an element to the canvas, click on one of the buttons in the
     Native/Custom/Samples palettes. Then, you can drag it and resize it in the canvas.

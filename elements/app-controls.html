@@ -18,7 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: flex;
       }
       button {
-        background: transparent;
+        background-color: transparent;
         color: white;
         border: none;
         cursor: pointer;
@@ -38,16 +38,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 8px;
       }
     </style>
-    <button on-click="undo" id="undoBtn" disabled title="Undo">
+    <button role="button" on-click="undo" id="undoBtn" disabled title="Undo">
       <iron-icon icon="designer:undo"></iron-icon>
       <div>Undo</div>
     </button>
-    <button on-click="redo" id="redoBtn" disabled title="Redo">
+    <button role="button" on-click="redo" id="redoBtn" disabled title="Redo">
       <iron-icon icon="designer:redo"></iron-icon>
       <div>Redo</div>
     </button>
     <div class="separator"></div>
-    <button on-click="jsFiddleIt" title="Create a JSFiddle">
+    <button role="button" on-click="jsFiddleIt" title="Create a JSFiddle">
       <iron-icon icon="designer:cloud"></iron-icon>
       <div>JSFiddle</div>
     </button>

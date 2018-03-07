@@ -41,6 +41,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         position: relative;
         margin: 0;
         transition: all .05s ease-in;
+        outline: none;
       }
       button[disabled] {
         pointer-events: none;
@@ -64,7 +65,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       button:hover,
       button:hover::before,
-      button:hover::after {
+      button:hover::after,
+      button:focus, /* :focus hack */
+      button:focus::before,
+      button:focus::after {
         border-color: var(--light-grey);
       }
       button:active,
@@ -74,25 +78,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <designer-tab>
-      <button on-click="delete" title="Delete element">
+      <button role="button" on-click="delete" title="Delete element">
         <iron-icon icon="designer:delete"></iron-icon>
       </button>
-      <button on-click="clone" id="cloneBtn" title="Clone element">
+      <button role="button" on-click="clone" id="cloneBtn" title="Clone element">
         <iron-icon icon="designer:copy"></iron-icon>
       </button>
-      <button on-click="fit" id="fitBtn" title="Fit to parent">
+      <button role="button" on-click="fit" id="fitBtn" title="Fit to parent">
         <iron-icon icon="designer:fit"></iron-icon>
       </button>
-      <button on-click="moveUp" title="Move to parent. Also Shift+UpArrow" id="moveUpBtn">
+      <button role="button" on-click="moveUp" title="Move to parent. Also Shift+UpArrow" id="moveUpBtn">
         <iron-icon icon="designer:up"></iron-icon>
       </button>
-      <button on-click="moveDown" title="Move to first child. Also Shift+DownArrow" id="moveDownBtn">
+      <button role="button" on-click="moveDown" title="Move to first child. Also Shift+DownArrow" id="moveDownBtn">
         <iron-icon icon="designer:down"></iron-icon>
       </button>
-      <button on-click="moveBack" title="Move back. Also Shift+LeftArrow" id="moveBackBtn">
+      <button role="button" on-click="moveBack" title="Move back. Also Shift+LeftArrow" id="moveBackBtn">
         <iron-icon icon="designer:back"></iron-icon>
       </button>
-      <button on-click="moveForward" title="Move forward. Also Shift+RightArrow" id="moveForwardBtn">
+      <button role="button" on-click="moveForward" title="Move forward. Also Shift+RightArrow" id="moveForwardBtn">
         <iron-icon icon="designer:forward"></iron-icon>
       </button>
     </designer-tab>
@@ -143,6 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.actionHistory.add('delete', el, {parent: parent});
         }
         this._refreshView();
+
       }
 
       /**
@@ -162,6 +167,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // P.S: Since we did a clone, we already have the initial state of the <tag>.
         this.actionHistory.add('new', clone, {parent: el.parentNode});
         this._refreshView();
+
       }
 
       /**
@@ -230,6 +236,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         this.actionHistory.add('move-back', el);
 
+
       }
 
       moveForward(skipHistory) {
@@ -253,6 +260,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           parent.insertBefore(el, parent.firstChild);
         }
         this._refreshView();
+
         if (skipHistory === true) {
           return;
         }

@@ -29,16 +29,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--medium-grey);
         color: white;
       }
+      button:hover {
+        box-shadow: inset 0 3px 0 var(--light-grey);
+      }
+      button:focus {
+        box-shadow: inset 0 3px 0 var(--highlight-pink);
+      }
     </style>
     <designer-tabs attr-for-selected="name" selected="{{selected}}">
       <designer-tab name="properties">
-        <button>properties</button>
+        <button role="button">Properties</button>
       </designer-tab>
       <designer-tab name="styles">
-        <button>styles</button>
+        <button role="button">Styles</button>
       </designer-tab>
       <designer-tab name="flex">
-        <button>flex</button>
+        <button role="button">Flex</button>
       </designer-tab>
     </designer-tabs>
 

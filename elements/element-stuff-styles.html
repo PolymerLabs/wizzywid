@@ -27,35 +27,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         text-transform: uppercase;
         line-height: 1.5;
         color: white;
-        background: #232733;
+        background: var(--dark-grey);
         margin-top: 4px;
+        cursor: pointer;
+        outline: none;
+        border-radius: 5px;
+      }
+      button.add:hover {
+        background: var(--highlight-pink);
       }
     </style>
     <div class="content-wrapper">
-      <label>color</label><input name="color" type="color"><br>
-      <label>bkground color</label><input name="backgroundColor" type="color">
-      <label>box-sizing</label>
-      <select name="box-sizing">
+      <label for="color">color</label><input name="color" type="color" id="color">
+      <label for="bkground-color">bkground color</label><input name="backgroundColor" type="color" id="bkground-color">
+      <label for="box-sizing">box-sizing</label>
+      <select name="box-sizing" id="box-sizing">
         <option>border-box</option>
         <option>content-box</option>
       </select>
-      <label>border</label><input name="border">
-      <label>box shadow</label><input name="boxShadow">
-      <label>opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1">
-      <label>padding</label><input name="padding">
-      <label>margin</label><input name="margin">
-      <label>position</label>
-      <select name="position">
+      <label for="border">border</label><input name="border" id="border">
+      <label for="box-shadow">box shadow</label><input name="boxShadow" id="box-shadow">
+      <label for="opacity">opacity</label><input name="opacity" type="text" min="0" max="1" step="0.1" value="1" id="opacity">
+      <label for="padding">padding</label><input name="padding" id="padding">
+      <label for="margin">margin</label><input name="margin" id="margin">
+      <label for="position">position</label>
+      <select name="position" id="position">
         <option>static</option>
         <option>absolute</option>
         <option>relative</option>
       </select>
-      <label>left</label><input name="left">
-      <label>top</label><input name="top">
-      <label>width</label><input name="width">
-      <label>height</label><input name="height">
+      <label for="top">top</label><input name="top" id="top">
+      <label for="right">right</label><input name="right" id="right">
+      <label for="bottom">bottom</label><input name="bottom" id="bottom">
+      <label for="left">left</label><input name="left" id="left">
+      <label for="width">width</label><input name="width" id="width">
+      <label for="height">height</label><input name="height" id="height">
       <div id="bonus"></div>
-      <button class="add" on-click="addStyle">+ Add style</button>
+      <button class="add" on-click="addStyle" role="button">+ Add style</button>
   </div>
   </template>
   <script>

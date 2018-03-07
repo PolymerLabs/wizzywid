@@ -31,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!-- The list of clickable buttons -->
     <dom-repeat items="[[elements]]">
       <template>
-        <button>[[item]]</button>
+        <button role="button">[[item]]</button>
       </template>
     </dom-repeat>
     <iron-ajax auto url="bower.json" handle-as="json" on-response="_elementsReady"></iron-ajax>

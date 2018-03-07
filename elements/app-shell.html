@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="app-icons.html">
 <link rel="import" href="app-controls.html">
@@ -58,10 +59,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       button {
-        background: transparent;
         color: white;
         border: none;
         cursor: pointer;
+      }
+      button:hover {
+        box-shadow: inset 0 3px 0 var(--light-grey);
+      }
+      button:focus {
+        box-shadow: inset 0 3px 0 var(--highlight-pink);
       }
 
       button[disabled] {
@@ -83,6 +89,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 0;
         border: none;
       }
+      designer-tab.single span {
+        box-shadow: none;
+      }
 
       .app-body {
         box-sizing: border-box;
@@ -90,6 +99,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         flex-direction: row;
         padding-top: 60px;
         height: 100vh;
+      }
+      .app-body[fullscreen] .drawer {
+        display: none;
       }
 
       .drawer {
@@ -130,6 +142,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       canvas-view {
         overflow: auto;
       }
+      paper-toggle-button {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        padding: 8px 5px;
+        line-height: 1em;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        --paper-toggle-button-checked-bar-color:  var(--highlight-pink);
+        --paper-toggle-button-checked-button-color:  var(--highlight-pink);
+        --paper-toggle-button-label-color: var(--canvas-background);
+        --paper-toggle-button-unchecked-bar-color:  var(--canvas-background);
+        --paper-toggle-button-unchecked-button-color:  var(--canvas-background);
+      }
     </style>
 
     <action-history id="actionHistory"></action-history>
@@ -141,27 +169,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-toolbar>
     </app-header>
 
-    <div class="app-body">
+    <div class="app-body" fullscreen$="[[toggleFullscreen]]">
       <div class="drawer">
-        <designer-tab class="single"><button>tree</button></designer-tab>
+        <designer-tab class="single"><span>Tree</span></designer-tab>
         <tree-view name="tree" id="treeView"></tree-view>
       </div>
 
       <div class="main-view">
         <designer-tabs attr-for-selected="name" selected="{{mainPage}}">
           <designer-tab name="designer">
-            <button>Designer</button>
+            <button role="button">Designer</button>
           </designer-tab>
           <designer-tab name="preview">
-            <button on-click="viewDemo">Preview</button>
+            <button role="button" on-click="viewDemo">Preview</button>
           </designer-tab>
           <designer-tab name="code">
-            <button on-click="viewCode">Code</button>
+            <button role="button" on-click="viewCode">Code</button>
           </designer-tab>
           <designer-tab name="help">
-            <button>Help</button>
+            <button role="button">Help</button>
           </designer-tab>
         </designer-tabs>
+        <paper-toggle-button unchecked noink checked="{{toggleFullscreen}}">Fullscreen</paper-toggle-button>
         <iron-pages selected="[[mainPage]]" attr-for-selected="name" selected-attribute="visible">
           <canvas-view name="designer" id="viewContainer" style="height:100%"></canvas-view>
           <div name="code" style="width:100%;height:100%;"><slot name="code"></slot></div>
