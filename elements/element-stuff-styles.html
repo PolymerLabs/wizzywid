@@ -50,10 +50,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div class="content-wrapper">
-      <label>color</label><paper-swatch-picker class="custom-picker" name="color" horizontal-align="right"></paper-swatch-picker><br>
-      <label>bkground color</label><paper-swatch-picker class="custom-picker" name="backgroundColor" horizontal-align="right"></paper-swatch-picker><br>
-      <label>box-sizing</label>
-      <select name="box-sizing">
+      <label for="color">color</label>
+      <paper-swatch-picker id="color" class="custom-picker" name="color" horizontal-align="right"></paper-swatch-picker>
+      <label for="bkground-color">bkground color</label>
+      <paper-swatch-picker id="bkground-color" class="custom-picker" name="backgroundColor" horizontal-align="right"></paper-swatch-picker>
+      <label for="box-sizing">box-sizing</label>
+      <select name="box-sizing" id="box-sizing">
         <option>border-box</option>
         <option>content-box</option>
       </select>
@@ -91,6 +93,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (!elementStyles[name])
             continue;
           let el = this.root.querySelector(`[name=${name}]`);
+          console.log(el);
           if (name === 'backgroundColor' || name === 'color') {
             el.color = this._rgb2hex(elementStyles[name]);
           } else if (name === 'width' || name === 'height') {
