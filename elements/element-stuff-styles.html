@@ -93,7 +93,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (!elementStyles[name])
             continue;
           let el = this.root.querySelector(`[name=${name}]`);
-          console.log(el);
           if (name === 'backgroundColor' || name === 'color') {
             el.color = this._rgb2hex(elementStyles[name]);
           } else if (name === 'width' || name === 'height') {
