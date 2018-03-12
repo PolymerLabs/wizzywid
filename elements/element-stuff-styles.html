@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-swatch-picker/paper-swatch-picker.html">
 <link rel="import" href="element-stuff-base.html">
 <link rel="import" href="element-stuff-shared-styles.html">
 
@@ -36,10 +37,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       button.add:hover {
         background: var(--highlight-pink);
       }
+      paper-swatch-picker {
+        border: 1px solid var(--input-border-color);
+        border-radius: 5px;
+        margin: 2px 0;
+        --paper-icon-button-ink-color: var(--input-border-color);
+        --paper-icon-button: {
+          padding: 0;
+          height: 20px;
+          width: 20px;
+        };
+      }
     </style>
     <div class="content-wrapper">
-      <label for="color">color</label><input name="color" type="color" id="color">
-      <label for="bkground-color">bkground color</label><input name="backgroundColor" type="color" id="bkground-color">
+      <label for="color">color</label>
+      <paper-swatch-picker id="color" class="custom-picker" name="color" horizontal-align="right"></paper-swatch-picker>
+      <label for="bkground-color">bkground color</label>
+      <paper-swatch-picker id="bkground-color" class="custom-picker" name="backgroundColor" horizontal-align="right"></paper-swatch-picker>
       <label for="box-sizing">box-sizing</label>
       <select name="box-sizing" id="box-sizing">
         <option>border-box</option>
@@ -64,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <label for="height">height</label><input name="height" id="height">
       <div id="bonus"></div>
       <button class="add" on-click="addStyle">+ Add style</button>
-  </div>
+    </div>
   </template>
   <script>
     class ElementStyles extends ElementStuffBase(Polymer.Element) {
@@ -80,7 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             continue;
           let el = this.root.querySelector(`[name=${name}]`);
           if (name === 'backgroundColor' || name === 'color') {
-            el.value = this._rgb2hex(elementStyles[name]);
+            el.color = this._rgb2hex(elementStyles[name]);
           } else if (name === 'width' || name === 'height') {
             // For width or height, the computedStyle gives us exact pixels
             // rather than % positioning.

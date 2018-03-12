@@ -16,13 +16,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           super.ready();
           this._recomputeStuff();
           this.root.addEventListener('change', this._do.bind(this));
+          this.root.addEventListener('color-picker-selected', this._do.bind(this));
         }
 
         _recomputeStuff() {
           this._stuff = [];
           let els = this.root.querySelectorAll('[name]');
           for (let i = 0 ; i < els.length; i++) {
-            this._stuff.push(els[i].name);
+            this._stuff.push(els[i].getAttribute('name'));
           }
         }
 
@@ -37,11 +38,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return;
           }
 
+          let value = target.value;
+          if (target.classList.contains('custom-picker')) { value = target.color; }
+
           Polymer.Base.fire('element-updated',
               {
                 type: this.stuffType,
-                name: target.name,
-                value: target.value,
+                name: target.getAttribute('name'),
+                value: value,
                 isAttribute: target.classList.contains('attribute')
               }, {node: this});
         }
