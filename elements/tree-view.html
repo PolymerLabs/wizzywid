@@ -14,6 +14,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template strip-whitespace>
     <style>
       :host {
+        --horz-margin: 20px;
+        --vert-margin: 0px;
+        --horz-shift: calc(var(--horz-margin) / 2); /* typically */
+        --vert-shift: 12px;
+
         display: inline-block;
         position: relative;
         width: 100%;
@@ -34,7 +39,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0;
         background: var(--dark-grey);
         position: relative;
-        top: .5em;
         color: white;
       }
       button:hover, button:focus {
@@ -51,27 +55,59 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: var(--light-grey);
         outline: none;
       }
-      #tree ul:first-child {
-        padding-left: 0;
-      }
-      ul, li {
-        list-style: none;
+
+      li, ul {
         margin: 0;
         padding: 0;
       }
-      ul {
-        padding-left: 14px;
+      .tree ul {
+        margin-left: var(--horz-margin);
       }
-      li {
-        padding-left: 10px;
-        border: 1px solid silver;
-        border-width: 0 0 1px 1px;
+      .tree li {
+        list-style-type: none;
+        margin-top: var(--vert-margin);
+        margin-bottom: var(--vert-margin);
+        position: relative;
       }
-      li.has-children { border-bottom: 0; }
-      li ul {
-        margin-left: -10px;
-        padding-left: 20px;
+
+      /* up connector */
+      .tree li::before {
+          content: "";
+          position: absolute;
+          top: calc(0px - var(--vert-margin));
+          left: calc(var(--horz-shift) - var(--horz-margin));
+          width: calc(var(--horz-margin) - var(--horz-shift));
+          height: calc(var(--vert-shift) + var(--vert-margin));
+          border-left: 1px solid #ccc;
+          border-bottom: 1px solid #ccc;
+          border-radius: 0;
       }
+
+      /* down connector */
+      .tree li::after {
+          position: absolute;
+          content: "";
+          top: var(--vert-shift);
+          left: calc(var(--horz-shift) - var(--horz-margin));
+          width: calc(var(--horz-margin) - var(--horz-shift));
+          height: calc(100% - var(--vert-shift));
+          border-left: 1px solid #ccc;
+          border-top: 1px solid #ccc;
+          border-radius: 0;
+      }
+
+      /* do not draw: up connector of first root item */
+      ul.tree>li:first-child::before { display:none; }
+
+      /* do not draw: down connector of last item */
+      .tree li:last-child::after  { display:none; }
+
+      /* draw rounded: down connector of first root item */
+      ul.tree>li:first-child::after { border-radius: 5px 0 0 0; }
+
+      /* draw rounded: up connector of last item */
+      .tree li:last-child:before { border-radius: 0 0 0 5px; }
+
     </style>
     <div id="tree"></div>
   </template>
@@ -81,17 +117,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         super.ready();
-        this.$.tree.addEventListener('click', this.findElement.bind(this))
+        this.$.tree.addEventListener('click', this.findElement.bind(this));
       }
 
       recomputeTree(parent, active) {
         this.$.tree.innerHTML = '';
+        let ul = document.createElement('ul');
+        ul.classList.add('tree');
+        this.$.tree.appendChild(ul);
+
         // Since we can't add a pojo to each button, generate a new index for
         // each button in the this.items array of useful data.
+
         this._index = 0;
-        this.items = this.getChildren(parent, this.$.tree);
+        this.items = this.getChildren(parent, ul);
         this.highlight(active);
-        this.$.tree
         return this.items;
       }
 
@@ -109,40 +149,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return aButton;
       }
 
-      getChildren(parent, div) {
-        // At every new parent, we create a new <ul>
-        let ul = document.createElement('ul');
-        div.appendChild(ul);
+      getChildren(item, list) {
+        // Add item and its children into nested ul list
 
-        let isViewContainer = parent.id === 'viewContainer';
+        let isViewContainer = item.id === 'viewContainer';
         let data = {
-          tag: isViewContainer ? 'main-app': parent.tagName.toLowerCase(),
-          id: isViewContainer ? '' : (parent.id ? '#' + parent.id : ''),
-          text: isViewContainer ? '' : '"' + parent.textContent + '"',
-          ref: parent,
+          tag: isViewContainer ? 'main-app': item.tagName.toLowerCase(),
+          id: isViewContainer ? '' : (item.id ? '#' + item.id : ''),
+          text: isViewContainer ? '' : '"' + item.textContent + '"',
+          ref: item,
           index: this._index
         };
 
-        // Create this node's content;
+        // Add item to list
         let li = document.createElement('li');
         let button = this._makeButton(data.tag, data.id, data.index);
         li.appendChild(button);
-        ul.appendChild(li);
+        list.appendChild(li);
 
         this._index++;
         let nodes = [data];
 
-        // If this node has children...
-        for (let i = 0; i < parent.children.length; i++) {
-          let child = parent.children[i];
+        // Add children to subordinate list
+        let ul = null;
+        for (let i = 0; i < item.children.length; i++) {
+          let child = item.children[i];
+
           // Skip <style> nodes;
           if (child.localName === 'style') {
             continue;
           }
 
-          li.className = 'has-children';
-          nodes = nodes.concat(this.getChildren(child, li));
+          if (ul == null) { 
+            ul = document.createElement('ul');
+            li.appendChild(ul);         
+          }
+          nodes = nodes.concat(this.getChildren(child, ul));
         }
+
         return nodes;
       }
 
